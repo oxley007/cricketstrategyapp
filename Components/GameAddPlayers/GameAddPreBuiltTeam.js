@@ -37,14 +37,7 @@ class GameAddPreBuiltTeam extends Component {
         <Content style={{height:'100%',width:'100%'}}>
         <Text style={styles.whiteTextHOne}>Pre-Built Team.</Text>
         <Text style={styles.whiteTextCenter}>Select on of our pre built teams. You'll likley find some suprises in the 'All Stars' teams!</Text>
-          <Button rounded large warning
-          onPress={() => this.props.navigation.navigate('GameAddPlayers', {
-            preBuildTeam : 1,
-            })
-          }
-          style={styles.largeButton}>
-              <Text>All Countries: best Ever XI</Text>
-            </Button>
+
             <Button rounded large warning
             onPress={() => this.props.navigation.navigate('GameAddPlayers', {
               preBuildTeam : 2,
@@ -61,6 +54,186 @@ class GameAddPreBuiltTeam extends Component {
               style={styles.largeButton}>
                   <Text>Bollywood All-Star XI</Text>
                 </Button>
+
+                <Button rounded large warning
+                onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                  preBuildTeam : 5,
+                  })
+                }
+                style={styles.largeButton}>
+                    <Text>Australia: Best Ever XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                  onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                    preBuildTeam : 6,
+                    })
+                  }
+                  style={styles.largeButton}>
+                      <Text>Australia: Hollywood XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                  preBuildTeam : 7,
+                  })
+                }
+                style={styles.largeButton}>
+                    <Text>England: Best Ever XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                  onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                    preBuildTeam : 8,
+                    })
+                  }
+                  style={styles.largeButton}>
+                      <Text>England: Hollywood XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                  preBuildTeam : 9,
+                  })
+                }
+                style={styles.largeButton}>
+                    <Text>South Africa: Best Ever XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                  onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                    preBuildTeam : 10,
+                    })
+                  }
+                  style={styles.largeButton}>
+                      <Text>South Africa: Hollywood XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                  preBuildTeam : 11,
+                  })
+                }
+                style={styles.largeButton}>
+                    <Text>New Zealand: Best Ever XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                  onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                    preBuildTeam : 12,
+                    })
+                  }
+                  style={styles.largeButton}>
+                      <Text>New Zealand: Hollywood XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                  preBuildTeam : 13,
+                  })
+                }
+                style={styles.largeButton}>
+                    <Text>Pakistan: Best Ever XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                  onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                    preBuildTeam : 14,
+                    })
+                  }
+                  style={styles.largeButton}>
+                      <Text>Pakistan: Lollywood XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                  preBuildTeam : 15,
+                  })
+                }
+                style={styles.largeButton}>
+                    <Text>West Indies: Best Ever XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                  onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                    preBuildTeam : 16,
+                    })
+                  }
+                  style={styles.largeButton}>
+                      <Text>West Indies: Musicians XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                  preBuildTeam : 17,
+                  })
+                }
+                style={styles.largeButton}>
+                    <Text>Sri Lanka: Best Ever XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                  onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                    preBuildTeam : 18,
+                    })
+                  }
+                  style={styles.largeButton}>
+                      <Text>Sri Lanka: H/Bollywood/Tamil XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                  preBuildTeam : 19,
+                  })
+                }
+                style={styles.largeButton}>
+                    <Text>Bangladesh: Best Ever XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                  onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                    preBuildTeam : 20,
+                    })
+                  }
+                  style={styles.largeButton}>
+                      <Text>Bangladesh: Tollywood XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                  onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                    preBuildTeam : 21,
+                    })
+                  }
+                  style={styles.largeButton}>
+                      <Text>Zimbabwe: Best Ever XI</Text>
+                </Button>
+
+                <Button rounded large warning
+                  onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                    preBuildTeam : 22,
+                    })
+                  }
+                  style={styles.largeButton}>
+                      <Text>All Countries: Hollywood XI</Text>
+                </Button>
+
+
+                    <Button rounded large warning
+                    onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                      preBuildTeam : 4,
+                      })
+                    }
+                    style={styles.largeButton}>
+                        <Text>All Countries: Moden Day Best XI</Text>
+                      </Button>
+                <Button rounded large warning
+                onPress={() => this.props.navigation.navigate('GameAddPlayers', {
+                  preBuildTeam : 1,
+                  })
+                }
+                style={styles.largeButton}>
+                    <Text>All Countries: Best of all time XI</Text>
+                  </Button>
         </Content>
         </Col>
         </LinearGradient>

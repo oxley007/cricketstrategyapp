@@ -14,6 +14,7 @@ import { connect } from "react-redux";
 import { updateGameId } from '../../Reducers/gameId';
 import { updateGameRuns } from '../../Reducers/gameRuns';
 import { updatePlayers } from '../../Reducers/players';
+import { updateToggle } from '../../Reducers/toggle';
 
 
 class DisplayCurrentBatters extends Component {
@@ -34,12 +35,15 @@ class DisplayCurrentBatters extends Component {
     overBowled: this.props.gameRuns.overBowled || false,
     players: this.props.players.players || [],
     facingBall: this.props.players.facingBall || 1,
+    togglePremium: this.props.toggle.togglePremium || true,
+    toggleHomeLoad: this.props.toggle.toggleHomeLoad || true,
   };
 
-  handleChange = ( gameID, gameRuns, players ) => {
+  handleChange = ( gameID, gameRuns, players, toggle ) => {
     this.setState({ gameID });
     this.setState({ gameRuns });
     this.setState({ players });
+    this.setState({ toggle });
   };
 
 
@@ -53,7 +57,7 @@ class DisplayCurrentBatters extends Component {
 
     let allPlayers = this.props.players.players;
 
-    console.log(allPlayers);
+    console.log(allPlayers + ' display current batsman allPlayers');
     console.log(documentSnapshot.data().players);
 
     if (allPlayers === [] || allPlayers === undefined || allPlayers === null || allPlayers.length < 1) {
@@ -79,12 +83,63 @@ class DisplayCurrentBatters extends Component {
       });
       */
 
+      this.setState({
+        togglePremium: false,
+        toggleHomeLoad: false,
+      }, function () {
+        const { togglePremium, toggleHomeLoad } = this.state
+        this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+      })
+
+      console.log(this.props.toggle.toggleHomeLoad + ' or is this hit first toggleHomeLoad displayCurrent Batters?');
+
     }
 
   getFacingBall = (facingBall, countCurrentBatter) => {
     console.log('getFacingBall hit');
     console.log(facingBall);
     console.log(countCurrentBatter);
+    if (this.props.fromWicket === true) {
+
+      let sum = a => a.reduce((acc, item) => acc + item);
+      const gameRunEvents = this.props.gameRuns.gameRunEvents;
+      console.log(gameRunEvents + ' from wicket here.');
+
+      const ballCount = gameRunEvents.map(acc => {
+        console.log(acc);
+        return 1;
+    });
+    const ball = sum(ballCount.map(acc => Number(acc)));
+
+      if (ball === 6 || ball === 12 || ball === 18 || ball === 24 || ball === 30 || ball === 36 || ball ===42 || ball === 48 ||
+      ball === 54 || ball === 60 || ball === 66 || ball === 72 || ball === 78 || ball === 84 || ball === 90 || ball === 96 ||
+      ball === 102 || ball === 108 || ball === 114 || ball === 120 ) {
+        if (facingBall === 1) {
+          facingBall = 2;
+        }
+        else if (facingBall === 2) {
+            facingBall = 1;
+        }
+      } else {
+          if (facingBall === 1) {
+            facingBall = 1;
+          }
+          else {
+            facingBall = 2;
+          }
+      }
+
+      if (facingBall === 1 && countCurrentBatter === 1) {
+        return (<Text style={{color: '#fff', height: 10, alignSelf: 'flex-end', paddingRight: 5}}>*</Text >);
+      }
+      else if (facingBall === 2 && countCurrentBatter === 2) {
+        return (<Text style={{color: '#fff', height: 10, alignSelf: 'flex-end', paddingRight: 5}}>*</Text>);
+      }
+      else {
+        return (<Text style={{color: '#fff'}}></Text>);
+      }
+    }
+    else {
     if (facingBall === 1 && countCurrentBatter === 1) {
       return (<Text style={{color: '#fff', height: 10, alignSelf: 'flex-end', paddingRight: 5}}>*</Text >);
     }
@@ -94,6 +149,7 @@ class DisplayCurrentBatters extends Component {
     else {
       return (<Text style={{color: '#fff'}}></Text>);
     }
+  }
   }
 
   getCurrentBatter = () => {
@@ -211,13 +267,34 @@ class DisplayCurrentBatters extends Component {
     */
     //})
 
+    /*
+    let countCurrentBatterCheck = 0;
+    let countCurrentBatterMoreThanThree = false;
     console.log(players);
+    players.map(player => {
+      console.log(player.batterFlag);
+      console.log(player.id);
+      console.log(player.player);
+
+      console.log(countCurrentBatterCheck);
+      console.log();
+      if (player.batterFlag === 0) {
+        countCurrentBatterCheck++
+      }
+
+      if (player.batterFlag === 0 && countCurrentBatterCheck === 3) {
+        countCurrentBatterMoreThanThree = true;
+      }
+      console.log(countCurrentBatterMoreThanThree + ' countCurrentBatterMoreThanThree');
+    })
+    */
+
     return players.map(player => {
       console.log(player.batterFlag);
       console.log(player.id);
       console.log(player.player);
 
-      if (player.batterFlag === 0) {
+    if (player.batterFlag === 0) {
         countCurrentBatter++
         console.log(countCurrentBatter);
         console.log('batter flag === 0 hit');
@@ -265,13 +342,22 @@ class DisplayCurrentBatters extends Component {
     }
     */
 
+    getGameID = () => {
+      return (
+        <View style={{ height: 0}}>
+        <Text>{this.props.gameTest}</Text>
+        </View>
+      )
+    }
+
   render() {
     console.log('Hit current batters');
     return (
 
       <Col>
       {this.getCurrentBatter()}
-      </Col>
+      {this.getGameID()}
+      </Col >
 
     );
   }
@@ -281,6 +367,7 @@ const mapStateToProps = state => ({
   gameID: state.gameID,
   gameRuns: state.gameRuns,
   players: state.players,
+  toggle: state.toggle,
 });
 
 export default connect(mapStateToProps)(DisplayCurrentBatters);

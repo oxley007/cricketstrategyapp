@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Container, Footer, Text, Button, Icon, H1 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
-import { StyleSheet, View, PixelRatio, Platform, Dimensions, ImageBackground, Easing } from 'react-native';
+import { StyleSheet, View, PixelRatio, Platform, Dimensions, ImageBackground, Easing, ActivityIndicator } from 'react-native';
 import { connect } from "react-redux";
 
 import BoardDisplayStrikeRateTop from './BoardDisplayStrikeRateTop';
@@ -17,6 +17,8 @@ import { updateGameCards } from '../../Reducers/gameCards';
 import { updatePlayers } from '../../Reducers/players';
 import { updateFirstInningsRuns } from '../../Reducers/firstInningsRuns';
 import { updateMomentum } from '../../Reducers/momentum';
+import { updatePlayerRuns } from '../../Reducers/playerRuns';
+import { updateToggle } from '../../Reducers/toggle';
 
 import CardBoard from '../../Util/CardBoard.js';
 import BallDiff from '../../Util/BallDiff.js';
@@ -32,6 +34,7 @@ class BoardDisplayTopAttack extends Component {
       stop: 0,
       ballCount: 0,
       momentumThisOver: [],
+      loadingBoard: true,
   };
   }
 
@@ -53,16 +56,22 @@ class BoardDisplayTopAttack extends Component {
     momentum: this.props.momentum.momentum || 0,
     momentum: this.props.momentum.momentumPrevOver || 0,
     momentumThisOver: this.props.momentum.momentumThisOver || [],
+    playerRuns: this.props.playerRuns.wickets || 0,
+    playerRuns: this.props.playerRuns.totalRuns || 0,
+    togglePremium: this.props.toggle.togglePremium || true,
+    toggleHomeLoad: this.props.toggle.toggleHomeLoad || true,
     //yAnimation: new Animated.Value(21),
   };
 
-  handleChange = ( gameRuns, ball, gameCards, players, firstInningsRuns, momentum ) => {
+  handleChange = ( gameRuns, ball, gameCards, players, firstInningsRuns, momentum, playerRuns, toggle ) => {
     this.setState({ gameRuns });
     this.setState({ ball });
     this.setState({ gameCards });
     this.setState({ players });
     this.setState({ firstInningsRuns });
     this.setState({ momentum });
+    this.setState({ playerRuns });
+    this.setState({ toggle });
   };
 
 /*
@@ -80,6 +89,7 @@ componentDidUpdate () {
   this.animate()
   this.animateAll()
   this.animateRuns()
+  this.hideSpinner()
 }
 
 animate () {
@@ -145,22 +155,31 @@ getDisplayRunsTotal() {
   let gameRunEvents = this.props.gameRuns.gameRunEvents;
 
   let sum = a => a.reduce((acc, item) => acc + item);
-  let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+  //let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+
+  const totalRuns = this.props.playerRuns.totalRuns;
   console.log(totalRuns);
 
   //Get total wickets
-  let getWicketCount = BallDiff.getWicketCount(gameRunEvents);
-  let totalWickets = getWicketCount[0];
+  //let getWicketCount = BallDiff.getWicketCount(gameRunEvents);
+  //let totalWickets = getWicketCount[0];
+
+  const totalWickets = this.props.playerRuns.wickets;
   console.log(totalWickets);
 
   //----------calculate overs
   let over = this.props.ball.over;
   let ball = 0;
 
+  /*
   let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
   let ballTotal = legitBall[0];
 
   ball = sum(ballTotal.map(acc => Number(acc)));
+  */
+
+  ball = gameRunEvents.length;
+  ball--
 
   let totalBallDiff = BallDiff.getpartnershipDiffTotal(ball);
   let totalOver = totalBallDiff[0];
@@ -178,18 +197,26 @@ displayRequiredRunRate() {
 //----------calculate overs
 let ball = 0;
 
+/*
 let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
 let ballTotal = legitBall[0];
 console.log(ballTotal);
 
 ball = sum(ballTotal.map(acc => Number(acc)));
 console.log(ball);
+*/
+
+ball = gameRunEvents.length;
+ball--
+console.log(ball + ' balls to replave Legitball.');
 
 const ballsRemaining = 120 - ball;
 
 
 //Calculate the total runs to go
-let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+//let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+
+const totalRuns = this.props.playerRuns.totalRuns;
 console.log(totalRuns);
 
 let runsRequired = this.props.firstInningsRuns.firstInningsRuns - totalRuns;
@@ -214,7 +241,17 @@ console.log(runRate);
 
     const gameRunEvents = this.props.gameRuns.gameRunEvents;
     const players = this.props.players.players;
-    const facingBall = this.props.players.facingBall;
+    //const facingBall = this.props.players.facingBall;
+
+    let facingBall = 1;
+
+    if (this.props.overPageFlag === true) {
+    facingBall = this.props.overPageFacingBall;
+    }
+    else {
+      facingBall = this.props.players.facingBall;
+    }
+
     console.log(facingBall);
 
     let battingStrikeRate = CardBoard.battingStrikeRate(gameRunEvents, players, facingBall);
@@ -863,7 +900,7 @@ boardRuns = [
   id: 62, col: 7, run: "0", header: 0
 },
 {
-  id: 63, col: 7, run: "W", header: 0
+  id: 63, col: 7, run: "0", header: 0
 },
 {
   id: 64, col: 7, run: sevenSeven, header: 0
@@ -1257,7 +1294,7 @@ boardRuns = [
   id: 62, col: 7, run: "6", header: 0
 },
 {
-  id: 63, col: 7, run: "W", header: 0
+  id: 63, col: 7, run: "0", header: 0
 },
 {
   id: 64, col: 7, run: sevenSeven, header: 0
@@ -1304,7 +1341,7 @@ boardRuns = [
   id: 12, col: 1, run: "4", header: 0
 },
 {
-  id: 13, col: 1, run: "W", header: 0
+  id: 13, col: 1, run: "0", header: 0
 },
 {
   id: 14, col: 1, run: "2", header: 0
@@ -1424,7 +1461,7 @@ boardRuns = [
   id: 52, col: 6, run: "0", header: 0
 },
 {
-  id: 53, col: 6, run: "W", header: 0
+  id: 53, col: 6, run: "0", header: 0
 },
 {
   id: 54, col: 6, run: "2", header: 0
@@ -1740,7 +1777,7 @@ boardRuns = [
   id: 26, col: 3, run: "4", header: 0
 },
 {
-  id: 27, col: 3, run: "W", header: 0
+  id: 27, col: 3, run: "0", header: 0
 },
 {
   id: 28, col: 3, run: threeThree, header: 0
@@ -1848,7 +1885,7 @@ boardRuns = [
   id: 62, col: 7, run: "1", header: 0
 },
 {
-  id: 63, col: 7, run: "W", header: 0
+  id: 63, col: 7, run: "0", header: 0
 },
 {
   id: 64, col: 7, run: sevenSeven, header: 0
@@ -1937,7 +1974,7 @@ boardRuns = [
   id: 26, col: 3, run: "0", header: 0
 },
 {
-  id: 27, col: 3, run: "W", header: 0
+  id: 27, col: 3, run: "0", header: 0
 },
 {
   id: 28, col: 3, run: threeThree, header: 0
@@ -2015,7 +2052,7 @@ boardRuns = [
   id: 52, col: 6, run: "1", header: 0
 },
 {
-  id: 53, col: 6, run: "W", header: 0
+  id: 53, col: 6, run: "0", header: 0
 },
 {
   id: 54, col: 6, run: "2", header: 0
@@ -3411,7 +3448,16 @@ getRowAll = (data, index, cardNumberValue) => {
   if ((data.id === 10 &&  (data.run === "0" || data.run === "1" || data.run === "2" || data.run === "4" || data.run === "6" || data.run === "W")) || (data.id === 19 && (data.run === "0" || data.run === "4" || data.run === "6" || data.run === "2" || data.run === "1"))) {
   const gameRunEvents = this.props.gameRuns.gameRunEvents;
   const players = this.props.players.players;
-  const facingBall = this.props.players.facingBall;
+  //const facingBall = this.props.players.facingBall;
+
+  let facingBall = 1;
+
+  if (this.props.overPageFlag === true) {
+  facingBall = this.props.overPageFacingBall;
+  }
+  else {
+    facingBall = this.props.players.facingBall;
+  }
 
   const battingStrikeRateArray = CardBoard.battingStrikeRate(gameRunEvents, players, facingBall);
 
@@ -3438,7 +3484,16 @@ console.log(data.run);
 if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0" || data.run === "2" || data.run === "4")) || (data.id === 64 && (data.run === "0" || data.run === "2" || data.run === "4" || data.run === "6"))) {
   const gameRunEvents = this.props.gameRuns.gameRunEvents;
   const players = this.props.players.players;
-  const facingBall = this.props.players.facingBall;
+  //const facingBall = this.props.players.facingBall;
+
+  let facingBall = 1;
+
+  if (this.props.overPageFlag === true) {
+  facingBall = this.props.overPageFacingBall;
+  }
+  else {
+    facingBall = this.props.players.facingBall;
+  }
 
   const getFormScore = CardBoard.getFormScore(players, facingBall, gameRunEvents);
   console.log(getFormScore);
@@ -3812,7 +3867,17 @@ getOpacity = (data, index, cardNumberValue) => {
   if ((data.id === 10 && (data.run === "0" || data.run === "1" || data.run === "2" || data.run === "4" || data.run === "W")) || (data.id === 19 && data.run === "0" ) || (data.id === 19 && (data.run === "4" || data.run === "0" || data.run === "6" || data.run === "2" || data.run === "1"))) {
     const gameRunEvents = this.props.gameRuns.gameRunEvents;
     const players = this.props.players.players;
-    const facingBall = this.props.players.facingBall;
+    //const facingBall = this.props.players.facingBall;
+
+    let facingBall = 1;
+
+    if (this.props.overPageFlag === true) {
+    facingBall = this.props.overPageFacingBall;
+    }
+    else {
+      facingBall = this.props.players.facingBall;
+    }
+
 
     const battingStrikeRateArray = CardBoard.battingStrikeRate(gameRunEvents, players, facingBall);
 
@@ -4309,12 +4374,85 @@ BoardDisplayStrikeRateTop = () => {
   }
 }
 
+getBoardDisplay = () => {
+
+  if (this.props.overPageFlag === false) {
+  return (
+    <ImageBackground source={require(`../../assets/4dot6-cricekt-sim-bg-image-2.png`)} style={styles.backgroundImage}>
+      <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
+      locations={[0,0.9,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradientOpacity}>
+        <View style={{paddingLeft: 15, paddingRight: 15, paddingBottom: 15}}>
+        {this.BoardDisplayStrikeRateTop()}
+        {this.getScorecard()}
+        </View >
+      </LinearGradient>
+    </ImageBackground>
+  )
+}
+else {
+  return (
+        <Grid style={{paddingLeft: 15, paddingRight: 15}}>
+        {this.BoardDisplayStrikeRateTop()}
+        {this.getScorecard()}
+        </Grid>
+  )
+}
+}
+
+getView = () => {
+
+  if (this.state.loadingBoard === true) {
+
+    return (
+      <Col style={{justifyContent: 'center', textAlign: 'center', height: '100%', height: '100%', backgroundColor: '#c471ed', width: 'auto', justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator
+        style={{ color: '#fff', height: 200, width: 'auto' }}
+        size="large"
+        color="#fff"
+      />
+      <Text style={{ color: '#fff', fontSize: 30, width: 'auto' }}>Loading...3</Text >
+
+      </Col >
+    )
+
+    /*
+    return (
+      <View style={{ flex: 1 }}>
+  <WebView
+    onLoad={() => this.hideSpinner()}
+    style={{ flex: 1 }}
+  />
+  {this.state.loadingBoard && (
+    <ActivityIndicator
+      style={{ color: '#fff', height: 200, width: 'auto' }}
+      size="large"
+      color="#fff"
+    />
+  )}
+  </View>
+);
+*/
+  }
+  else {
+    return(
+      <Col>
+    {this.getBoardDisplay()}
+    </Col>
+  )
+
+  }
+}
+
+
+hideSpinner() {
+  console.log('when is this hit hideSpinnder?');
+this.setState({ loadingBoard: false });
+}
 
   render() {
     return (
-        <Grid style={{paddingLeft: 15, paddingRight: 15}}>
-          {this.BoardDisplayStrikeRateTop()}
-          {this.getScorecard()}
+        <Grid>
+          {this.getView()}
         </Grid>
     );
   }
@@ -4327,6 +4465,8 @@ const mapStateToProps = state => ({
   players: state.players,
   firstInningsRuns: state.firstInningsRuns,
   momentum: state.momentum,
+  playerRuns: state.playerRuns,
+  toggle: state.toggle,
 });
 
 export default connect(mapStateToProps)(BoardDisplayTopAttack);
@@ -4927,6 +5067,12 @@ const styles = StyleSheet.create({
   },
   linearGradient: {
     opacity: 0.9
+  },
+  linearGradientOpacity: {
+    flex: 1,
+    paddingLeft: 15,
+    paddingRight: 15,
+    opacity: 0.9,
   },
 
 });

@@ -561,7 +561,7 @@ else if ((aggBoard === 3 && batterId <= 5) || (aggBoard === 6 && batterId <= 5))
   }
   else if (cardOne === 1 && cardTwo === 4) {
     console.log('0,false');
-    return [0,true];
+    return [0,false];
   }
   else if (cardOne === 1 && cardTwo === 5) {
     console.log('2,false');
@@ -696,7 +696,7 @@ else if ((aggBoard === 3 && batterId <= 5) || (aggBoard === 6 && batterId <= 5))
       return [0,false];
   }
   else if (cardOne === 7 && cardTwo === 6) {
-      return [0,true];
+      return [0,false];
   }
   else if (cardOne === 7 && cardTwo === 7) {
       return [sevenSeven,sevenWicket];
@@ -1013,7 +1013,7 @@ else if ((aggBoard === 2 && batterId <= 8) || (aggBoard === 5 && batterId <= 8))
       return [6,false];
   }
   else if (cardOne === 7 && cardTwo === 6) {
-      return [0,true];
+      return [0,false];
   }
   else if (cardOne === 7 && cardTwo === 7) {
       return [sevenSeven,sevenWicket];
@@ -1036,7 +1036,7 @@ else if ((aggBoard === 3 && batterId <= 8) || (aggBoard === 6 && batterId <= 8))
   }
   else if (cardOne === 1 && cardTwo === 4) {
     console.log('0,true');
-    return [0,true];
+    return [0,false];
   }
   else if (cardOne === 1 && cardTwo === 5) {
     console.log('2,false');
@@ -1144,7 +1144,7 @@ else if ((aggBoard === 3 && batterId <= 8) || (aggBoard === 6 && batterId <= 8))
       return [0,false];
   }
   else if (cardOne === 6 && cardTwo === 4) {
-      return [0,true];
+      return [0,false];
   }
   else if (cardOne === 6 && cardTwo === 5) {
       return [2,false];
@@ -1392,7 +1392,7 @@ else if ((aggBoard === 2 && batterId > 8) || (aggBoard === 5 && batterId > 8)) {
       return [4,false];
   }
   else if (cardOne === 3 && cardTwo === 2) {
-      return [0,true];
+      return [0,false];
   }
   else if (cardOne === 3 && cardTwo === 3) {
       return [threeThree,threeWicket];
@@ -1488,7 +1488,7 @@ else if ((aggBoard === 2 && batterId > 8) || (aggBoard === 5 && batterId > 8)) {
       return [1,false];
   }
   else if (cardOne === 7 && cardTwo === 6) {
-      return [0,true];
+      return [0,false];
   }
   else if (cardOne === 7 && cardTwo === 7) {
       return [sevenSeven,sevenWicket];
@@ -1550,7 +1550,7 @@ else if ((aggBoard === 3 && batterId > 8) || (aggBoard === 6 && batterId > 8)) {
       return [0,false];
   }
   else if (cardOne === 3 && cardTwo === 2) {
-      return [0,true];
+      return [0,false];
   }
   else if (cardOne === 3 && cardTwo === 3) {
       return [threeThree,threeWicket];
@@ -1574,7 +1574,7 @@ else if ((aggBoard === 3 && batterId > 8) || (aggBoard === 6 && batterId > 8)) {
       return [0,false];
   }
   else if (cardOne === 4 && cardTwo === 3) {
-      return [1,true];
+      return [1,false];
   }
   else if (cardOne === 4 && cardTwo === 4) {
       return [fourFour,fourWicket];
@@ -1619,7 +1619,7 @@ else if ((aggBoard === 3 && batterId > 8) || (aggBoard === 6 && batterId > 8)) {
       return [1,false];
   }
   else if (cardOne === 6 && cardTwo === 4) {
-      return [0,true];
+      return [0,false];
   }
   else if (cardOne === 6 && cardTwo === 5) {
       return [2,false];
@@ -2983,6 +2983,8 @@ let currentKey = games.map(acc => {
   }
   else {
 
+    console.log(' is this the bug thats happening?');
+
   let filterIndex = filtered[0].map(acc => {
     console.log(acc);
     filterCount++;
@@ -3893,7 +3895,7 @@ console.log(formScore);
 console.log(formScoreOne);
 console.log(formScoreTwo);
 
-  return [formScoreOne, formScoreTwo];
+  return [formScoreOne, formScoreTwo, formScore];
 },
 
 getFormScoreRuns(formScore, players, facingBall) {
@@ -4000,7 +4002,7 @@ getMomentum(gameRunEvents, momentum) {
   }
   else if (thisBallWicket === true) {
 
-    const lastTweleveBalls = gameRunEvents.slice(Math.max(gameRunEvents.length - 12, 0))
+    const lastTweleveBalls = gameRunEvents.slice(Math.max(gameRunEvents.length - 6, 0))
     console.log(lastTweleveBalls);
 
 
@@ -4019,10 +4021,10 @@ getMomentum(gameRunEvents, momentum) {
     console.log(wicketCount);
 
     if (wicketCountTotal === 1) {
-      momentumThisBall = 10;
+      momentumThisBall = 6;
     }
     else {
-      momentumThisBall = 20;
+      momentumThisBall = 10;
     }
 
   }

@@ -46,30 +46,58 @@ class GameListWinningStreak extends React.Component {
 }
 
 componentWillUnmount() {
-    this.unsubscribe();
+    //this.unsubscribe();
 }
 
 onDocCollectionUpdate = (documentSnapshot) => {
   console.log('display snapshot game winning streak.');
   console.log(documentSnapshot);
   console.log(documentSnapshot.data());
-  console.log(documentSnapshot.data().winningStreak);
+  //console.log(documentSnapshot.data().winningStreak);
 
-  const winningStreak = documentSnapshot.data().winningStreak;
-  const longestStreak = documentSnapshot.data().longestStreak;
+
+
+  let winningStreak = 0;
+  let longestStreak = 0;
+  let highestTeamScore = 0
+  let highestPlayerScore = 0
+  let highestPlayerScoreId = []
   const autoNotOut = documentSnapshot.data().autoNotOut;
+
+  if (documentSnapshot.data() === undefined || documentSnapshot.data() === null) {
+    //longestStreak = 0;
+    //winningStreak = 0;
+    longestStreak = documentSnapshot.data().longestStreak;
+    winningStreak = documentSnapshot.data().winningStreak;
+    highestTeamScore = documentSnapshot.data().highestTeamScore;
+    highestPlayerScore = documentSnapshot.data().highestPlayerScore;
+    highestPlayerScoreId = documentSnapshot.data().highestPlayerScoreId;
+  }
+  else {
+    //longestStreak = documentSnapshot.data().longestStreak;
+    //winningStreak = documentSnapshot.data().winningStreak;
+    winningStreak = this.props.playerStats.winningStreak;
+    longestStreak = this.props.playerStats.longestStreak;
+    highestTeamScore = this.props.playerStats.highestPlayerScore;
+    highestPlayerScore = this.props.playerStats.highestPlayerScore;
+    highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
+  }
 
   this.setState({
     winningStreak,
     loading: false,
  });
 
+ //const highestPlayerScore = this.props.playerStats.highestPlayerScore;
+ //const highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
+  //const highestTeamScore = this.props.playerStats.highestTeamScore;
+
  this.setState({
  winningStreak: winningStreak,
  longestStreak: longestStreak,
- highestPlayerScore: 0,
- highestPlayerScoreId: 0,
- highestTeamScore: 0,
+ highestPlayerScore: highestPlayerScore,
+ highestPlayerScoreId: highestPlayerScoreId,
+ highestTeamScore: highestTeamScore,
  }, function () {
    const { winningStreak, longestStreak, highestPlayerScore, highestPlayerScoreId, highestTeamScore } = this.state
    this.props.dispatch(updatePlayerStats(this.state.winningStreak, this.state.longestStreak, this.state.highestPlayerScore, this.state.highestPlayerScoreId, this.state.highestTeamScore));
@@ -117,10 +145,12 @@ onDocCollectionUpdate = (documentSnapshot) => {
   render() {
     return (
       <Col size={2} style={styles.rowPaddingStartGame}>
-        <Row size={3}>
+      <View style={styles.horizontalRule} />
+        <Row size={3} >
           <Text style={styles.winningStreakText}>Current winning streak:</Text>
         </Row>
           {this.getWinningStreak()}
+          <View style={styles.horizontalRule} />
       </Col>
   );
   }
@@ -172,5 +202,12 @@ const styles = StyleSheet.create({
       paddingBottom: 10,
       paddingLeft: 20,
       textAlign: 'center',
+    },
+    horizontalRule: {
+      borderBottomColor: '#fff',
+      borderBottomWidth: 1,
+      width: '100%',
+      marginTop: 15,
+      marginBottom: 15,
     },
 });

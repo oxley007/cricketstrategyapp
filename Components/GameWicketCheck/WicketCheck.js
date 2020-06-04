@@ -13,6 +13,7 @@ import { updateTeamPlayers } from '../../Reducers/teamPlayers';
 import { updateMomentum } from '../../Reducers/momentum';
 import { updateFirstInningsRuns } from '../../Reducers/firstInningsRuns';
 import { updateAutoNotOut } from '../../Reducers/autoNotOut';
+import { updatePlayerStats } from '../../Reducers/playerStats';
 
 import BallDiff from '../../Util/BallDiff.js';
 import CardBoard from '../../Util/CardBoard.js';
@@ -20,6 +21,7 @@ import FacingBatter from '../../Util/FacingBatter.js';
 import BoardDisplayStats from '../Board/BoardDisplayStats';
 import RunsTotal from '../Board/RunsTotal';
 import DisplayCurrentBatters from '../Board/DisplayCurrentBatters'
+
 
 class WicketCheck extends React.Component {
   constructor(props) {
@@ -56,9 +58,14 @@ class WicketCheck extends React.Component {
     momentumThisOver: this.props.momentum.momentumThisOver || [],
     firstInningsRuns: this.props.firstInningsRuns.firstInningsRuns || 0,
     autoNotOut: this.props.autoNotOut.autoNotOut || 0,
+    winningStreak: this.props.playerStats.winningStreak || 0,
+    longestStreak: this.props.playerStats.longestStreak || 0,
+    highestPlayerScore: this.props.playerStats.highestPlayerScore || 0,
+    highestPlayerScoreId: this.props.playerStats.highestPlayerScoreId || 0,
+    highestTeamScore: this.props.playerStats.highestTeamScore || 0,
   };
 
-  handleChange = ( gameID, gameRuns, ball, players, teamPlayers, momentum, firstInningsRuns, autoNotOut ) => {
+  handleChange = ( gameID, gameRuns, ball, players, teamPlayers, momentum, firstInningsRuns, autoNotOut, playerStats ) => {
     this.setState({ gameID });
     this.setState({ gameRuns });
     this.setState({ ball });
@@ -67,6 +74,7 @@ class WicketCheck extends React.Component {
     this.setState({ momentum });
     this.setState({ firstInningsRuns });
     this.setState({ autoNotOut });
+    this.setState({ playerStats });
   };
 
   incrementer = () => {
@@ -269,12 +277,14 @@ handleWicket = () => {
       //worout who is facing.
       console.log();
       let facingBall = this.props.players.facingBall;
+
       if (ball <= 1) {
         facingBall = 1;
       }
       else {
         //nothing
       }
+
 
       console.log(facingBall);
       if (facingBall === 1) {
@@ -296,23 +306,7 @@ handleWicket = () => {
       gameRunEvents.push({eventID: eventID, runsValue: runs, ball: ball, runsType: 'runs', wicketEvent: wicketEvent, batterID: facingBatter, bowlerID: 0});
       console.log(gameRunEvents);
 
-      if (ball === 6 || ball === 12 || ball === 18 || ball === 24 || ball === 30 || ball === 36 || ball ===42 || ball === 48 ||
-      ball === 54 || ball === 60 || ball === 66 || ball === 72 || ball === 78 || ball === 84 || ball === 90 || ball === 96 ||
-      ball === 102 || ball === 108 || ball === 114 || ball === 120 ) {
-        if (facingBall === 1) {
-          facingBall = 2;
-        }
-        else if (facingBall === 2) {
-            facingBall = 1;
-        }
-      } else {
-          if (facingBall === 1) {
-            facingBall = 1;
-          }
-          else {
-            facingBall = 2;
-          }
-      }
+
 
       //************ WICKET ON LAST BALL OF INNIBGS!!!!!!!!!!!! *******************//
 
@@ -333,6 +327,24 @@ handleWicket = () => {
 
       if (cardColor === 'red' && totalWickets < 10) {
 
+        if (ball === 6 || ball === 12 || ball === 18 || ball === 24 || ball === 30 || ball === 36 || ball ===42 || ball === 48 ||
+        ball === 54 || ball === 60 || ball === 66 || ball === 72 || ball === 78 || ball === 84 || ball === 90 || ball === 96 ||
+        ball === 102 || ball === 108 || ball === 114 || ball === 120 ) {
+          if (facingBall === 1) {
+            facingBall = 2;
+          }
+          else if (facingBall === 2) {
+              facingBall = 1;
+          }
+        } else {
+            if (facingBall === 1) {
+              facingBall = 1;
+            }
+            else {
+              facingBall = 2;
+            }
+        }
+
         if (facingBall === 1) {
           facingBatter = idBatterOneNumber;
         }
@@ -341,18 +353,22 @@ handleWicket = () => {
         }
 
         allPlayers = this.props.players.players;
+        let batterRuns = 0;
+        let playerIDHighestScore = 0;
 
         allPlayers.map(player => {
           console.log(player);
           console.log(player.id);
           const wicketsPlusTwo = totalWickets + 2;
-
+          console.log(facingBatter);
           if (player.id === facingBatter) {
             //batterFlag = 1;
             console.log(allPlayers[player.id]);
+            playerIDHighestScore = allPlayers[player.id];
             allPlayers[player.id].batterFlag = 1;
             const scoreTwo = allPlayers[player.id].scoreOne;
             const scoreThree = allPlayers[player.id].scoreTwo;
+            const highestScore = allPlayers[player.id].highestScore;
 
             let sum = a => a.reduce((acc, item) => acc + item);
             const gameRunEventsNew = this.props.gameRuns.gameRunEvents;
@@ -391,7 +407,7 @@ handleWicket = () => {
 
               console.log(batterRunsCount);
 
-              const batterRuns = sum(batterRunsCount.map(acc => Number(acc)));
+              batterRuns = sum(batterRunsCount.map(acc => Number(acc)));
 
               console.log(batterRuns);
 
@@ -400,7 +416,47 @@ handleWicket = () => {
             allPlayers[player.id].scoreOne = batterRuns;
             allPlayers[player.id].scoreTwo = scoreTwo;
             allPlayers[player.id].scoreThree = scoreThree;
+            allPlayers[player.id].highestScore = highestScore;
             allPlayers[player.id].outs = outs;
+
+            let batterRunsHighest = allPlayers[player.id].highestScore;
+            let batterRunsInt;
+            let batterRunsHighestInt = 0;
+
+            console.log(batterRunsInt + ' wicket batterRuns ');
+            console.log(batterRunsHighestInt +  ' wicket batterRunsHighest ');
+
+            if ((isNaN(batterRunsHighest)) && (isNaN(batterRuns))) {
+
+              console.log();
+              batterRunsInt = parseInt(batterRuns, 10);
+              batterRunsHighestInt  = parseInt(batterRunsHighest, 10);
+
+              if (batterRunsInt > batterRunsHighestInt){
+                batterRunsHighestInt = batterRunsInt;
+              }
+              else {
+                batterRunsHighestInt = batterRunsHighestInt;
+              }
+
+            }
+            else if (batterRuns > batterRunsHighest) {
+              batterRunsHighestInt = batterRuns;
+            }
+            else {
+              batterRunsHighestInt = batterRunsHighest;
+            }
+
+
+
+            console.log(batterRunsInt + ' wicket batterRunsInt ');
+            console.log(batterRuns + ' wicket batterRuns ');
+            console.log(batterRunsHighestInt +  ' wicket batterRunsHighestInt ');
+            console.log(batterRunsHighest +  ' wicket batterRunsHighest ');
+
+
+
+            teamPlayers[player.id].highestScore = batterRunsHighestInt;
 
             console.log(allPlayers);
 
@@ -409,12 +465,14 @@ handleWicket = () => {
             teamPlayers[player.id].scoreThree = scoreThree;
             teamPlayers[player.id].outs = outs;
 
+            /*
             if (teamPlayers[player.id].id === 1 || teamPlayers[player.id].id === 2) {
               teamPlayers[player.id].batterFlag = 0;
             }
             else {
               teamPlayers[player.id].batterFlag = 1;
             }
+            */
 
             console.log(teamPlayers);
 
@@ -424,6 +482,27 @@ handleWicket = () => {
               const { teamPlayers } = this.state
               this.props.dispatch(updateTeamPlayers(this.state.players));
             })
+
+            const highestPlayerScore = this.props.playerStats.highestPlayerScore;
+            const winningStreak = this.props.playerStats.winningStreak;
+            const longestStreak = this.props.playerStats.longestStreak;
+            const highestTeamScore = this.props.playerStats.highestTeamScore;
+
+            console.log(batterRuns + ' batterRuns');
+            console.log(highestPlayerScore + ' highestPlayerScore');
+
+            if (batterRuns > highestPlayerScore) {
+              this.setState({
+              winningStreak: winningStreak,
+              longestStreak: longestStreak,
+              highestPlayerScore: batterRuns,
+              highestPlayerScoreId: playerIDHighestScore,
+              highestTeamScore: highestTeamScore,
+              }, function () {
+                const { winningStreak, longestStreak, highestPlayerScore, highestPlayerScoreId, highestTeamScore } = this.state
+                this.props.dispatch(updatePlayerStats(this.state.winningStreak, this.state.longestStreak, this.state.highestPlayerScore, this.state.highestPlayerScoreId, this.state.highestTeamScore));
+              })
+            }
 
             /*
 
@@ -534,6 +613,7 @@ handleWicket = () => {
 
         //**ENDS not out player runs**//
 
+        /*
       const teamPlayersSet = allPlayers.map(player => {
         console.log(player);
         console.log(player.id);
@@ -584,20 +664,84 @@ handleWicket = () => {
 
       console.log(countBAtterFlag0Total + ' count batter flag Tota; ');
 
-
+      */
         //players.map(player => {
 
+        const batters = this.props.players.players;
+        const getFacingBatter = FacingBatter.getFacingBatter(batters, facingBall, totalWickets);
+        const facingBatterNew = getFacingBatter[0];
+
+        const teamPlayersSet = allPlayers.map(player => {
+
+          console.log('New batter change.');
+
+          const newBatsmanNum = player.id + 2;
+
+          console.log(facingBatterNew + ' facingBatterNew');
+          console.log(newBatsmanNum + ' newBatsmanNum');
+          console.log(player.id + ' player.id');
+
+          if (facingBatterNew === player.id) {
+            return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: player.aggBoard, autoNotOut: player.autoNotOut, highestScore: player.highestScore};
+          }
+          else if (newBatsmanNum === player.id) {
+            return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: player.aggBoard, autoNotOut: player.autoNotOut, highestScore: player.highestScore};
+          }
+          else {
+            return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: player.batterFlag, aggBoard: player.aggBoard, autoNotOut: player.autoNotOut, highestScore: player.highestScore};
+          }
+        });
+
+            /*
+          console.log(player);
+          console.log(player.id);
+          let batterZeroCount = 0
+          if (countCurrentBatterMoreThanThree === true) {
+            countCurrentBatterMoreThanThree = false;
+            return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: player.aggBoard, autoNotOut: player.autoNotOut};
+          }
+          else if (player.batterFlag === 1 ) {
+            return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: player.aggBoard, autoNotOut: player.autoNotOut};
+          }
+          else if (player.batterFlag === 2) {
+            return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: player.aggBoard, autoNotOut: player.autoNotOut};
+          }
+          else {
+            return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: player.aggBoard, autoNotOut: player.autoNotOut};
+          }
+        });
+
+        let countCurrentBatterCheck = 0;
+        let countCurrentBatterMoreThanThree = false;
+        console.log(allPlayers);
+        allPlayers.map(player => {
+          console.log(player.batterFlag);
+          console.log(player.id);
+          console.log(player.player);
+
+          console.log(countCurrentBatterCheck);
+          console.log();
+          if (player.batterFlag === 0) {
+            countCurrentBatterCheck++
+          }
+
+          if (player.batterFlag === 0 && countCurrentBatterCheck === 3) {
+            countCurrentBatterMoreThanThree = true;
+          }
+          console.log(countCurrentBatterMoreThanThree + ' countCurrentBatterMoreThanThree');
+        })
 
 
-        if (countBAtterFlag0Total > 2) {
+
+
           let teamPlayersSet = [];
           if (facingBall === 1) {
             teamPlayersSet = allPlayers.map(player => {
               console.log(player);
               console.log(player.id);
               let batterZeroCount = 0
-              if (player.batterFlag === 0 && batterZeroCount === 0) {
-                batterZeroCount++;
+              if (countCurrentBatterMoreThanThree === true) {
+                countCurrentBatterMoreThanThree = false;
                 return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: player.aggBoard, autoNotOut: player.autoNotOut};
               }
               else if (player.batterFlag === 1 ) {
@@ -610,17 +754,14 @@ handleWicket = () => {
                 return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: player.aggBoard, autoNotOut: player.autoNotOut};
               }
             });
-
-
-
           }
           else {
-            let batterZeroCount = 0
             teamPlayersSet = allPlayers.map(player => {
               console.log(player);
               console.log(player.id);
 
-              if (player.batterFlag === 0 && batterZeroCount === 1) {
+              if (countCurrentBatterMoreThanThree === true) {
+                countCurrentBatterMoreThanThree === false;
                 return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: player.autoNotOut};
               }
               else if (player.batterFlag === 1 ) {
@@ -638,9 +779,10 @@ handleWicket = () => {
               }
 
             });
-          }
+
         }
 
+        */
 
 
       console.log(teamPlayersSet);
@@ -721,18 +863,24 @@ handleWicket = () => {
       //----------calculate overs
       ball = 0;
 
+      /*
       let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
       let ballTotal = legitBall[0];
       console.log(ballTotal);
 
       ball = sum(ballTotal.map(acc => Number(acc)));
       console.log(ball);
+      */
+
+      ball = gameRunEvents.length;
+      ball--
 
       let totalBallDiff = BallDiff.getpartnershipDiffTotal(ball);
       let totalBall = totalBallDiff[1];
       let totalOver = totalBallDiff[0];
       console.log(totalBall);
       let numberBallValue = 0;
+
       if (totalBall === 0 && totalOver > 0) {
         let eventID = this.props.gameRuns.eventID;
         numberBallValue = Number(6);
@@ -809,6 +957,7 @@ handleWicket = () => {
 
           this.props.navigation.navigate('WicketOut', {
             displayId: displayId,
+            totalWickets: totalWickets,
             });
           }, 1000);  //5000 milliseconds
         }
@@ -846,7 +995,7 @@ handleWicket = () => {
       return (
         <Button rounded large success
           onPress={() => this.handleWicketStart()}>
-          <Text>GO!</Text>
+          <Text >GO!</Text>
         </Button>
       )
   }
@@ -917,10 +1066,10 @@ handleUseNotOut = () => {
         console.log(player.id);
 
         if (player.id === facingBatter) {
-          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: player.batterFlag, aggBoard: player.aggBoard, autoNotOut: autoNotOutplayer};
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: player.batterFlag, aggBoard: player.aggBoard, autoNotOut: autoNotOutplayer, highestScore: player.highestScore};
         }
         else {
-          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: player.batterFlag, aggBoard: player.aggBoard, autoNotOut: player.autoNotOut}
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: player.batterFlag, aggBoard: player.aggBoard, autoNotOut: player.autoNotOut, highestScore: player.highestScore}
         }
       });
 
@@ -1046,7 +1195,7 @@ handleUseNotOutTeam = () => {
     <Header style={styles.headerStyle}>
       <Left size={1}>
         <Icon name="menu" onPress={() => this.props.navigation.openDrawer()} style={{color: '#fff', paddingLeft: 20, marginTop: 'auto', marginBottom: 'auto' }} />
-      </Left>
+      </Left >
       <Col size={1} style={ styles.logoStylingCol }>
       <Image
        source={require('../../assets/4dot6logo-transparent.png')}
@@ -1080,10 +1229,10 @@ handleUseNotOutTeam = () => {
             <Col size={1} style={{backgroundColor: '#12c2e9', alignItems: 'center', justifyContent: 'center'}}>
               <Text style={{color: '#fff'}}>Use Auto Not-Out.</Text>
             </Col>
-          </Row>
+          </Row >
         </Col>
         <Row style={{paddingTop: 10}}>
-        <DisplayCurrentBatters />
+        <DisplayCurrentBatters fromWicket={true} />
         </Row>
           {this.goOrCardDisplay()}
     </Content>
@@ -1094,20 +1243,20 @@ handleUseNotOutTeam = () => {
       <Text style={{color: '#fff', fontSize: 30}}>Use Auto Not Out: </Text><Icon type="MaterialCommunityIcons" name="arrow-bottom-right" style={styles.autoNotOutIcon} />
     </Row>
     <Row style={{width: '100%'}}>
-      <Col>
+      <Col >
       <Button full style={{width: '100%', height: 150}}
       onPress={() => this.handleUseNotOutTeam()}
       >
         <Col style={styles.autoNotOutCol}>
 
-        <Row size={5}>
+        <Row size={5} >
           <Col style={styles.autoNotOutColNum}>
             <Row size={7}>
             <Text style={styles.autoNotOutNumber}>{this.props.autoNotOut.autoNotOut}</Text>
             </Row>
             <Row size={2}>
           <Text style={styles.autoNotOutHeading}>Auto Not-Outs</Text>
-          </Row>
+          </Row >
           </Col>
           <Col style={styles.autoNotOutColIcon}>
           <Row size={7}>
@@ -1159,6 +1308,7 @@ const mapStateToProps = state => ({
   momentum: state.momentum,
   firstInningsRuns: state.firstInningsRuns,
   autoNotOut: state.autoNotOut,
+  playerStats: state.playerStats,
 });
 
 export default connect(mapStateToProps)(WicketCheck);

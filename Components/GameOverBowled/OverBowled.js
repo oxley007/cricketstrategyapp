@@ -87,13 +87,13 @@ gameNavigateBack = () => {
   });
 
   if (playerTwoAgg === 0 && playerOneAgg === 0) {
-    alert("To continue please set an aggression value (Agressive / Medium / Defensive) for " + playerOneName + " and " + playerTwoName + "." )
+    alert("To continue please set an aggression value (Aggressive / Medium / Defensive) for " + playerOneName + " and " + playerTwoName + "." )
   }
   else if (playerOneAgg === 0) {
-    alert("To continue please set an aggression value (Agressive / Medium / Defensive) for " + playerOneName + "." )
+    alert("To continue please set an aggression value (Aggressive / Medium / Defensive) for " + playerOneName + "." )
   }
   else if (playerTwoAgg === 0) {
-    alert("To continue please set an aggression value (Agressive / Medium / Defensive) for " + playerTwoName + "." )
+    alert("To continue please set an aggression value (Aggressive / Medium / Defensive) for " + playerTwoName + "." )
   }
   else {
 
@@ -105,6 +105,7 @@ gameNavigateBack = () => {
   const runs = gameRunEvents[gameRunEventsLength].runsValue;
   console.log(runs);
 
+  /*
   let facingBall = this.props.players.facingBall;
   console.log(facingBall);
 
@@ -121,6 +122,7 @@ gameNavigateBack = () => {
     facingBall = 1;
   }
 
+
   let allPlayers = this.props.players.players;
 
   this.setState({
@@ -131,6 +133,17 @@ gameNavigateBack = () => {
     this.props.dispatch(updatePlayers(this.state.players, this.state.facingBall));
   })
 
+  */
+
+  const { navigation } = this.props;
+  const fromWicket = navigation.getParam('fromWicket', false);
+
+  if (fromWicket === true) {
+    this.props.navigation.navigate('Game', {
+      backFromOver: true,
+    });
+  }
+  else {
   const momentum = this.props.momentum.momentum;
 
   this.setState({
@@ -142,8 +155,12 @@ gameNavigateBack = () => {
     this.props.dispatch(updateMomentum(this.state.momentum, this.state.momentumPrevOver, this.state.momentumThisOver));
   })
 
-  this.props.navigation.navigate('Game')
+  this.props.navigation.navigate('Game', {
+    backFromOver: true,
+  });
+
   }
+}
 
 }
 
@@ -155,6 +172,7 @@ gameNavigateBack = () => {
 
     const { navigation } = this.props;
     const momentumEndOfOverRRR = navigation.getParam('momentumEndOfOverRRR', false);
+    const fromWicket = navigation.getParam('fromWicket', false);
 
     return (
     <Container>
@@ -170,14 +188,14 @@ gameNavigateBack = () => {
       </Col>
       <Right size={1} style={styles.colVerticleAlign}>
         </Right>
-    </Header>
+    </Header >
     <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
     locations={[0,0.9,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradient}>
     <Content style={{ flex: 1, width: '100%'}}>
-      <OverBowledBoard momentumEndOfOverRRR={momentumEndOfOverRRR} />
+      <OverBowledBoard momentumEndOfOverRRR={momentumEndOfOverRRR} fromWicket={fromWicket} />
     </Content>
     <Footer style={{ height: 50, backgroundColor: 'transparent', borderTopWidth: 0, backgroundColor: 'transparent', elevation: 0, shadowOpacity: 0 }}>
-    <Row>
+    <Row >
       <Col size={1}>
       <Button style={styles.goButton} large success
         onPress={() => this.gameNavigateBack()} >

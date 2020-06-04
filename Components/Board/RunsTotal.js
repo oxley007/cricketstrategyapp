@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 
 import { updateOver } from '../../Reducers/over';
 import { updateGameRuns } from '../../Reducers/gameRuns';
+import { updatePlayerRuns } from '../../Reducers/playerRuns';
 
 import BallDiff from '../../Util/BallDiff.js';
 import RequiredRunRate from './RequiredRunRate';
@@ -23,13 +24,15 @@ class RunsTotal extends Component {
     ball: this.props.ball.ball || 0,
     over: this.props.ball.over || 0,
     firstInningsRuns: this.props.firstInningsRuns.firstInningsRuns || 0,
-
+    playerRuns: this.props.playerRuns.wickets || 0,
+    playerRuns: this.props.playerRuns.totalRuns || 0,
   };
 
   handleChange = ( gameRuns, ball, firstInningsRuns ) => {
     this.setState({ gameRuns });
     this.setState({ ball });
     this.setState({ firstInningsRuns });
+    this.setState({ playerRuns });
   };
 
   componentDidUpdate() {
@@ -57,12 +60,17 @@ getRunRate() {
 //----------calculate overs
 let ball = 0;
 
+/*
 let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
 let ballTotal = legitBall[0];
 console.log(ballTotal);
 
 ball = sum(ballTotal.map(acc => Number(acc)));
 console.log(ball);
+*/
+
+ball = gameRunEvents.length;
+ball--
 
 let totalBallDiff = BallDiff.getpartnershipDiffTotal(ball);
 let totalOver = totalBallDiff[0];
@@ -75,8 +83,10 @@ let numberOverValue = Number(overValue);
 //---------- end of calularte overs
 
 //Calculate the total runs
-let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
-console.log(totalRuns);
+//et totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+
+const totalRuns = this.props.playerRuns.totalRuns;
+console.log(totalRuns + ' total runs from RunTotal.js');
 
 //workout run rate:
 console.log(numberOverValue);
@@ -101,21 +111,30 @@ getDisplayRunsTotal() {
 
   let sum = a => a.reduce((acc, item) => acc + item);
   let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+
+  //const totalRuns = this.props.playerRuns.totalRuns;
   console.log(totalRuns);
 
   //Get total wickets
   let getWicketCount = BallDiff.getWicketCount(gameRunEvents);
   let totalWickets = getWicketCount[0];
+
+  //const totalWickets = this.props.playerRuns.wickets;
   console.log(totalWickets);
 
   //----------calculate overs
   let over = this.props.ball.over;
   let ball = 0;
 
+  /*
   let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
   let ballTotal = legitBall[0];
 
   ball = sum(ballTotal.map(acc => Number(acc)));
+  */
+
+  ball = gameRunEvents.length;
+  ball--
 
   let totalBallDiff = BallDiff.getpartnershipDiffTotal(ball);
   let totalOver = totalBallDiff[0];
@@ -230,6 +249,7 @@ const mapStateToProps = state => ({
   gameRuns: state.gameRuns,
   ball: state.ball,
   firstInningsRuns: state.firstInningsRuns,
+  playerRuns: state.playerRuns,
 });
 
 export default connect(mapStateToProps)(RunsTotal);

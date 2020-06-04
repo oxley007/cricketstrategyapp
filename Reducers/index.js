@@ -26,6 +26,7 @@ import playerStats from './playerStats';
 import gameCards from './gameCards';
 import momentum from './momentum';
 import autoNotOut from './autoNotOut';
+import playerRuns from './playerRuns';
 
 
 export default combineReducers({
@@ -55,4 +56,5 @@ export default combineReducers({
   gameCards,
   momentum,
   autoNotOut,
+  playerRuns,
 });

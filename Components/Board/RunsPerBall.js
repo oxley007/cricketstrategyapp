@@ -25,7 +25,6 @@ class RunsPerBall extends Component {
   };
 
 
-
   RunsPerOverDsiplay() {
 
     console.log('getting hit early in runPerBall');
@@ -40,12 +39,17 @@ class RunsPerBall extends Component {
     //----------calculate overs
     let ball = 0;
 
+    /*
     let legitBall = BallDiff.getLegitBall(ball, runEvents);
     let ballTotal = legitBall[0];
     console.log(ballTotal);
 
     ball = sum(ballTotal.map(acc => Number(acc)));
     console.log(ball);
+    */
+
+    ball = runEvents.length;
+    ball--
 
     let totalBallDiff = BallDiff.getpartnershipDiffTotal(ball);
     let totalBall = totalBallDiff[1];
@@ -102,6 +106,8 @@ class RunsPerBall extends Component {
   console.log(latestOver);
   console.log(numberBallValue);
 
+
+
   return (
       <Row>
           {
@@ -109,13 +115,23 @@ class RunsPerBall extends Component {
             console.log(item.runsValue);
             console.log(countBall);
             console.log(numberBallValue);
+
+            let wicketOrRun = '';
+
+            if (item.wicketEvent === false) {
+              wicketOrRun = <Text style={styles.textBall} key={i}>{item.runsValue}</Text>;
+            }
+            else {
+                wicketOrRun = <Text style={styles.textBall} key={i}>W</Text>;
+            }
+
             if (countBall === numberBallValue) {
               if (numberBallValue === 1) {
                 return (
                   <Col size={5}>
                     <Row>
                       <Col style={styles.ballCircle} size={1}>
-                        <Text style={styles.textBall} key={i}>{item.runsValue}</Text>
+                        {wicketOrRun}
                       </Col>
                       <Col style={styles.yetToBeBowledCircle} size={1}>
                         <Text style={styles.textBall} key={i}> </Text>
@@ -141,7 +157,7 @@ class RunsPerBall extends Component {
                   <Col size={5}>
                     <Row>
                       <Col style={styles.ballCircle} size={1}>
-                        <Text style={styles.textBall} key={i}>{item.runsValue}</Text>
+                        {wicketOrRun}
                       </Col>
                       <Col style={styles.yetToBeBowledCircle} size={1}>
                         <Text style={styles.textBall} key={i}> </Text>
@@ -164,7 +180,7 @@ class RunsPerBall extends Component {
                   <Col size={5}>
                     <Row>
                       <Col style={styles.ballCircle} size={1}>
-                        <Text style={styles.textBall} key={i}>{item.runsValue}</Text>
+                        {wicketOrRun}
                       </Col>
                       <Col style={styles.yetToBeBowledCircle} size={1}>
                         <Text style={styles.textBall} key={i}> </Text>
@@ -184,7 +200,7 @@ class RunsPerBall extends Component {
                   <Col size={4}>
                     <Row>
                       <Col style={styles.ballCircle} size={1}>
-                        <Text style={styles.textBall} key={i}>{item.runsValue}</Text>
+                        {wicketOrRun}
                       </Col>
                       <Col style={styles.yetToBeBowledCircle} size={1}>
                         <Text style={styles.textBall} key={i}> </Text>
@@ -201,7 +217,7 @@ class RunsPerBall extends Component {
                   <Col size={3}>
                     <Row>
                       <Col style={styles.ballCircle} size={1}>
-                        <Text style={styles.textBall} key={i}>{item.runsValue}</Text>
+                        {wicketOrRun}
                       </Col>
                       <Col style={styles.yetToBeBowledCircle} size={1}>
                         <Text style={styles.textBall} key={i}> </Text>
@@ -212,7 +228,7 @@ class RunsPerBall extends Component {
               }
               else if (numberBallValue === 6) {
                 return (<Col style={styles.ballCircle} size={1}>
-                  <Text style={styles.textBall} key={i}>{item.runsValue}</Text>
+                  {wicketOrRun}
                   </Col>
                 )
               }
@@ -246,7 +262,7 @@ class RunsPerBall extends Component {
               else {
                 countBall++
             return (<Col style={styles.ballCircle} size={1}>
-              <Text style={styles.textBall} key={i}>{item.runsValue}</Text>
+              {wicketOrRun}
               </Col>
             )
             }
@@ -269,6 +285,7 @@ class RunsPerBall extends Component {
         <Grid style={styles.rowPadding}>
           <View style={styles.horizontalRule} />
           {this.RunsPerOverDsiplay()}
+          <View style={styles.horizontalRule} />
         </Grid>
     );
   }

@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 
 import { updateOver } from '../../Reducers/over';
 import { updateGameRuns } from '../../Reducers/gameRuns';
+import { updatePlayerRuns } from '../../Reducers/playerRuns';
 
 import BallDiff from '../../Util/BallDiff.js';
 
@@ -27,11 +28,14 @@ class RequiredRunRate extends Component {
     eventID: this.props.gameRuns.eventID || 0,
     ball: this.props.ball.ball || 0,
     over: this.props.ball.over || 0,
+    playerRuns: this.props.playerRuns.wickets || 0,
+    playerRuns: this.props.playerRuns.totalRuns || 0,
   };
 
-  handleChange = ( gameRuns, ball ) => {
+  handleChange = ( gameRuns, ball, playerRuns ) => {
     this.setState({ gameRuns });
     this.setState({ ball });
+    this.setState({ playerRuns });
   };
 
   componentDidUpdate() {
@@ -59,12 +63,17 @@ displayRequiredRunRate() {
 //----------calculate overs
 let ball = 0;
 
+/*
 let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
 let ballTotal = legitBall[0];
 console.log(ballTotal);
 
 ball = sum(ballTotal.map(acc => Number(acc)));
 console.log(ball);
+*/
+
+ball = gameRunEvents.length;
+ball--
 
 const ballsRemaining = 120 - ball;
 
@@ -83,7 +92,9 @@ let numberOverValue = Number(overValue);
 //---------- end of calularte overs
 
 //Calculate the total runs to go
-let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+//let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+
+const totalRuns = this.props.playerRuns.totalRuns;
 console.log(totalRuns);
 
 let runsRequired = this.props.firstInningsRuns - totalRuns;
@@ -202,6 +213,7 @@ else {
 const mapStateToProps = state => ({
   gameRuns: state.gameRuns,
   ball: state.ball,
+  playerRuns: state.playerRuns,
 });
 
 export default connect(mapStateToProps)(RequiredRunRate);

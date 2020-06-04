@@ -20,7 +20,7 @@ import { updateGameId } from '../../Reducers/gameId';
 import { updateFirstInningsRuns } from '../../Reducers/firstInningsRuns';
 import { updatePlayers } from '../../Reducers/players';
 import { updateMomentum } from '../../Reducers/momentum';
-
+import { updatePlayerRuns } from '../../Reducers/playerRuns';
 
 class OverBowledBoard extends React.Component {
   constructor(props) {
@@ -48,6 +48,8 @@ class OverBowledBoard extends React.Component {
     facingBall: this.props.players.facingBall || 1,
     momentum: this.props.momentum.momentum || 0,
     momentumThisOver: this.props.momentum.momentumThisOver || [],
+    playerRuns: this.props.playerRuns.wickets || 0,
+    playerRuns: this.props.playerRuns.totalRuns || 0,
   };
 
   handleChange = ( gameRuns, gameID, firstInningsRuns, ball, players, momentum ) => {
@@ -57,6 +59,7 @@ class OverBowledBoard extends React.Component {
     this.setState({ ball });
     this.setState({ players });
     this.setState({ momentum });
+    this.setState({ playerRuns });
   };
 
 /*
@@ -104,22 +107,31 @@ componentDidMount() {
     let gameRunEvents = this.props.gameRuns.gameRunEvents;
 
     let sum = a => a.reduce((acc, item) => acc + item);
-    let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+    //let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+
+    const totalRuns = this.props.playerRuns.totalRuns;
     console.log(totalRuns);
 
     //Get total wickets
-    let getWicketCount = BallDiff.getWicketCount(gameRunEvents);
-    let totalWickets = getWicketCount[0];
+    //let getWicketCount = BallDiff.getWicketCount(gameRunEvents);
+    //let totalWickets = getWicketCount[0];
+
+    const totalWickets = this.props.playerRuns.wickets;
     console.log(totalWickets);
 
     //----------calculate overs
     let over = this.props.ball.over;
     let ball = 0;
 
+    /*
     let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
     let ballTotal = legitBall[0];
 
     ball = sum(ballTotal.map(acc => Number(acc)));
+    */
+
+    ball = gameRunEvents.length;
+    ball--
 
     let totalBallDiff = BallDiff.getpartnershipDiffTotal(ball);
     let totalOver = totalBallDiff[0];
@@ -137,17 +149,24 @@ componentDidMount() {
     //----------calculate overs
     let ball = 0;
 
+    /*
     let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
     let ballTotal = legitBall[0];
     console.log(ballTotal);
 
     ball = sum(ballTotal.map(acc => Number(acc)));
     console.log(ball);
+    */
+
+    ball = gameRunEvents.length;
+    ball--
 
     const ballsRemaining = 120 - ball;
 
     //Calculate the total runs to go
-    let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+    //let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+
+    const totalRuns = this.props.playerRuns.totalRuns;
     console.log(totalRuns);
 
     let runsRequired = this.props.firstInningsRuns.firstInningsRuns - totalRuns;
@@ -277,7 +296,7 @@ getCoachChat = (momentum) => {
           <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>If you are comfortable with the runrate then go with one defensive batsman and one medium or aggressive batsman</Text>
         </Row>
         <Row>
-          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>If your struggling with the runrate then you might need to risk going one batsam agressive and the other medium.</Text>
+          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>If your struggling with the runrate then you might need to risk going one batsam aggressive and the other medium.</Text>
         </Row>
       </Grid>
     )
@@ -303,7 +322,7 @@ getCoachChat = (momentum) => {
           <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>Otherwise you might need to keep at least one batsman aggressive.</Text>
         </Row>
         <Row>
-          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>Just remember that if you lose 2 wickets in 12 balls you will lose -20 momentum points.</Text>
+          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>Just remember that if you lose 2 wickets in 6 balls you will lose -10 momentum points.</Text>
         </Row>
       </Grid>
     )
@@ -323,7 +342,7 @@ getCoachChat = (momentum) => {
           <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>If you're not comfortable with the runrate then have atleast one batsman as aggressive.</Text>
         </Row>
         <Row>
-          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>Just remember that if you lose 2 wickets in 12 balls you will lose -20 momentum points.</Text>
+          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>Just remember that if you lose 2 wickets in 6 balls you will lose -10 momentum points.</Text>
         </Row>
       </Grid>
     )
@@ -346,7 +365,7 @@ getCoachChat = (momentum) => {
           <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>2) If the runrate is under control then go medium or defesive so you don't lose wickets.</Text>
         </Row>
         <Row>
-          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>With this type of momentum you should be able to score runs without needing to go agressive.</Text>
+          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>With this type of momentum you should be able to score runs without needing to go aggressive.</Text>
         </Row>
       </Grid>
     )
@@ -375,8 +394,8 @@ getCoachChat = (momentum) => {
           console.log('in.');
           console.log(agressionValue);
           currentBatterCount++
-          console.log({player: acc.player, id: acc.id, scoreOne: acc.scoreOne, scoreTwo: acc.scoreTwo, scoreThree: acc.scoreThree, outs: acc.outs, batterFlag: acc.batterFlag, aggBoard: agressionValue, autoNotOut: acc.autoNotOut });
-          return {player: acc.player, id: acc.id, scoreOne: acc.scoreOne, scoreTwo: acc.scoreTwo, scoreThree: acc.scoreThree, outs: acc.outs, batterFlag: acc.batterFlag, aggBoard: agressionValue, autoNotOut: acc.autoNotOut };
+          console.log({player: acc.player, id: acc.id, scoreOne: acc.scoreOne, scoreTwo: acc.scoreTwo, scoreThree: acc.scoreThree, outs: acc.outs, batterFlag: acc.batterFlag, aggBoard: agressionValue, autoNotOut: acc.autoNotOut, highestScore: acc.highestScore });
+          return {player: acc.player, id: acc.id, scoreOne: acc.scoreOne, scoreTwo: acc.scoreTwo, scoreThree: acc.scoreThree, outs: acc.outs, batterFlag: acc.batterFlag, aggBoard: agressionValue, autoNotOut: acc.autoNotOut, highestScore: acc.highestScore };
         }
           else {
             console.log(acc.batterFlag);
@@ -400,7 +419,7 @@ getCoachChat = (momentum) => {
         }
         else if (acc.batterFlag === 0 && currentBatterCount === 1) {
           currentBatterCount++
-          return {player: acc.player, id: acc.id, scoreOne: acc.scoreOne, scoreTwo: acc.scoreTwo, scoreThree: acc.scoreThree, outs: acc.outs, batterFlag: acc.batterFlag, aggBoard: agressionValue, autoNotOut: acc.autoNotOut };
+          return {player: acc.player, id: acc.id, scoreOne: acc.scoreOne, scoreTwo: acc.scoreTwo, scoreThree: acc.scoreThree, outs: acc.outs, batterFlag: acc.batterFlag, aggBoard: agressionValue, autoNotOut: acc.autoNotOut, highestScore: acc.highestScore };
         }
           else {
             console.log(acc.batterFlag);
@@ -420,6 +439,39 @@ getCoachChat = (momentum) => {
     this.props.dispatch(updatePlayers(this.state.players, this.state.facingBall));
   })
 
+
+  }
+
+  getScoreBoard = () => {
+
+    const players = this.props.players.players;
+    const agressionValue = this.state.agressionValue;
+
+    //let playerOneName = '';
+    //let playerTwoName = '';
+    //let playerOneAgg = 0;
+    //let playerTwoAgg = 0;
+    let facingBall;
+    let flag = 0;
+    players.map(player => {
+      if (player.batterFlag === 0 && agressionValue <= 3) {
+        facingBall = 1;
+        flag++
+      }
+      else if (player.batterFlag === 0 && (agressionValue >= 3 && agressionValue <= 6)) {
+        facingBall = 2;
+      }
+      else {
+        //nothing.
+      }
+
+    });
+
+    console.log(facingBall + ' facingBall');
+
+    return (
+      <BoardDisplayTopAttack aggBoardValue={this.state.agressionValue} overPageFlag={true} overPageFacingBall={facingBall} />
+    )
 
   }
 
@@ -698,8 +750,24 @@ getAggressionTwo = () => {
   }
 
   getMomentumDusplay = () => {
-      const momentum = this.props.momentum.momentum;
-      const momentumThisOver = this.props.momentum.momentumThisOver;
+
+    const fromWicket = this.props.fromWicket;
+    const momentum = this.props.momentum.momentum;
+    const momentumThisOver = this.props.momentum.momentumThisOver;
+
+    if (fromWicket === true) {
+      return (
+      <Grid >
+        <Row size={1}>
+          <Text style={styles.buttonTextBack}>Momentum total:</Text>
+        </Row>
+        <Row size={4}>
+          <Text style={styles.buttonText}>{momentum}</Text>
+        </Row>
+      </Grid>
+    )
+    }
+    else {
 
       let momentumThisOverDisplay = momentumThisOver.map((data, index) => {
           if (data === 2) {
@@ -723,24 +791,24 @@ getAggressionTwo = () => {
                   </Row>
             )
             }
-            else if (data === 10) {
+            else if (data === 6) {
               return (
                   <Row>
                     <Text style={styles.negativePoints}>-{data} Wicket</Text>
                   </Row>
             )
             }
-            else if (data === 20) {
+            else if (data === 10) {
               return (
                   <Row>
-                    <Text style={styles.negativePoints}>-{data} more than one Wicket in last 12 balls</Text>
+                    <Text style={styles.negativePoints}>-{data} more than one Wicket in last 6 balls</Text>
                   </Row>
             )
           }
           })
 
           momentumTotalDisplay = (
-            <Grid>
+            <Grid >
               <Row size={1}>
                 <Text style={styles.buttonTextBack}>Momentum total:</Text>
               </Row>
@@ -760,6 +828,7 @@ getAggressionTwo = () => {
             </Grid>
 
           )
+        }
 
   }
 
@@ -784,7 +853,7 @@ getAggressionTwo = () => {
             {this.getAggressionTwo()}
           </Row>
           <Row>
-            <BoardDisplayTopAttack aggBoardValue={this.state.agressionValue} overPageFlag={true} />
+            {this.getScoreBoard()}
           </Row>
           </Col>
         </LinearGradient>
@@ -801,6 +870,7 @@ const mapStateToProps = state => ({
   ball: state.ball,
   players: state.players,
   momentum: state.momentum,
+  playerRuns: state.playerRuns,
 });
 
 export default connect(mapStateToProps)(OverBowledBoard);

@@ -15,6 +15,7 @@ import { updateGameCards } from '../../Reducers/gameCards';
 import { updatePlayers } from '../../Reducers/players';
 import { updateFirstInningsRuns } from '../../Reducers/firstInningsRuns';
 import { updateMomentum } from '../../Reducers/momentum';
+import { updatePlayerRuns } from '../../Reducers/playerRuns';
 
 import CardBoard from '../../Util/CardBoard.js';
 import BallDiff from '../../Util/BallDiff.js';
@@ -42,15 +43,18 @@ class BoardDisplayStrikeRateTop extends Component {
     momentum: this.props.momentum.momentum || 0,
     momentum: this.props.momentum.momentumPrevOver || 0,
     momentumThisOver: this.props.momentum.momentumThisOver || [],
+    playerRuns: this.props.playerRuns.wickets || 0,
+  playerRuns: this.props.playerRuns.totalRuns || 0,
   };
 
-  handleChange = ( gameRuns, ball, gameCards, players, firstInningsRuns, momentum) => {
+  handleChange = ( gameRuns, ball, gameCards, players, firstInningsRuns, momentum, playerRuns) => {
     this.setState({ gameRuns });
     this.setState({ ball });
     this.setState({ gameCards });
     this.setState({ players });
     this.setState({ firstInningsRuns });
     this.setState({ momentum });
+    this.setState({ playerRuns });
   };
 
 /*
@@ -119,22 +123,31 @@ getDisplayRunsTotal() {
   let gameRunEvents = this.props.gameRuns.gameRunEvents;
 
   let sum = a => a.reduce((acc, item) => acc + item);
-  let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+  //let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+
+  const totalRuns = this.props.playerRuns.totalRuns;
   console.log(totalRuns);
 
   //Get total wickets
-  let getWicketCount = BallDiff.getWicketCount(gameRunEvents);
-  let totalWickets = getWicketCount[0];
+  //let getWicketCount = BallDiff.getWicketCount(gameRunEvents);
+  //let totalWickets = getWicketCount[0];
+
+  const totalWickets = this.props.playerRuns.wickets;
   console.log(totalWickets);
 
   //----------calculate overs
   let over = this.props.ball.over;
   let ball = 0;
 
+  /*
   let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
   let ballTotal = legitBall[0];
 
   ball = sum(ballTotal.map(acc => Number(acc)));
+  */
+
+  ball = gameRunEvents.length;
+  ball--
 
   let totalBallDiff = BallDiff.getpartnershipDiffTotal(ball);
   let totalOver = totalBallDiff[0];
@@ -152,17 +165,24 @@ displayRequiredRunRate = () => {
 //----------calculate overs
 let ball = 0;
 
+/*
 let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
 let ballTotal = legitBall[0];
 console.log(ballTotal);
 
 ball = sum(ballTotal.map(acc => Number(acc)));
 console.log(ball);
+*/
+
+ball = gameRunEvents.length;
+ball--
 
 const ballsRemaining = 120 - ball;
 
 //Calculate the total runs to go
-let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+//let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+
+const totalRuns = this.props.playerRuns.totalRuns;
 console.log(totalRuns);
 
 let runsRequired = this.props.firstInningsRuns.firstInningsRuns - totalRuns;
@@ -789,6 +809,7 @@ const mapStateToProps = state => ({
   players: state.players,
   firstInningsRuns: state.firstInningsRuns,
   momentum: state.momentum,
+  playerRuns: state.playerRuns,
 });
 
 export default connect(mapStateToProps)(BoardDisplayStrikeRateTop);

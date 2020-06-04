@@ -1,8 +1,9 @@
 import React from 'react';
 import firebase from 'react-native-firebase';
 import LinearGradient from 'react-native-linear-gradient';
-import { ScrollView, View, Text, TextInput, StyleSheet, PixelRatio, Platform, Image, FlatList, TouchableHighlight, TouchableOpacity, Alert } from 'react-native';
+import { ScrollView, View, Text, TextInput, StyleSheet, PixelRatio, Platform, Image, FlatList, TouchableHighlight, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import {Header,Left,Right,Icon,Content,Grid,Row,Col,Container,H1,H3,Footer,Button,FooterTab} from 'native-base';
+import { WebView } from 'react-native-webview';
 
 import { connect } from "react-redux";
 import { updateGameId } from '../../Reducers/gameId';
@@ -16,8 +17,11 @@ import { updateGameCards } from '../../Reducers/gameCards';
 import { updateTeamPlayers } from '../../Reducers/teamPlayers';
 import { updateMomentum } from '../../Reducers/momentum';
 import { updateAutoNotOut } from '../../Reducers/autoNotOut';
+import { updateToggle } from '../../Reducers/toggle';
+import { updatePlayerRuns } from '../../Reducers/playerRuns';
 
 import RunsTotal from './RunsTotal';
+import Loader from '../App/Loader';
 import DisplayCurrentBatters from './DisplayCurrentBatters'
 import RequiredRunRate from './RequiredRunRate';
 import BallDiff from '../../Util/BallDiff.js';
@@ -47,6 +51,9 @@ class Board extends React.PureComponent {
         //facingBall: 0,
         firstInningsRuns: 0,
         facingBall: 1,
+        isLoading: true,
+        loadingWinGameTotalRuns: true,
+        loadingBoard: true,
     };
     this.rImages = [require('./random/a-hearts.png'),require('./random/2-hearts.png'),require('./random/3-hearts.png'),require('./random/4-hearts.png'),require('./random/5-hearts.png'),require('./random/6-hearts.png'),require('./random/7-hearts.png'),require('./random/a-diamonds.png'),require('./random/2-diamonds.png'),require('./random/3-diamonds.png'),require('./random/4-diamonds.png'),require('./random/5-diamonds.png'),require('./random/6-diamonds.png'),require('./random/7-diamonds.png'),require('./random/a-spades.png'),require('./random/2-spades.png'),require('./random/3-spades.png'),require('./random/4-spades.png'),require('./random/5-spades.png'),require('./random/6-spades.png'),require('./random/7-spades.png'),require('./random/a-clubs.png'),require('./random/2-clubs.png'),require('./random/3-clubs.png'),require('./random/4-clubs.png'),require('./random/5-clubs.png'),require('./random/6-clubs.png'),require('./random/7-clubs.png')]
   }
@@ -75,12 +82,16 @@ state = {
   wicketEvent: this.props.gameCards.wicketEvent || false,
   teamPlayers: this.props.teamPlayers.teamPlayers || [],
   momentum: this.props.momentum.momentum || 0,
-  momentum: this.props.momentum.momentumPrevOver || 0,
+  momentumPrevOver: this.props.momentum.momentumPrevOver || 0,
   momentumThisOver: this.props.momentum.momentumThisOver || [],
-  autoNotOut: this.props.autoNotOut.autoNotOut || 0,
+  autoNotOut: this.props.autoNotOut.autoNotOut || 5,
+  togglePremium: this.props.toggle.togglePremium || true,
+  toggleHomeLoad: this.props.toggle.toggleHomeLoad || true,
+  playerRuns: this.props.playerRuns.wickets || 0,
+  playerRuns: this.props.playerRuns.totalRuns || 0,
 };
 
-handleChange = ( gameID, gameRuns, ball, players, games, gamesList, firstInningsRuns, playerStats, gameCards, teamPlayers, momentum, autoNotOut ) => {
+handleChange = ( gameID, gameRuns, ball, players, games, gamesList, firstInningsRuns, playerStats, gameCards, teamPlayers, momentum, autoNotOut, toggle, playerRuns ) => {
   this.setState({ gameID });
   this.setState({ gameRuns });
   this.setState({ ball });
@@ -93,6 +104,8 @@ handleChange = ( gameID, gameRuns, ball, players, games, gamesList, firstInnings
   this.setState({ teamPlayers });
   this.setState({ momentum });
   this.setState({ autoNotOut });
+  this.setState({ toggle });
+  this.setState({ playerRuns });
 };
 
 incrementer = () => {
@@ -142,12 +155,17 @@ onDocCollectionUpdate = (documentSnapshot) => {
 
   let ball = 0;
 
+  /*
   let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
   let ballTotal = legitBall[0];
   console.log(ballTotal);
 
   ball = sum(ballTotal.map(acc => Number(acc)));
   console.log(ball);
+  */
+
+  ball = gameRunEvents.length;
+  ball--
 
   let totalBallDiff = BallDiff.getpartnershipDiffTotal(ball);
   const over = totalBallDiff[0];
@@ -160,7 +178,8 @@ onDocCollectionUpdate = (documentSnapshot) => {
 
 
   let allPlayers = this.props.players.players;
-  let facingBall = this.state.facingBall;
+  //let facingBall = this.state.facingBall;
+  let facingBall = this.props.players.facingBall;
 
   console.log(allPlayers);
   console.log(facingBall);
@@ -240,7 +259,38 @@ onDocCollectionUpdate = (documentSnapshot) => {
     this.props.dispatch(updatePlayers(this.state.players, this.state.facingBall));
   })
 
-  console.log(this.props.players.players);
+  /*
+  const gameRunEventsArray = this.props.gameRuns.gameRunEvents;
+  const gameRunEventsLength = gameRunEventsArray.length;
+
+  console.log(this.props.playerRuns.totalRuns + ' totalRuns at end of onDocCollectionUpdate ');
+  console.log(this.props.playerRuns.wickets + ' wickets at end of onDocCollectionUpdate.');
+  console.log(this.props.firstInningsRuns.firstInningsRuns + ' first innings runs at end of onDocCollectionUpdate');
+  console.log(this.props.ball.ball + ' ball at end of onDocCollectionUpdate');
+  console.log(gameRunEventsLength + ' game events length at end of onDocCollectionUpdate');
+
+    console.log(this.state.loadingWinGameTotalRuns);
+    if ((this.props.playerRuns.totalRuns > this.props.firstInningsRuns.firstInningsRuns) || (this.props.playerRuns.wickets >= 10) || (gameRunEventsLength >= 121)) {
+    this.setState({loadingWinGameTotalRuns: false})
+    }
+    else {
+      //this.setState({loadingWinGameTotalRuns: true})
+    }
+
+    console.log(this.state.loadingWinGameTotalRuns + ' how about this for loadingWinGameTotalRuns?');
+    */
+
+    /*
+    this.setState({
+      togglePremium: false,
+      toggleHomeLoad: false,
+    }, function () {
+      const { togglePremium, toggleHomeLoad } = this.state
+      this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+    })
+    */
+
+    this.hideSpinner();
 
   console.log('finished onDocCollectionUpdate');
 
@@ -309,6 +359,8 @@ let firstInningsRuns = games.map(acc => {
  console.log(firstInningsRuns);
  this.setState({firstInningsRuns: firstInningsRuns});
 */
+
+
 }
 
 
@@ -325,12 +377,17 @@ let firstInningsRuns = games.map(acc => {
   //----------calculate overs
   let ball = 0;
 
+  /*
   let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
   let ballTotal = legitBall[0];
   console.log(ballTotal);
 
   ball = sum(ballTotal.map(acc => Number(acc)));
   console.log(ball);
+  */
+
+  ball = gameRunEvents.length;
+  ball--
 
     this.setState({
       cardOne: 100,
@@ -362,7 +419,7 @@ let firstInningsRuns = games.map(acc => {
         }
       )}
       if (this.state.randomClick === 1) {
-        if (ball < 119) {
+        //if (ball > 1 && ball < 119) {
         var randomInt = Math.floor(Math.random() * this.rImages.length)
         console.log(randomInt);
         this.setState({
@@ -373,24 +430,30 @@ let firstInningsRuns = games.map(acc => {
               rImageTwo: rImageTwo,
             }
           )
-        }
+        /*}
         else {
 
           let randomInt = Math.floor(Math.random() * this.rImages.length)
           const cardOne = this.state.cardOne;
-          if ((cardOne === 1 && randomInt == 4) || (cardOne === 1 && randomInt == 1)) {
+          if ((cardOne === 1 && randomInt === 4) || (cardOne === 1 && randomInt === 1)) {
             randomInt === 7;
           }
-          else if ((cardOne === 3 && randomInt == 2) || (cardOne === 3 && randomInt == 3)) {
+          else if ((cardOne === 2 && randomInt === 2) || (cardOne === 2 && randomInt === 5)) {
+            randomInt === 3;
+          }
+          else if ((cardOne === 3 && randomInt === 2) || (cardOne === 3 && randomInt === 3)) {
             randomInt === 1;
           }
-          else if ((cardOne === 5 && randomInt == 5) || (cardOne === 5 && randomInt == 7)) {
+          else if ((cardOne === 4 && randomInt === 4) || (cardOne === 4 && randomInt === 3)) {
+            randomInt === 7;
+          }
+          else if ((cardOne === 5 && randomInt === 5) || (cardOne === 5 && randomInt === 7)) {
             randomInt === 2;
           }
-          else if (cardOne === 6 && randomInt == 6) {
+          else if ((cardOne === 6 && randomInt === 6) || (cardOne === 6 && randomInt === 4)) {
             randomInt === 2;
           }
-          else if (cardOne === 7 && randomInt == 56) {
+          else if ((cardOne === 7 && randomInt === 6) || (cardOne === 7 && randomInt === 7)) {
             randomInt === 5;
           }
 
@@ -403,7 +466,7 @@ let firstInningsRuns = games.map(acc => {
                 rImageTwo: rImageTwo,
               }
             )
-        }
+        }*/
         }
       }, secValue);
     }
@@ -439,19 +502,26 @@ let firstInningsRuns = games.map(acc => {
   //----------calculate overs
   let ball = 0;
 
+  /*
   let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
   let ballTotal = legitBall[0];
   console.log(ballTotal);
 
   ball = sum(ballTotal.map(acc => Number(acc)));
   console.log(ball);
+  */
+
+  ball = gameRunEvents.length;
+  ball--
 
   const ballsRemaining = 120 - ball;
 
 
   //Calculate the total runs to go
-  let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
-  console.log(totalRuns);
+  //let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+  //console.log(totalRuns);
+
+  const totalRuns = this.props.playerRuns.totalRuns;
 
   let runsRequired = this.props.firstInningsRuns.firstInningsRuns - totalRuns;
   console.log(runsRequired);
@@ -484,14 +554,30 @@ let firstInningsRuns = games.map(acc => {
     let totalWickets = getWicketCount[0];
     console.log(totalWickets);
 
+    this.setState({
+      wickets: totalWickets,
+      totalRuns: totalRuns,
+    }, function () {
+      const { wickets, totalRuns } = this.state
+      this.props.dispatch(updatePlayerRuns(this.state.wickets, this.state.totalRuns));
+    })
+
+    console.log(this.props.playerRuns.wickets + ' .playerRuns.wickets');
+    console.log(this.props.playerRuns.totalRuns + ' .playerRuns.totalRuns');
+
     //----------calculate overs
     let over = this.props.ball.over;
     let ball = 0;
 
+    /*
     let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
     let ballTotal = legitBall[0];
 
     ball = sum(ballTotal.map(acc => Number(acc)));
+    */
+
+    ball = gameRunEvents.length;
+    ball--
 
     let totalBallDiff = BallDiff.getpartnershipDiffTotal(ball);
     let totalOver = totalBallDiff[0];
@@ -509,6 +595,29 @@ let firstInningsRuns = games.map(acc => {
       var cardOne = this.state.cardOne;
       console.log(cardOne);
       var cardTwo = this.state.cardTwo;
+
+      if ((cardOne === 1 && cardTwo === 4) || (cardOne === 1 && cardTwo === 1)) {
+        cardTwo === 7;
+      }
+      else if ((cardOne === 2 && cardTwo === 2) || (cardOne === 2 && cardTwo === 5)) {
+        cardTwo === 3;
+      }
+      else if ((cardOne === 3 && cardTwo === 2) || (cardOne === 3 && cardTwo === 3)) {
+        cardTwo === 1;
+      }
+      else if ((cardOne === 4 && cardTwo === 4) || (cardOne === 4 && cardTwo === 3)) {
+        cardTwo === 7;
+      }
+      else if ((cardOne === 5 && cardTwo === 5) || (cardOne === 5 && cardTwo === 7)) {
+        cardTwo === 2;
+      }
+      else if ((cardOne === 6 && cardTwo === 6) || (cardOne === 6 && cardTwo === 4)) {
+        cardTwo === 2;
+      }
+      else if ((cardOne === 7 && cardTwo === 6) || (cardOne === 7 && cardTwo === 7)) {
+        cardTwo === 5;
+      }
+
       let gameRunEvents = this.props.gameRuns.gameRunEvents;
       const players =  this.props.players.players;
       let facingBall = this.props.players.facingBall;
@@ -735,13 +844,39 @@ let firstInningsRuns = games.map(acc => {
         console.log(gameRunEvents);
         }
 
+        //let totalRuns = this.props.playerRuns.totalRuns;
+        //const firstInningsRuns = this.props.firstInningsRuns.firstInningsRuns;
+        //const firstInningsTotalGap = firstInningsRuns - totalRuns
+
         //Calculate the total runs
-        let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
-        console.log(totalRuns);
+        //console.log(firstInningsTotalGap + ' firstInningsTotalGap');
+        //console.log(firstInningsRuns + ' firstInningsRuns');
+        //console.log(totalRuns + ' totalRuns');
+        //if (firstInningsTotalGap <= 12 ) {
+          //console.log('firstInningsTotalGap hit.');
+          let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+
+          let getWicketCount = BallDiff.getWicketCount(gameRunEvents);
+          let totalWickets = getWicketCount[0];
+          console.log(totalWickets);
+
+          this.setState({
+            wickets: totalWickets,
+            totalRuns: totalRuns,
+          }, function () {
+            const { wickets, totalRuns } = this.state
+            this.props.dispatch(updatePlayerRuns(this.state.wickets, this.state.totalRuns));
+          })
+        //}
+        //else {
+          //totalRuns = this.props.playerRuns.totalRuns;
+        //}
+        //let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+        //console.log(totalRuns);
 
         if (ball === 6 || ball === 12 || ball === 18 || ball === 24 || ball === 30 || ball === 36 || ball ===42 || ball === 48 ||
         ball === 54 || ball === 60 || ball === 66 || ball === 72 || ball === 78 || ball === 84 || ball === 90 || ball === 96 ||
-        ball === 102 || ball === 108 || ball === 114 || ball === 120 ) {
+        ball === 102 || ball === 108 || ball === 114 || ball === 120) {
           if (facingBall === 1 && (runs === 1 || runs === 3)) {
             facingBall = 1;
           }
@@ -769,12 +904,22 @@ let firstInningsRuns = games.map(acc => {
 
         //handle wicket event to remove batsman.
         //Get total wickets
-        let getWicketCount = BallDiff.getWicketCount(gameRunEvents);
-        let totalWickets = getWicketCount[0];
-        console.log(totalWickets);
+
 
         //if (wicketEvent === true || runs === 6 || runs === '6' || runs === 4 || runs === '4' ) {
           if (wicketEvent === true && totalWickets < 10) {
+
+            console.log(players + ' players wicket');
+            console.log(facingBall + ' players wicket');
+
+            this.setState({
+              players: players,
+              facingBall: facingBall,
+            }, function () {
+              const { players, facingBall } = this.state
+              this.props.dispatch(updatePlayers(this.state.players, this.state.facingBall));
+            })
+
             console.log('wicket event true!!');
           setTimeout(() => {
             this.props.navigation.navigate('WicketCheck', {
@@ -839,12 +984,17 @@ let firstInningsRuns = games.map(acc => {
         //----------calculate overs
         ball = 0;
 
+        /*
         let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
         let ballTotal = legitBall[0];
         console.log(ballTotal);
 
         ball = sum(ballTotal.map(acc => Number(acc)));
         console.log(ball);
+        */
+
+        ball = gameRunEvents.length;
+        ball--
 
         let totalBallDiff = BallDiff.getpartnershipDiffTotal(ball);
         let totalBall = totalBallDiff[1];
@@ -864,6 +1014,9 @@ let firstInningsRuns = games.map(acc => {
         else {
           //do nohthing.
         }
+
+        console.log(totalRuns + ' check the total runs here.');
+        console.log(this.props.toggle.togglePremium + ' check toggle premium here.');
 
         if (totalBall === 0 && totalOver > 0 && wicketEvent != true && totalRuns <= firstInningsRuns && totalOver < 20) {
           let eventID = this.props.gameRuns.eventID;
@@ -1016,7 +1169,7 @@ let firstInningsRuns = games.map(acc => {
 
         }
         else if (totalWickets >= 10 || totalRuns > firstInningsRuns || totalOver >= 20) {
-
+            //totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
             this.getGameResult(totalWickets, totalRuns, firstInningsRuns, totalOver);
 
         }
@@ -1248,11 +1401,84 @@ let firstInningsRuns = games.map(acc => {
     let battersNameSecondHighestScore = highestScorers[4];
     let secondHighestScoreBallCount = highestScorers[5];
 
+    let highestPlayerScore = this.props.playerStats.highestPlayerScore;
+    let highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
+    let count = 0;
+    let batterRuns = 0;
+    let batterRunsOne = 0;
+    let batterRunsTwo = 0;
+
+    allPlayers.map(player => {
+
+      if (player.batterFlag === 0) {
+
+        let batterRunsCount = gameRunEvents.map(acc => {
+          console.log(acc);
+          if (acc.batterID === player.id) {
+            console.log(acc.runsValue);
+            return [acc.runsValue];
+          }
+          else {
+              console.log(acc.runsValue);
+              return 0;
+            }
+          });
+
+          console.log(batterRunsCount);
+
+          count++
+
+          if (count === 1) {
+          batterRunsOne = sum(batterRunsCount.map(acc => Number(acc)));
+        }
+        else {
+          batterRunsTwo = sum(batterRunsCount.map(acc => Number(acc)));
+        }
+
+        console.log(batterRunsOne + ' batterRunsOne');
+        console.log(batterRunsTwo + ' batterRunsTwo');
+
+        if (batterRunsOne > batterRunsTwo) {
+          batterRuns = batterRunsOne;
+        }
+        else {
+          batterRuns = batterRunsTwo;
+        }
+
+          console.log(batterRuns);
+
+          if (batterRuns > highestPlayerScore) {
+            highestPlayerScore = batterRuns;
+            highestPlayerScoreId = player;
+          }
+
+          console.log(highestPlayerScore);
+          console.log(highestPlayerScoreId);
+      }
+  })
+
+  const teamScore = this.props.playerStats.highestTeamScore;
+  let highestTeamScore = 0;
+
+  console.log(totalRuns);
+  console.log(teamScore + ' teamScore');
+
+  if (totalRuns > teamScore) {
+    highestTeamScore = totalRuns
+  }
+  else {
+    highestTeamScore = teamScore
+  }
+
     if (totalRuns > firstInningsRuns) {
 
     winningStreak++
     if (winningStreak > longestStreak) {
       longestStreak = winningStreak
+    }
+    else {
+      //nothing.
+    }
 
       if (winningStreak === 5) {
         autoNotOut = autoNotOut + 2;
@@ -1275,12 +1501,9 @@ let firstInningsRuns = games.map(acc => {
       else if (winningStreak === 500) {
         autoNotOut = autoNotOut + 100;
       }
-
-
-    }
-    else {
+      else {
       //nothing.
-    }
+      }
   }
 
     console.log(gameRunEvents);
@@ -1340,14 +1563,12 @@ let firstInningsRuns = games.map(acc => {
           winningStreak: winningStreak,
       });
 
-
-
       this.ref.doc("playerStats").update({
         winningStreak: winningStreak,
         longestStreak: longestStreak,
-        highestPlayerScore: 0,
-        highestPlayerScoreId: 0,
-        highestTeamScore: 0,
+        highestPlayerScore: highestPlayerScore,
+        highestPlayerScoreId: highestPlayerScoreId,
+        highestTeamScore: highestTeamScore,
         autoNotOut: autoNotOut,
       });
 
@@ -1411,14 +1632,15 @@ let firstInningsRuns = games.map(acc => {
           winningStreak: winningStreak,
       });
 
-
+      //const highestPlayerScore = this.props.playerStats.highestPlayerScore;
+      //const highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
 
       this.ref.doc("playerStats").update({
         winningStreak: winningStreak,
         longestStreak: longestStreak,
-        highestPlayerScore: 0,
-        highestPlayerScoreId: 0,
-        highestTeamScore: 0,
+        highestPlayerScore: highestPlayerScore,
+        highestPlayerScoreId: highestPlayerScoreId,
+        highestTeamScore: highestTeamScore,
         autoNotOut: autoNotOut,
       });
 
@@ -1511,12 +1733,15 @@ let firstInningsRuns = games.map(acc => {
     console.log(winningStreak);
     console.log(longestStreak);
 
+    //const highestPlayerScore = this.props.playerStats.highestPlayerScore;
+    //const highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
+
     this.setState({
     winningStreak: winningStreak,
     longestStreak: longestStreak,
-    highestPlayerScore: 0,
-    highestPlayerScoreId: 0,
-    highestTeamScore: 0,
+    highestPlayerScore: highestPlayerScore,
+    highestPlayerScoreId: highestPlayerScoreId,
+    highestTeamScore: highestTeamScore,
     }, function () {
       const { winningStreak, longestStreak, highestPlayerScore, highestPlayerScoreId, highestTeamScore } = this.state
       this.props.dispatch(updatePlayerStats(this.state.winningStreak, this.state.longestStreak, this.state.highestPlayerScore, this.state.highestPlayerScoreId, this.state.highestTeamScore));
@@ -1533,6 +1758,15 @@ let firstInningsRuns = games.map(acc => {
     console.log(this.props.playerStats.longestStreak);
 
     //Add not out batsman runs here to player's Form attribute.
+    //let playerIDHighestScore = 0;
+
+    //let batterRuns = 0;
+
+    let facingOne = false;
+    let facingTwo = false;
+    if (facingBall === 1) {
+      facingOne = true;
+    }
 
       allPlayers = this.props.players.players;
       const facingBall = this.props.players.facingBall;
@@ -1542,22 +1776,27 @@ let firstInningsRuns = games.map(acc => {
         console.log(player);
         console.log(player.id);
 
+        let count = 0;
+
+
         if (player.batterFlag === 0) {
           const scoreTwo = allPlayers[player.id].scoreOne;
           const scoreThree = allPlayers[player.id].scoreTwo;
+          const highestScore = allPlayers[player.id].highestScore;
+          console.log('check 9');
 
           let outs = 0;
-          if (allPlayers[player.id].outs <= 0) {
-            outs = 0;
+          if (allPlayers[player.id].outs < 3) {
+            outs = allPlayers[player.id].outs
+            outs++
           }
           else {
-            outs = allPlayers[player.id].outs
-            outs--
+            outs = 3;
           }
 
           let batterRunsCount = gameRunEvents.map(acc => {
             console.log(acc);
-            if (acc.batterID === allPlayers[player.id].id) {
+            if (acc.batterID === allPlayers[player.id]) {
               console.log(acc.runsValue);
               return [acc.runsValue];
             }
@@ -1567,11 +1806,48 @@ let firstInningsRuns = games.map(acc => {
               }
             });
 
+            console.log('check 10');
             console.log(batterRunsCount);
 
             const batterRuns = sum(batterRunsCount.map(acc => Number(acc)));
 
             console.log(batterRuns);
+            console.log('check 11');
+
+            let batterRunsHighest  = allPlayers[player.id].highestScore;
+            let batterRunsInt;
+            let batterRunsHighestInt = 0;
+
+            console.log(batterRunsInt + ' wicket batterRuns ');
+            console.log(batterRunsHighestInt +  ' wicket batterRunsHighest ');
+
+            if ((isNaN(batterRunsHighest)) && (isNaN(batterRuns))) {
+              batterRunsInt = parseInt(batterRuns, 10);
+              batterRunsHighestInt  = parseInt(batterRunsHighest, 10);
+
+              if (batterRunsInt > batterRunsHighestInt){
+                batterRunsHighestInt = batterRunsInt;
+              }
+              else {
+                batterRunsHighestInt = batterRunsHighestInt;
+              }
+
+            }
+            else if (batterRuns > batterRunsHighest) {
+              batterRunsHighestInt = batterRuns;
+            }
+            else {
+              batterRunsHighestInt = batterRunsHighest;
+            }
+
+
+
+            console.log(batterRunsInt + ' wicket batterRunsInt ');
+            console.log(batterRuns + ' wicket batterRuns ');
+            console.log(batterRunsHighestInt +  ' wicket batterRunsHighestInt ');
+            console.log(batterRunsHighest +  ' wicket batterRunsHighest ');
+
+            allPlayers[player.id].highestScore = batterRunsHighestInt;
 
           allPlayers[player.id].scoreOne = batterRuns;
           allPlayers[player.id].scoreTwo = scoreTwo;
@@ -1579,19 +1855,29 @@ let firstInningsRuns = games.map(acc => {
           allPlayers[player.id].outs = outs;
 
           console.log(allPlayers);
-
-          teamPlayers[player.id].scoreOne = batterRuns;
-          teamPlayers[player.id].scoreTwo = scoreTwo;
-          teamPlayers[player.id].scoreThree = scoreThree;
-          teamPlayers[player.id].outs = outs;
-
-
-          console.log(teamPlayers);
+          console.log('check 12');
 
         }
     })
 
+    console.log(batterRuns + ' batterRuns');
+    console.log(highestPlayerScoreId + ' highestPlayerScoreId');
+
+    if (batterRuns > highestPlayerScore) {
+      this.setState({
+      winningStreak: winningStreak,
+      longestStreak: longestStreak,
+      highestPlayerScore: highestPlayerScore,
+      highestPlayerScoreId: highestPlayerScoreId,
+      highestTeamScore: highestTeamScore,
+      }, function () {
+        const { winningStreak, longestStreak, highestPlayerScore, highestPlayerScoreId, highestTeamScore } = this.state
+        this.props.dispatch(updatePlayerStats(this.state.winningStreak, this.state.longestStreak, this.state.highestPlayerScore, this.state.highestPlayerScoreId, this.state.highestTeamScore));
+      })
+    }
+
     /* Check if curretn batsman have more than 50 or 100 */
+    /*
     console.log(currentBatters);
     const idBatterOneScore = currentBatters[0].id;
     console.log(idBatterOneScore);
@@ -1629,6 +1915,7 @@ let firstInningsRuns = games.map(acc => {
       console.log(batterNotOutRunsCount);
 
       //work out notout player one runs.
+
       const currentBatterOneRunsArray = batterNotOutRunsCount.filter( batter => batter[1] != idBatterTwoScore)
       const currentBatterOneRunsArrayRunsOnly = currentBatterOneRunsArray.map(acc => {
         console.log(acc);
@@ -1659,32 +1946,30 @@ let firstInningsRuns = games.map(acc => {
         idBatterTwoAutoNotOuts = idBatterOneAutoNotOuts + 3;
       }
 
-      //**ENDS not out player runs**//
-
     const teamPlayersSet = allPlayers.map(player => {
       console.log(player);
       console.log(player.id);
 
       if ((player.id === 1 || player.id === 2) && (idBatterOneScoreNumber != 1 || idBatterOneScoreNumber != 2)) {
-        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: player.autoNotOut};
+        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: player.autoNotOut, highestScore: player.highestScore};
       }
       else if (player.id === 1 && idBatterOneScoreNumber === 1) {
-        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: idBatterOneAutoNotOuts};
+        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: idBatterOneAutoNotOuts, highestScore: player.highestScore};
       }
       else if (player.id === 2 && idBatterTwoScoreNumber === 2) {
-        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: idBatterTwoScoreNumber};
+        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: idBatterTwoScoreNumber, highestScore: player.highestScore};
       }
       else if (player.id === 2 && idBatterOneScoreNumber === 2) {
-        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: idBatterOneAutoNotOuts};
+        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: idBatterOneAutoNotOuts, highestScore: player.highestScore};
       }
       else if (player.id === idBatterOneScoreNumber) {
-        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: idBatterOneAutoNotOuts};
+        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: idBatterOneAutoNotOuts, highestScore: player.highestScore};
       }
       else if (player.id === idBatterTwoScoreNumber) {
-        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: idBatterTwoAutoNotOuts};
+        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: idBatterTwoAutoNotOuts, highestScore: player.highestScore};
       }
       else {
-        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: player.autoNotOut}
+        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: player.autoNotOut, highestScore: player.highestScore}
       }
     });
 
@@ -1701,7 +1986,7 @@ let firstInningsRuns = games.map(acc => {
 
 
 
-    console.log(teamPlayersSet);
+    console.log(teamPlayersSet + ' teamPlayersSet beofre storing in Redux & DB at the end of the game.');
 
     this.setState({
       teamPlayers: teamPlayersSet,
@@ -1713,6 +1998,7 @@ let firstInningsRuns = games.map(acc => {
     this.ref.doc("players").update({
       players: teamPlayersSet,
     });
+    */
 
     this.setState({
       momentum: 0,
@@ -1725,19 +2011,24 @@ let firstInningsRuns = games.map(acc => {
 
 
     //***** ENDS End Of Game Code. ***//
-    }
+  }
 
     playNewGame = () => {
+
 
       const gameRunEvents = this.props.gameRuns.gameRunEvents;
       const getWicketCount = BallDiff.getWicketCount(gameRunEvents);
       const totalWickets = getWicketCount[0];
+
+      //const totalWickets = this.props.playerRuns.wickets;
       console.log(totalWickets);
 
       let sum = a => a.reduce((acc, item) => acc + item);
 
       //Calculate the total runs
       const totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+
+      //const totalRuns = this.props.playerRuns.totalRuns;
       console.log(totalRuns);
 
       const { navigation } = this.props;
@@ -1748,12 +2039,17 @@ let firstInningsRuns = games.map(acc => {
         console.log('should not be hit unless 10 wikcet or more...');
         let ball = 0;
 
+        /*
         let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
         let ballTotal = legitBall[0];
         console.log(ballTotal);
 
         ball = sum(ballTotal.map(acc => Number(acc)));
         console.log(ball);
+        */
+
+        ball = gameRunEvents.length;
+        ball--
 
         const totalBallDiff = BallDiff.getpartnershipDiffTotal(ball);
         const totalOver = totalBallDiff[0];
@@ -1762,8 +2058,9 @@ let firstInningsRuns = games.map(acc => {
       }
 
       /******** Check if curretn batsman have more than 50 or 100 ******/
-
+      /*
       const allPlayers = this.props.players.players;
+      console.log(allPlayers);
 
       let findCurrentBatters = allPlayers.map(acc => {
         console.log(acc);
@@ -1787,10 +2084,12 @@ let firstInningsRuns = games.map(acc => {
       const idBatterTwoScore = currentBatters[1].id
       console.log(idBatterTwoScore);
 
+
       let idBatterOneAutoNotOuts = currentBatters[0].autoNotOut;
       console.log(idBatterOneAutoNotOuts);
       let idBatterTwoAutoNotOuts = currentBatters[1].autoNotOut;
       console.log(idBatterTwoAutoNotOuts);
+
 
       let idBatterOneScoreNumber = Number(idBatterOneScore);
       console.log(idBatterOneScoreNumber);
@@ -1815,7 +2114,7 @@ let firstInningsRuns = games.map(acc => {
           }
         });
 
-        console.log(batterNotOutRunsCount);
+        console.log(batterNotOutRunsCount + ' batterNotOutRunsCount here.');
 
         //work out notout player one runs.
         const currentBatterOneRunsArray = batterNotOutRunsCount.filter( batter => batter[1] != idBatterTwoScore)
@@ -1824,7 +2123,7 @@ let firstInningsRuns = games.map(acc => {
             return acc[0];
           });
         const currentBatterOneRuns = sum(currentBatterOneRunsArrayRunsOnly.map(acc => Number(acc)));
-        console.log(currentBatterOneRuns);
+        console.log(currentBatterOneRuns + ' currentBatterOneRuns here.');
 
         //work out notout player two runs.
         const currentBatterTwoRunsArray = batterNotOutRunsCount.filter( batter => batter[1] != idBatterOneScore)
@@ -1833,7 +2132,7 @@ let firstInningsRuns = games.map(acc => {
             return acc[0];
           });
         const currentBatterTwoRuns = sum(currentBatterTwoRunsArrayRunsOnly.map(acc => Number(acc)));
-        console.log(currentBatterTwoRuns);
+        console.log(currentBatterTwoRuns + ' currentBatterTwoRuns here.');
 
         if (currentBatterOneRuns >= 50) {
           idBatterOneAutoNotOuts++
@@ -1848,46 +2147,254 @@ let firstInningsRuns = games.map(acc => {
           idBatterTwoAutoNotOuts = idBatterOneAutoNotOuts + 3;
         }
 
-        //**ENDS not out player runs**//
+        //**ENDS not out player runs**/
 
+        let batters = this.props.players.players
+        console.log(batters);
+
+        let findCurrentBatters = batters.map(acc => {
+          console.log(acc);
+          if (acc.batterFlag === 0) {
+            console.log(acc.batterFlag);
+            return {id: [acc.id]};
+          }
+            else {
+              console.log(acc.batterFlag);
+              return {id: [100]};
+            }
+          });
+        console.log(findCurrentBatters);
+
+        let idBatter = 0;
+        console.log('currentBatters about to start');
+        console.log(findCurrentBatters);
+        let currentBatters = findCurrentBatters.filter( batter => batter['id'] != 100)
+        console.log(currentBatters);
+
+        let idBatterOne = currentBatters[0].id;
+        console.log(idBatterOne);
+        let idBatterTwo = currentBatters[1].id
+        console.log(idBatterTwo);
+
+        let idBatterOneNumber = Number(idBatterOne);
+        console.log(idBatterOneNumber);
+        let idBatterTwoNumber = Number(idBatterTwo);
+        console.log(idBatterTwoNumber);
+
+        //worout who is facing.
+        console.log();
+        let facingBall = this.props.players.facingBall;
+
+        let allPlayers = this.props.players.players;
+        let batterRuns = 0;
+        let playerIDHighestScore = 0;
+
+        const teamPlayers = this.props.teamPlayers.teamPlayers;
+
+        allPlayers.map(player => {
+          console.log(player);
+          console.log(player.id);
+          const wicketsPlusTwo = totalWickets + 2;
+          if (player.id === idBatterOneNumber || player.id === idBatterTwoNumber) {
+            //batterFlag = 1;
+            console.log(allPlayers[player.id]);
+            playerIDHighestScore = allPlayers[player.id];
+            //allPlayers[player.id].batterFlag = 1;
+            const scoreTwo = allPlayers[player.id].scoreOne;
+            const scoreThree = allPlayers[player.id].scoreTwo;
+            const highestScore = allPlayers[player.id].highestScore;
+
+            let sum = a => a.reduce((acc, item) => acc + item);
+            const gameRunEventsNew = this.props.gameRuns.gameRunEvents;
+
+            let ballCount = gameRunEventsNew.map(acc => {
+              console.log(acc);
+              return 1;
+            });
+
+            console.log(ballCount);
+
+            let ball = sum(ballCount.map(acc => Number(acc)));
+
+            let outs = 0;
+            if (allPlayers[player.id].outs >= 1) {
+              outs = allPlayers[player.id].outs
+              outs--
+            }
+            else {
+              outs = 0;
+            }
+
+            let batterRunsCount = gameRunEvents.map(acc => {
+              console.log(acc);
+              console.log(acc.batterID);
+              console.log(allPlayers[player.id]);
+              if (acc.batterID === allPlayers[player.id].id) {
+                console.log(acc.runsValue);
+                return [acc.runsValue];
+              }
+              else {
+                  console.log(acc.runsValue);
+                  return 0;
+                }
+              });
+
+              console.log(batterRunsCount);
+
+              batterRuns = sum(batterRunsCount.map(acc => Number(acc)));
+
+              console.log(batterRuns);
+              console.log(allPlayers[player.id]);
+
+
+            //allPlayers[player.id].batterFlag = 1;
+            allPlayers[player.id].scoreOne = batterRuns;
+            allPlayers[player.id].scoreTwo = scoreTwo;
+            allPlayers[player.id].scoreThree = scoreThree;
+            allPlayers[player.id].highestScore = highestScore;
+            allPlayers[player.id].outs = outs;
+
+            let batterRunsHighest = allPlayers[player.id].highestScore;
+            let batterRunsInt;
+            let batterRunsHighestInt = 0;
+
+            console.log(batterRunsInt + ' wicket batterRuns ');
+            console.log(batterRunsHighestInt +  ' wicket batterRunsHighest ');
+
+            if ((isNaN(batterRunsHighest)) && (isNaN(batterRuns))) {
+
+              console.log();
+              batterRunsInt = parseInt(batterRuns, 10);
+              batterRunsHighestInt  = parseInt(batterRunsHighest, 10);
+
+              if (batterRunsInt > batterRunsHighestInt){
+                batterRunsHighestInt = batterRunsInt;
+              }
+              else {
+                batterRunsHighestInt = batterRunsHighestInt;
+              }
+
+            }
+            else if (batterRuns > batterRunsHighest) {
+              batterRunsHighestInt = batterRuns;
+            }
+            else {
+              batterRunsHighestInt = batterRunsHighest;
+            }
+
+
+
+            console.log(batterRunsInt + ' wicket batterRunsInt ');
+            console.log(batterRuns + ' wicket batterRuns ');
+            console.log(batterRunsHighestInt +  ' wicket batterRunsHighestInt ');
+            console.log(batterRunsHighest +  ' wicket batterRunsHighest ');
+
+
+
+            teamPlayers[player.id].highestScore = batterRunsHighestInt;
+
+            console.log(allPlayers);
+
+            teamPlayers[player.id].scoreOne = batterRuns;
+            teamPlayers[player.id].scoreTwo = scoreTwo;
+            teamPlayers[player.id].scoreThree = scoreThree;
+            teamPlayers[player.id].outs = outs;
+
+            /*
+            if (teamPlayers[player.id].id === 1 || teamPlayers[player.id].id === 2) {
+              teamPlayers[player.id].batterFlag = 0;
+            }
+            else {
+              teamPlayers[player.id].batterFlag = 1;
+            }
+            */
+
+            console.log(teamPlayers);
+
+            this.setState({
+              teamPlayers: teamPlayers,
+            }, function () {
+              const { teamPlayers } = this.state
+              this.props.dispatch(updateTeamPlayers(this.state.players));
+            })
+
+            const highestPlayerScore = this.props.playerStats.highestPlayerScore;
+            const winningStreak = this.props.playerStats.winningStreak;
+            const longestStreak = this.props.playerStats.longestStreak;
+            const highestTeamScore = this.props.playerStats.highestTeamScore;
+
+            console.log(batterRuns + ' batterRuns');
+            console.log(highestPlayerScore + ' highestPlayerScore');
+
+            if (batterRuns > highestPlayerScore) {
+              this.setState({
+              winningStreak: winningStreak,
+              longestStreak: longestStreak,
+              highestPlayerScore: batterRuns,
+              highestPlayerScoreId: playerIDHighestScore,
+              highestTeamScore: highestTeamScore,
+              }, function () {
+                const { winningStreak, longestStreak, highestPlayerScore, highestPlayerScoreId, highestTeamScore } = this.state
+                this.props.dispatch(updatePlayerStats(this.state.winningStreak, this.state.longestStreak, this.state.highestPlayerScore, this.state.highestPlayerScoreId, this.state.highestTeamScore));
+              })
+            }
+
+            /*
+
+            this.setState({
+              momentum: 0,
+              momentumPrevOver: 0,
+              momentumThisOver: [],
+            }, function () {
+              const { momentum, momentumPrevOver, momentumThisOver } = this.state
+              this.props.dispatch(updateMomentum(this.state.momentum, this.state.momentumPrevOver, this.state.momentumThisOver));
+            })
+            */
+
+          }
+          else {
+            //do nothing.
+          }
+      })
+
+      /*
+        console.log(allPlayers + ' this is the set of players that get prepared for final state in redux.');
       const teamPlayersSet = allPlayers.map(player => {
         console.log(player);
         console.log(player.id);
 
         if ((player.id === 1 || player.id === 2) && (idBatterOneScoreNumber != 1 || idBatterOneScoreNumber != 2)) {
-          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: player.autoNotOut};
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: player.autoNotOut, highestScore: player.highestScore};
         }
         else if (player.id === 1 && idBatterOneScoreNumber === 1) {
-          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: idBatterOneAutoNotOuts};
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: idBatterOneAutoNotOuts, highestScore: player.highestScore};
         }
         else if (player.id === 2 && idBatterTwoScoreNumber === 2) {
-          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: idBatterTwoScoreNumber};
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: idBatterTwoScoreNumber, highestScore: player.highestScore};
         }
         else if (player.id === 2 && idBatterOneScoreNumber === 2) {
-          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: idBatterOneAutoNotOuts};
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: idBatterOneAutoNotOuts, highestScore: player.highestScore};
         }
         else if (player.id === idBatterOneScoreNumber) {
-          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: idBatterOneAutoNotOuts};
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: idBatterOneAutoNotOuts, highestScore: player.highestScore};
         }
         else if (player.id === idBatterTwoScoreNumber) {
-          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: idBatterTwoAutoNotOuts};
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: idBatterTwoAutoNotOuts, highestScore: player.highestScore};
         }
         else {
-          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: player.autoNotOut}
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: player.autoNotOut, highestScore: player.highestScore}
         }
       });
+      */
 
-
-      const facingBall = this.props.players.facingBall;
-      console.log(teamPlayersSet);
+      let teamPlayersSet = this.props.teamPlayers.teamPlayers;
+      //const facingBall = this.props.players.facingBall;
+      console.log(teamPlayersSet + ' this gets set into redux state.');
       console.log(facingBall);
-      this.setState({
-        players: teamPlayersSet,
-        facingBall: facingBall,
-      }, function () {
-        const { players, facingBall } = this.state
-        this.props.dispatch(updatePlayers(this.state.players, this.state.facingBall));
-      })
+
+
+
+
 
       /******** END CHCK IF PALYER SCORED 50 OR 100 ***************/
 
@@ -1899,6 +2406,56 @@ let firstInningsRuns = games.map(acc => {
         const { firstInningsRuns } = this.state
         this.props.dispatch(updateFirstInningsRuns(this.state.firstInningsRuns));
       })
+
+
+      this.setState({
+        togglePremium: true,
+        toggleHomeLoad: true,
+      }, function () {
+        const { togglePremium, toggleHomeLoad } = this.state
+        this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+      })
+      
+
+      this.setState({
+        wickets: 0,
+        totalRuns: 0,
+      }, function () {
+        const { wickets, totalRuns } = this.state
+        this.props.dispatch(updatePlayerRuns(this.state.wickets, this.state.totalRuns));
+      })
+
+      teamPlayersSet = allPlayers.map(player => {
+        console.log(player);
+        console.log(player.id);
+        if (player.id === 1 || player.id === 2) {
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: player.autoNotOut, highestScore: player.highestScore};
+        }
+        else {
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: player.autoNotOut, highestScore: player.highestScore}
+        }
+      });
+
+      this.setState({
+        players: teamPlayersSet,
+        facingBall: facingBall,
+      }, function () {
+        const { players, facingBall } = this.state
+        this.props.dispatch(updatePlayers(this.state.players, this.state.facingBall));
+      })
+
+      this.ref.doc("players").update({
+        players: teamPlayersSet,
+        facingBall: facingBall,
+      });
+
+      //console.log(this.state.loadingWinGameTotalRuns + ' deos it break on the next line?');
+
+      this.setState({loadingWinGameTotalRuns: true})
+
+      console.log(this.state.loadingWinGameTotalRuns + ' the value before changing.');
+
+      console.log(this.props.playerRuns.totalRuns + ' should be zero.');
 
       if (totalRuns >= firstInningsRuns) {
 
@@ -1915,7 +2472,7 @@ let firstInningsRuns = games.map(acc => {
         {text: 'Continue', onPress: () => {
 
           const { navigation } = this.props;
-          this.props.navigation.navigate('GameListNew')
+          this.props.navigation.navigate('HomeApp')
 
         }},
       ],
@@ -1935,7 +2492,7 @@ let firstInningsRuns = games.map(acc => {
     {text: 'Continue', onPress: () => {
 
       const { navigation } = this.props;
-      this.props.navigation.navigate('GameListNew')
+      this.props.navigation.navigate('HomeApp')
 
     }},
   ],
@@ -1955,7 +2512,7 @@ Alert.alert(
   {text: 'Continue', onPress: () => {
 
     const { navigation } = this.props;
-    this.props.navigation.navigate('GameListNew')
+    this.props.navigation.navigate('HomeApp')
 
   }},
 ],
@@ -1975,7 +2532,7 @@ Alert.alert(
   {text: 'Continue', onPress: () => {
 
     const { navigation } = this.props;
-    this.props.navigation.navigate('GameListNew')
+    this.props.navigation.navigate('HomeApp')
 
   }},
 ],
@@ -1995,7 +2552,7 @@ Alert.alert(
   {text: 'Continue', onPress: () => {
 
     const { navigation } = this.props;
-    this.props.navigation.navigate('GameListNew')
+    this.props.navigation.navigate('HomeApp')
 
   }},
 ],
@@ -2015,7 +2572,7 @@ Alert.alert(
   {text: 'Continue', onPress: () => {
 
     const { navigation } = this.props;
-    this.props.navigation.navigate('GameListNew')
+    this.props.navigation.navigate('HomeApp')
 
   }},
 ],
@@ -2035,7 +2592,7 @@ Alert.alert(
   {text: 'Continue', onPress: () => {
 
     const { navigation } = this.props;
-    this.props.navigation.navigate('GameListNew')
+    this.props.navigation.navigate('HomeApp')
 
   }},
 ],
@@ -2055,7 +2612,7 @@ Alert.alert(
   {text: 'Continue', onPress: () => {
 
     const { navigation } = this.props;
-    this.props.navigation.navigate('GameListNew')
+    this.props.navigation.navigate('HomeApp')
 
   }},
 ],
@@ -2075,7 +2632,7 @@ Alert.alert(
   {text: 'Continue', onPress: () => {
 
     const { navigation } = this.props;
-    this.props.navigation.navigate('GameListNew')
+    this.props.navigation.navigate('HomeApp')
 
   }},
 ],
@@ -2095,7 +2652,7 @@ Alert.alert(
   {text: 'Continue', onPress: () => {
 
     const { navigation } = this.props;
-    this.props.navigation.navigate('GameListNew')
+    this.props.navigation.navigate('HomeApp')
 
   }},
 ],
@@ -2115,7 +2672,7 @@ Alert.alert(
   {text: 'Continue', onPress: () => {
 
     const { navigation } = this.props;
-    this.props.navigation.navigate('GameListNew')
+    this.props.navigation.navigate('HomeApp')
 
   }},
 ],
@@ -2135,7 +2692,7 @@ Alert.alert(
   {text: 'Continue', onPress: () => {
 
     const { navigation } = this.props;
-    this.props.navigation.navigate('GameListNew')
+    this.props.navigation.navigate('HomeApp')
 
   }},
 ],
@@ -2155,7 +2712,7 @@ Alert.alert(
   {text: 'Continue', onPress: () => {
 
     const { navigation } = this.props;
-    this.props.navigation.navigate('GameListNew')
+    this.props.navigation.navigate('HomeApp')
 
   }},
 ],
@@ -2165,7 +2722,7 @@ Alert.alert(
 else if (winningStreak === 500) {
 Alert.alert(
   'You win THREE HUNDRED FREE auto not-outs!!!',
-  'Congratulations! You have 500 wins in a row and have THREE HUNDRED FREE auto not-outs! Wow, you have finsished the game. Keep going and email highscore@4dotsixdigital.com when you finaly lose. You might end up on the all-time highest winnig streask list. good luck!!',
+  'Congratulations! You have 500 wins in a row and have THREE HUNDRED FREE auto not-outs! Wow, you have finished the game. Keep going and email highscore@4dotsixdigital.com when you finaly lose. You might end up on the all-time highest winnig streask list. good luck!!',
   [
   {
     text: 'Get more auto not-outs now!',
@@ -2175,7 +2732,7 @@ Alert.alert(
   {text: 'Continue', onPress: () => {
 
     const { navigation } = this.props;
-    this.props.navigation.navigate('GameListNew')
+    this.props.navigation.navigate('HomeApp')
 
   }},
 ],
@@ -2195,13 +2752,18 @@ Alert.alert(
   {text: 'Continue', onPress: () => {
 
     const { navigation } = this.props;
-    this.props.navigation.navigate('GameListNew')
+    this.props.navigation.navigate('HomeApp')
 
   }},
 ],
 {cancelable: false},
 );
 }
+    }
+    else {
+      console.log('missed popup.');
+      const { navigation } = this.props;
+      this.props.navigation.navigate('HomeApp');
     }
   }
 
@@ -2261,7 +2823,7 @@ Alert.alert(
             </Row>
             <Row size={2}>
               <Text style={styles.buttonText}>+20</Text>
-            </Row>
+            </Row >
             <Row size={1}>
               <Text style={styles.buttonTextBack}>Auto Not-Outs</Text >
             </Row>
@@ -2279,7 +2841,7 @@ Alert.alert(
             </Row>
             <Row size={1}>
               <Text style={styles.buttonTextBack}>Auto Not-Outs</Text >
-            </Row>
+            </Row >
           </Col>
         )
       }
@@ -2303,13 +2865,13 @@ Alert.alert(
           <Col size={1}>
             <Row size={1}>
               <Text style={styles.buttonTextBack}>{winningStreak} in a row: </Text>
-            </Row>
+            </Row >
             <Row size={2}>
               <Text style={styles.buttonText}>+300</Text>
             </Row>
             <Row size={1}>
               <Text style={styles.buttonTextBack}>Auto Not-Outs</Text>
-            </Row>
+            </Row >
           </Col>
         )
       }
@@ -2332,17 +2894,24 @@ Alert.alert(
       let sum = a => a.reduce((acc, item) => acc + item);
 
       //Calculate the total runs
-      let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+      //let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+
+      const totalRuns = this.props.playerRuns.totalRuns;
       console.log(totalRuns);
 
       let ball = 0;
 
+      /*
       let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
       let ballTotal = legitBall[0];
       console.log(ballTotal);
 
       ball = sum(ballTotal.map(acc => Number(acc)));
       console.log(ball);
+      */
+
+      ball = gameRunEvents.length;
+      ball--
 
       let totalBallDiff = BallDiff.getpartnershipDiffTotal(ball);
       const over = totalBallDiff[0];
@@ -2396,6 +2965,20 @@ Alert.alert(
       console.log(gameIndex);
       console.log(allPlayers);
       */
+
+      const gameRunEventsArray = this.props.gameRuns.gameRunEvents;
+      const gameRunEventsLength = gameRunEventsArray.length;
+
+      console.log(this.props.playerRuns.totalRuns + ' totalRuns at end of onDocCollectionUpdate 2 ');
+      console.log(this.props.playerRuns.wickets + ' wickets at end of onDocCollectionUpdate 2.');
+      console.log(this.props.firstInningsRuns.firstInningsRuns + ' first innings runs at end of onDocCollectionUpdate 2');
+      console.log(this.props.ball.ball + ' ball at end of onDocCollectionUpdate 2');
+      console.log(gameRunEventsLength + ' game events length at end of onDocCollectionUpdate 2');
+
+        console.log(this.state.loadingWinGameTotalRuns);
+        if ((this.props.playerRuns.totalRuns > this.props.firstInningsRuns.firstInningsRuns) || (this.props.playerRuns.wickets >= 10) || (gameRunEventsLength >= 121)) {
+        this.setState({loadingWinGameTotalRuns: false})
+        }
 
       console.log(totalWickets);
       if (totalWickets >= 10) {
@@ -2480,18 +3063,36 @@ Alert.alert(
           })
           */
 
+          if (this.state.loadingWinGameTotalRuns === true) {
+            return (
+              <Row style={{height: 100}}>
+                <Col size={1}>
+                <Button style={styles.saveButton} large success
+                >
+                <ActivityIndicator
+                style={{ color: '#fff', height: 100, width: 'auto' }}
+                size="large"
+                color="#fff"
+              />
+              <Text style={styles.goButtonText}>All OUT! saving...</Text >
+                </Button>
+              </Col>
+            </Row>
+            )
+          }
+          else {
         return (
         <Row style={{height: 100}}>
           <Col size={1}>
             <Button style={styles.goButton} rounded large success
               onPress={() => this.playNewGame()}
             >
-              <Text style={styles.goButtonText}>All OUT! Play Again?</Text>
+              <Text style={styles.goButtonText}>Play Again?</Text>
             </Button>
           </Col>
         </Row>
       )
-
+    }
       }
       else if (totalRuns > firstInningsRuns) {
         /*
@@ -2563,18 +3164,39 @@ Alert.alert(
           })
           */
 
+          console.log(this.state.loadingWinGameTotalRuns + ' loadingWinGameTotalRuns');
 
-        return (
-        <Row style={{height: 100}}>
-          <Col size={1}>
-            <Button style={styles.goButton} rounded large success
-              onPress={() => this.playNewGame()}
-            >
-              <Text style={styles.goButtonText}>Win! Play Again?</Text>
-            </Button>
-          </Col>
-        </Row>
-      )
+          if (this.state.loadingWinGameTotalRuns === true) {
+            return (
+              <Row style={{height: 100}}>
+                <Col size={1}>
+                <Button style={styles.saveButton} large success
+                >
+                <ActivityIndicator
+                style={{ color: '#fff', height: 100, width: 'auto' }}
+                size="large"
+                color="#fff"
+              />
+              <Text style={styles.goButtonText}>You win! saving...</Text >
+                </Button >
+              </Col>
+            </Row>
+            )
+          }
+          else {
+            return (
+            <Row style={{height: 100}}>
+              <Col size={1}>
+                <Button style={styles.goButton} large success
+                  onPress={() => this.playNewGame()}
+                >
+                  <Text style={styles.goButtonText}>Play Again?</Text>
+                </Button>
+              </Col >
+            </Row>
+          )
+          }
+
       }
       else if (over >= 20) {
         /*
@@ -2644,18 +3266,36 @@ Alert.alert(
             this.props.dispatch(updateGames(this.state.games));
           })
           */
-
+          if (this.state.loadingWinGameTotalRuns === true) {
+            return (
+              <Row style={{height: 100}}>
+                <Col size={1}>
+                <Button style={styles.saveButton} large success
+                >
+                <ActivityIndicator
+                style={{ color: '#fff', height: 100, width: 'auto' }}
+                size="large"
+                color="#fff"
+              />
+              <Text style={styles.goButtonText}>Game over! saving...</Text >
+                </Button>
+              </Col>
+            </Row>
+            )
+          }
+          else {
         return (
         <Row style={{height: 100}}>
           <Col size={1}>
             <Button style={styles.goButton} rounded large success
               onPress={() => this.playNewGame()}
             >
-              <Text style={styles.goButtonText}>Game over! Play Again?</Text>
+              <Text style={styles.goButtonText}>Play Again?</Text>
             </Button>
           </Col>
         </Row>
       )
+    }
       }
       else {
 
@@ -2751,7 +3391,21 @@ Alert.alert(
           })
           */
 
+          if (this.props.toggle.toggleHomeLoad === true) {
 
+            return (
+              <Col style={{justifyContent: 'center', textAlign: 'center', height: '100%', height: '100%', backgroundColor: '#c471ed', width: 'auto', justifyContent: 'center', alignItems: 'center'}}>
+              <ActivityIndicator
+                style={{ color: '#fff', height: 200, width: 'auto' }}
+                size="large"
+                color="#fff"
+              />
+              <Text style={{ color: '#fff', fontSize: 30, width: 'auto' }}>Loading...5</Text >
+
+              </Col >
+            )
+          }
+          else {
         return (
         <Row size={3}>
           <Col size={1}>
@@ -2761,14 +3415,14 @@ Alert.alert(
               <Text style={styles.goButtonText}>PLAY!</Text>
             </Button>
           </Col>
-          <Col size={1} style={{backgroundColor: '#c471ed'}}>
+          <Col size={1} style={{backgroundColor: 'transparent'}}>
             <TouchableHighlight style={{height: 100, marginTop: 10}} onPress={() => this.handleStopCardsOne()}>
               <View style={{height: 100}}>
                 <Image style={styles.cardDisplay}source={this.state.rImage}/>
               </View>
             </TouchableHighlight>
           </Col>
-          <Col size={1} style={{backgroundColor: '#c471ed'}}>
+          <Col size={1} style={{backgroundColor: 'transparent'}}>
             <TouchableHighlight style={{height: 100, marginTop: 10}} onPress={() => this.handleStopCards()}>
               <View style={{height: 100}}>
                 <Image style={styles.cardDisplay}source={this.state.rImageTwo}/>
@@ -2778,9 +3432,93 @@ Alert.alert(
           <BoardDisplayStats firstInningsRuns={firstInningsRuns} />
         </Row>
       )
+    }
+      }
+
+      //this.setState({ isLoading: false });
+
+
+    }
+
+/*
+    hideSpinner = () => {
+      console.log('hit lead?' );
+      console.log(this.props.toggle.togglePremium);
+      const visible = this.props.toggle.togglePremium;
+      this.setState({ visible: visible });
+
+      this.setState({
+        togglePremium: false,
+      }, function () {
+        const { togglePremium } = this.state
+        this.props.dispatch(updateToggle(this.state.togglePremium));
+      })
+
+      //console.log(this.props.toggle.togglePremium);
+    }
+    */
+
+    getView = () => {
+      console.log(this.props.toggle.toggleHomeLoad + ' or is this hit first toggleHomeLoad? ');
+
+      if (this.state.loadingBoard === true) {
+
+        return (
+          <Col style={{justifyContent: 'center', textAlign: 'center', height: '100%', height: '100%', backgroundColor: '#c471ed', width: 'auto', justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator
+            style={{ color: '#fff', height: 200, width: 'auto' }}
+            size="large"
+            color="#fff"
+          />
+          <Text style={{ color: '#fff', fontSize: 30, width: 'auto' }}>Loading...3</Text >
+
+          </Col >
+        )
+
+        /*
+        return (
+          <View style={{ flex: 1 }}>
+      <WebView
+        onLoad={() => this.hideSpinner()}
+        style={{ flex: 1 }}
+      />
+      {this.state.loadingBoard && (
+        <ActivityIndicator
+          style={{ color: '#fff', height: 200, width: 'auto' }}
+          size="large"
+          color="#fff"
+        />
+      )}
+      </View>
+    );
+    */
+      }
+      else {
+        const gameID = this.props.gameID.gameID;
+        console.log(gameID + ' GameID for props');
+        return (
+          <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
+          locations={[0,0.7,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradient}>
+          {this.playButtons()}
+
+          <View style={styles.horizontalRule} />
+          <Row size={1}>
+          <DisplayCurrentBatters gameTest={gameID} />
+          </Row>
+
+          <Row size={2}>
+            <RunsTotal />
+            </Row >
+            </LinearGradient>
+      )
       }
     }
 
+
+    hideSpinner() {
+      console.log('when is this hit hideSpinnder?');
+  this.setState({ loadingBoard: false });
+}
 
     render() {
       console.log('hit board!');
@@ -2788,24 +3526,14 @@ Alert.alert(
       console.log(this.props.players.players);
         return (
 
-          <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
-          locations={[0,0.7,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradient}>
-
-          {this.playButtons()}
-
-          <View style={styles.horizontalRule} />
-
-          <Row size={1}>
-          <DisplayCurrentBatters />
-          </Row>
-
-          <Row size={2}>
-            <RunsTotal />
-            </Row>
+          <Col >
 
 
+          {this.getView()}
 
-          </LinearGradient>
+
+          </Col>
+
 
         );
     }
@@ -2831,6 +3559,8 @@ const mapStateToProps = state => ({
   teamPlayers: state.teamPlayers,
   momentum: state.momentum,
   autoNotOut: state.autoNotOut,
+  toggle: state.toggle,
+  playerRuns: state.playerRuns,
 });
 
 export default connect(mapStateToProps)(Board);
@@ -2851,6 +3581,16 @@ const styles = StyleSheet.create({
       elevation: 0,
       shadowOpacity: 0,
       backgroundColor: '#77dd77',
+    },
+    saveButton: {
+      width: '100%',
+      height: '100%',
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+      elevation: 0,
+      shadowOpacity: 0,
+      backgroundColor: '#ffbf00',
     },
     goButtonText: {
       color: '#fff',

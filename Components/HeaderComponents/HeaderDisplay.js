@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
    marginBottom: 'auto',
    height: PixelRatio.get() === 1.5 && Platform.OS === 'android' ? '60%' :
    PixelRatio.get() === 2 && Platform.OS === 'android' ? '60%' : '75%',
-   width: 'auto',
+   width: '40%',
  }
 
 });
@@ -134,28 +134,7 @@ class HeaderIndex extends Component {
 
 
  headerDisplay() {
-   //console.log(this.props.purchase);
-   //console.log(this.props.over);
- if (this.props.toggle.togglePremium === false && this.props.ball.over >= 10) {
- return (
-     <Row>
-       <Col size={1}>
-         <Image
-          source={require('../../assets/4dot6logo-transparent.png')}
-          style={styles.imageStyle}
-         />
-       </Col>
-       <Right size={1} style={styles.colVerticleAlign}>
-           <Row style={{height: 60}}>
-             <Button rounded success onPress={() => this.props.navigation.navigate('Upgrade')} >
-               <Text style={styles.upgradeStyle}>Upgrade</Text>
-             </Button>
-           </Row>
-         </Right>
-     </Row>
- )
-}
- else {
+
    return (
      <Row style={{alignItems: 'center'}}>
       <Col size={1}>
@@ -164,22 +143,9 @@ class HeaderIndex extends Component {
         style={styles.imageStyle}
       />
       </Col>
-       <Col>
-           <Row>
-             <Col>
-                 <Stopwatch />
-               </Col>
-               <Col style={{marginTop: 16, padding: 0, margin: 0, height: 0}}>
-                 <AvgSecondsDisplay style={{padding: 0, margin: 0, height: 0}} />
-             </Col>
-           </Row>
-           <Row>
-             <Text style={{fontSize: 8, height: 30, color: '#fff'}}>since last ball</Text>
-           </Row>
-         </Col>
      </Row>
    )
- }
+
  }
 
  /*

@@ -20,13 +20,17 @@ import { createDrawerNavigator, DrawerItems } from 'react-navigation-drawer';
 //import ProHome from './Components/App/ProHome.js';
 //import FinishTransaction from './Components/App/FinishTransaction.js';
 //import Settings from './Components/App/Settings.js';
-import GameListNew from './Components/App/GameList.js';
+import HomeApp from './Components/App/HomeApp.js';
+//import GameListings from './Components/App/GameListings.js';
+//import GameListNew from './Components/App/GameList.js';
+//import GameListingsNew from './Components/App/GameListingsNew.js';
 import Loading from './Components/App/Loading.js';
 import SignUp from './Components/App/SignUp.js';
 import Login from './Components/App/Login.js';
 import SignOut from './Components/App/SignOut.js';
 import Game from './Components/Game/Game.js';
 import SimulateFirstInnings from './Components/Game/SimulateFirstInnings.js';
+import SimulateFirstInningsNew from './Components/Game/SimulateFirstInningsNew.js';
 import OverBowled from './Components/GameOverBowled/OverBowled.js';
 import WicketCheck from './Components/GameWicketCheck/WicketCheck.js';
 import WicketOut from './Components/GameWicketCheck/WicketOut.js';
@@ -39,6 +43,20 @@ import GameAddPreBuiltTeam from './Components/GameAddPlayers/GameAddPreBuiltTeam
 import HitRuns from './Components/Board/HitRuns.js';
 import CricStratIap from './Components/Iap/CricStrat_Iap.js';
 import IapTrue from './Components/Iap/IapTrue.js';
+import ExplainerImageOne from './Components/Explainer/ExplainerImageOne.js';
+import ExplainerImageTwo from './Components/Explainer/ExplainerImageTwo.js';
+import ExplainerImageThree from './Components/Explainer/ExplainerImageThree.js';
+import ExplainerImageFour from './Components/Explainer/ExplainerImageFour.js';
+import ExplainerImageFive from './Components/Explainer/ExplainerImageFive.js';
+import ExplainerImageSix from './Components/Explainer/ExplainerImageSix.js';
+import ExplainerImageSeven from './Components/Explainer/ExplainerImageSeven.js';
+import ExplainerImageEight from './Components/Explainer/ExplainerImageEight.js';
+import ExplainerImageNine from './Components/Explainer/ExplainerImageNine.js';
+import ExplainerImageTen from './Components/Explainer/ExplainerImageTen.js';
+import ExplainerImageEleven from './Components/Explainer/ExplainerImageEleven.js';
+import StatsMain from './Components/GameStats/StatsMain.js';
+import SimulateFirstInningsSpecial from './Components/GameStats/SimulateFirstInningsSpecial.js';
+
 
 //import HeaderDisplay from './Components/HeaderComponents/HeaderDisplay.js';
 import {Header,Left,Right,Icon} from 'native-base';
@@ -73,6 +91,9 @@ const CustomDrawerComponent = (props) => (
 
 const RootStack = createDrawerNavigator(
   {
+    HomeApp: {
+      screen: HomeApp,
+    },
     Loading: {
       screen: Loading,
     },
@@ -85,6 +106,45 @@ const RootStack = createDrawerNavigator(
     CricStratIap: {
       screen: CricStratIap,
     },
+    StatsMain: {
+      screen: StatsMain,
+    },
+    SimulateFirstInningsSpecial: {
+      screen: SimulateFirstInningsSpecial,
+    },
+    ExplainerImageThree: {
+      screen: ExplainerImageThree,
+    },
+    ExplainerImageOne: {
+      screen: ExplainerImageOne,
+    },
+    ExplainerImageTwo: {
+      screen: ExplainerImageTwo,
+    },
+    ExplainerImageFour: {
+      screen: ExplainerImageFour,
+    },
+    ExplainerImageFive: {
+      screen: ExplainerImageFive,
+    },
+    ExplainerImageSix: {
+      screen: ExplainerImageSix,
+    },
+    ExplainerImageSeven: {
+      screen: ExplainerImageSeven,
+    },
+    ExplainerImageEight: {
+      screen: ExplainerImageEight,
+    },
+    ExplainerImageNine: {
+      screen: ExplainerImageNine,
+    },
+    ExplainerImageTen: {
+      screen: ExplainerImageTen,
+    },
+    ExplainerImageEleven: {
+      screen: ExplainerImageEleven,
+    },
     IapTrue: {
       screen: IapTrue,
     },
@@ -94,11 +154,11 @@ const RootStack = createDrawerNavigator(
     SimulateFirstInnings: {
       screen: SimulateFirstInnings,
     },
+    SimulateFirstInningsNew: {
+      screen: SimulateFirstInningsNew,
+    },
     GameAddPlayers: {
       screen: GameAddPlayers,
-    },
-    GameListNew: {
-      screen: GameListNew,
     },
     SignOut: {
       screen: SignOut,

@@ -51,6 +51,8 @@ target 'CricketStrategyApp' do
 
 
 
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+
   target 'CricketStrategyAppTests' do
     inherit! :search_paths
     # Pods for testing

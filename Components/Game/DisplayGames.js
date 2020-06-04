@@ -1,9 +1,11 @@
 import React from 'react';
 import { TouchableHighlight, View, StyleSheet, ImageBackground, Grid } from 'react-native';
 import { Container, Header, Content, List, ListItem, Text, Row, Col, Icon, H3, H2, Button } from 'native-base';
+import { WebView } from 'react-native-webview';
 
 import { connect } from "react-redux";
 import { updateGames } from '../../Reducers/games';
+import { updateToggle } from '../../Reducers/toggle';
 
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -20,10 +22,13 @@ class DisplayGames extends React.PureComponent {
 
   state = {
     games: this.props.games.games || [],
+    togglePremium: this.props.toggle.togglePremium || true,
+    toggleHomeLoad: this.props.toggle.toggleHomeLoad || true,
   };
 
-  handleChange = ( games ) => {
+  handleChange = ( games, toggle ) => {
     this.setState({ games });
+    this.setState({ toggle });
   };
     // toggle a todo as completed or not via update()
     toggleComplete() {
@@ -108,7 +113,7 @@ class DisplayGames extends React.PureComponent {
 
     getMoreGames = () => {
       console.log('getMoreGames press');
-      const games = this.props.games.games;
+      const games = this.props.games;
       console.log(games);
 
 
@@ -156,10 +161,12 @@ class DisplayGames extends React.PureComponent {
 
       let games = this.state.gamesFirstFive;
 
+
       if (games === undefined || games.length == 0) {
         games = this.props.games.games;
          games = games.slice(0, 5);
       }
+
 
       console.log(games + ' games!');
 
@@ -239,7 +246,7 @@ class DisplayGames extends React.PureComponent {
             <Col size={1}>
               <Row>
               <Text style={styles.whiteText}>+4</Text>
-              </Row>
+              </Row >
               <Row>
               <Text style={styles.whiteText}>Auto Not-Outs</Text>
               </Row>
@@ -307,7 +314,7 @@ class DisplayGames extends React.PureComponent {
             <Col size={1}>
               <Row>
               <Text style={styles.whiteText}>+100</Text>
-              </Row>
+              </Row >
               <Row>
               <Text style={styles.whiteText}>Auto Not-Outs</Text>
               </Row>
@@ -337,6 +344,25 @@ class DisplayGames extends React.PureComponent {
       }
     }
 
+getGameNav = (gameId, displayId) => {
+
+  this.setState({
+    togglePremium: false,
+    toggleHomeLoad: false,
+  }, function () {
+    const { togglePremium, toggleHomeLoad } = this.state
+    this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+  })
+
+  const { navigation } = this.props;
+
+  this.props.navigation.navigate('Game', {
+    gameId: gameId,
+    displayId: displayId,
+    }
+  )
+}
+
 
     getDisplay = (item) => {
 
@@ -351,7 +377,12 @@ class DisplayGames extends React.PureComponent {
 
 
 
-      if (item.gameResult === 0) {
+      if (item.gameId === 1) {
+        // do nothing.
+      }
+      else if (item.gameResult === 0) {
+        const firstInningsRuns = item.firstInningsRuns;
+        const target = firstInningsRuns + 1;
         return (
           <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
           locations={[0,0.7,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradient}>
@@ -364,18 +395,14 @@ class DisplayGames extends React.PureComponent {
             </Row>
             <Row style={styles.rowCenterLarge}>
               <Button rounded large warning style={styles.largeButton}
-              onPress={() => this.props.navigation.navigate('Game', {
-                gameId: item.gameId,
-                displayId: item.displayId,
-                }
-              )} >
+              onPress={() => this.getGameNav(item.gameId, item.displayId)} >
                 <Text style={styles.buttonTextBack}>Continue Game <Icon name='ios-arrow-forward' style={styles.buttonTextBack} /></Text>
               </Button>
             </Row>
             <View style={styles.horizontalRule} />
             <Row style={{marginTop: 0, height: 20}}>
               <Col >
-                  <Text style={styles.whiteText}>Target: {item.firstInningsRuns}</Text>
+                  <Text style={styles.whiteText}>Target: {target}</Text>
               </Col>
               <Col>
                   <Text style={styles.whiteText}>Total: {item.totalRuns}/{item.totalWickets}</Text>
@@ -388,7 +415,33 @@ class DisplayGames extends React.PureComponent {
           </LinearGradient>
         )
       }
+      else if (item.gameResult === 3) {
+        return (
+          <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
+          locations={[0,0.7,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradient}>
+          <TouchableHighlight>
+          <ListItem style={{ flex: 1, height: 240, flexDirection: 'row', alignItems: 'center' }}>
+          <Col>
+            <Row style={styles.rowCenter}>
+              <H2 style={{color: '#fff'}}>Game #{item.displayId}&nbsp;</H2>
+              {this.getIconDisplay(item)}
+            </Row>
+            <View style={styles.horizontalRule} />
+            <Row style={{marginTop: 0, height: 20}}>
+              <Col>
+                  <Text style={styles.whiteText}>Game Abandond.</Text>
+              </Col>
+            </Row>
+            <View style={styles.horizontalRule} />
+              </Col>
+            </ListItem>
+          </TouchableHighlight>
+          </LinearGradient>
+        )
+      }
       else {
+        const firstInningsRuns = item.firstInningsRuns;
+        const target = firstInningsRuns + 1;
       return (
       <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
       locations={[0,0.7,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradient}>
@@ -402,7 +455,7 @@ class DisplayGames extends React.PureComponent {
         <View style={styles.horizontalRule} />
         <Row style={{marginTop: 0, height: 20}}>
           <Col >
-              <Text style={styles.whiteText}>Target: {item.firstInningsRuns}</Text>
+              <Text style={styles.whiteText}>Target: {target}</Text>
           </Col>
           <Col>
               <Text style={styles.whiteText}>Total: {item.totalRuns}/{item.totalWickets}</Text>
@@ -437,6 +490,43 @@ class DisplayGames extends React.PureComponent {
     }
   }
 
+getGameButton = () => {
+
+  const games = this.props.games.games;
+  const gamesCount = games.length;
+
+  if (gamesCount <= 5) {
+  return (
+    <ImageBackground source={require(`../../assets/4dot6-cricekt-sim-bg-image-2.png`)} style={styles.backgroundImage}>
+    <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
+    locations={[0,0.7,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradient}>
+    <Row style={{padding: 10, backgroundColor: '#c471ed', height: 200, alignItems: 'center', justifyContent: 'center',}}><Text style={{color: '#fff', fontSize: 30, textAlign: 'center'}}>
+      Click 'New Game' at bottom of the screen to start a game. Good luck!
+    </Text></Row>
+    </LinearGradient>
+    </ImageBackground>
+    )
+  }
+  else {
+    return (
+    <Button large style={styles.largeButtonLoad}
+    onPress={() => this.getMoreGames()}>
+      <Text style={styles.buttonTextBackLoad}>Load More Games... </Text>
+    </Button>
+    )
+  }
+}
+
+hideSpinner = () => {
+  console.log('hit lead 2?' );
+  this.setState({
+    togglePremium: false,
+    toggleHomeLoad: false,
+  }, function () {
+    const { togglePremium, toggleHomeLoad } = this.state
+    this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+  })
+}
 
 /*
   render() {
@@ -457,10 +547,13 @@ class DisplayGames extends React.PureComponent {
         return (
           <View style={{width: '100%'}}>
           {this.getImageBackground()}
-          <Button large style={styles.largeButtonLoad}
-          onPress={() => this.getMoreGames()}>
-            <Text style={styles.buttonTextBackLoad}>Load More Games... </Text>
-          </Button>
+          {this.getGameButton()}
+          <View style={{ height: 0 }}>
+          <WebView
+            onLoad={() => this.hideSpinner()}
+            style={{ height: 0 }}
+          />
+          </View>
           </View>
         );
     }
@@ -469,6 +562,7 @@ class DisplayGames extends React.PureComponent {
 
 const mapStateToProps = state => ({
   games: state.games,
+  toggle: state.toggle,
 });
 
 export default connect(mapStateToProps)(DisplayGames);

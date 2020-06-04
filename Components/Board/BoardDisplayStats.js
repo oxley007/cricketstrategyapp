@@ -132,6 +132,9 @@ componentWillMount = () => {
 
   getTarget = () => {
 
+    const firstInningsRuns = this.props.firstInningsRuns;
+    const target = firstInningsRuns + 1;
+
     if (this.props.overBoardFlag === true) {
     return (
       <Col style={styles.rowPaddingStartGame}>
@@ -139,7 +142,7 @@ componentWillMount = () => {
           <Text style={styles.buttonTextBackOver}>Target:</Text>
         </Row>
         <Row size={4}>
-          <Text style={styles.buttonTextOver}>{this.props.firstInningsRuns}</Text>
+          <Text style={styles.buttonTextOver}>{target}</Text>
         </Row>
       </Col>
     )
@@ -151,7 +154,7 @@ componentWillMount = () => {
         <Text style={styles.buttonTextBack}>Target:</Text>
       </Row>
       <Row size={4}>
-        <Text style={styles.buttonText}>{this.props.firstInningsRuns}</Text>
+        <Text style={styles.buttonText}>{target}</Text>
       </Row>
     </Col>
     )

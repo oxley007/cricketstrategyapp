@@ -18,6 +18,7 @@ import { updateFirstInningsRuns } from '../../Reducers/firstInningsRuns';
 import { updateGames } from '../../Reducers/games';
 import { updatePlayerStats } from '../../Reducers/playerStats';
 import { updateAutoNotOut } from '../../Reducers/autoNotOut';
+import { updatePlayerRuns } from '../../Reducers/playerRuns';
 
 class WicketOut extends React.Component {
   constructor(props) {
@@ -44,9 +45,15 @@ class WicketOut extends React.Component {
     games: this.props.games.games || [],
     longestStreak: this.props.playerStats.longestStreak || 0,
     autoNotOut: this.props.autoNotOut.autoNotOut || 0,
+    winningStreak: this.props.playerStats.winningStreak || 0,
+    highestPlayerScore: this.props.playerStats.highestPlayerScore || 0,
+    highestPlayerScoreId: this.props.playerStats.highestPlayerScoreId || 0,
+    highestTeamScore: this.props.playerStats.highestTeamScore || 0,
+    playerRuns: this.props.playerRuns.wickets || 0,
+  playerRuns: this.props.playerRuns.totalRuns || 0,
   };
 
-  handleChange = ( gameRuns, gameID, players, firstInningsRuns, games, playerStats, autoNotOut ) => {
+  handleChange = ( gameRuns, gameID, players, firstInningsRuns, games, playerStats, autoNotOut, playerRuns ) => {
     this.setState({ gameID });
     this.setState({ gameRuns });
     this.setState({ players });
@@ -54,6 +61,7 @@ class WicketOut extends React.Component {
     this.setState({ games });
     this.setState({ playerStats });
     this.setState({ autoNotOut });
+    this.setState({ playerRuns });
   };
 
 /*
@@ -82,10 +90,12 @@ getNavigation = () => {
     const { navigation } = this.props;
     const displayId = navigation.getParam('displayId');
     console.log(displayId);
-    const totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+    //const totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+    const totalRuns = this.props.playerRuns.totalRuns;
     console.log(totalRuns);
-    let getWicketCount = BallDiff.getWicketCount(gameRunEvents);
-    let totalWickets = getWicketCount[0];
+    //let getWicketCount = BallDiff.getWicketCount(gameRunEvents);
+    //let totalWickets = getWicketCount[0];
+    const totalWickets = this.props.playerRuns.wickets;
     console.log(totalWickets);
     const games = this.props.games.games;
     const longestStreak = this.props.playerStats.longestStreak;
@@ -160,13 +170,17 @@ getNavigation = () => {
 
   winningStreak = 0;
   const autoNotOut = this.props.autoNotOut.autoNotOut;
+  const highestPlayerScore = this.props.playerStats.highestPlayerScore;
+  const highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
+  const highestTeamScore = this.props.playerStats.highestTeamScore;
+
 
   this.ref.doc("playerStats").update({
     winningStreak: winningStreak,
     longestStreak: longestStreak,
-    highestPlayerScore: 0,
-    highestPlayerScoreId: 0,
-    highestTeamScore: 0,
+    highestPlayerScore: highestPlayerScore,
+    highestPlayerScoreId: highestPlayerScoreId,
+    highestTeamScore: highestTeamScore,
     autoNotOut: autoNotOut,
   });
 
@@ -238,12 +252,15 @@ getNavigation = () => {
   console.log(winningStreak);
   console.log(longestStreak);
 
+  //const highestPlayerScore = this.props.playerStats.highestPlayerScore;
+  //const highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
+
   this.setState({
   winningStreak: winningStreak,
   longestStreak: longestStreak,
-  highestPlayerScore: 0,
-  highestPlayerScoreId: 0,
-  highestTeamScore: 0,
+  highestPlayerScore: highestPlayerScore,
+  highestPlayerScoreId: highestPlayerScoreId,
+  highestTeamScore: highestTeamScore,
   }, function () {
     const { winningStreak, longestStreak, highestPlayerScore, highestPlayerScoreId, highestTeamScore } = this.state
     this.props.dispatch(updatePlayerStats(this.state.winningStreak, this.state.longestStreak, this.state.highestPlayerScore, this.state.highestPlayerScoreId, this.state.highestTeamScore));
@@ -262,15 +279,28 @@ getNavigation = () => {
   })
 
   //Add not out batsman runs here to player's Form attribute.
+    let playerIDHighestScore = 0;
+
+    let batterRuns = 0;
+
+    let facingOne = false;
+    let facingTwo = false;
+    if (facingBall === 1) {
+      facingOne = true;
+    }
 
     allPlayers.map(player => {
       console.log(player);
       console.log(player.id);
       console.log('check 8');
 
-      if (player.batterFlag === 0) {
+      let count = 0;
+
+
+      if (player.batterFlag === 0 && facingOne === true) {
         const scoreTwo = allPlayers[player.id].scoreOne;
         const scoreThree = allPlayers[player.id].scoreTwo;
+        const highestScore = allPlayers[player.id].highestScore;
         console.log('check 9');
 
         let outs = 0;
@@ -297,7 +327,7 @@ getNavigation = () => {
           console.log('check 10');
           console.log(batterRunsCount);
 
-          const batterRuns = sum(batterRunsCount.map(acc => Number(acc)));
+          batterRuns = sum(batterRunsCount.map(acc => Number(acc)));
 
           console.log(batterRuns);
           console.log('check 11');
@@ -305,6 +335,57 @@ getNavigation = () => {
         allPlayers[player.id].scoreOne = batterRuns;
         allPlayers[player.id].scoreTwo = scoreTwo;
         allPlayers[player.id].scoreThree = scoreThree;
+        allPlayers[player.id].highestScore = highestScore;
+        allPlayers[player.id].outs = outs;
+
+        console.log(allPlayers);
+        console.log('check 12');
+
+      }
+      else if (player.batterFlag === 0 && facingOne === false) {
+        facingTwo === true;
+      }
+      else if (player.batterFlag === 0 && facingTwo === true) {
+        const scoreTwo = allPlayers[player.id].scoreOne;
+        const scoreThree = allPlayers[player.id].scoreTwo;
+        const highestScore = allPlayers[player.id].highestScore;
+        console.log('check 9');
+
+        let outs = 0;
+        if (allPlayers[player.id].outs < 3) {
+          outs = allPlayers[player.id].outs
+          outs++
+        }
+        else {
+          outs = 3;
+        }
+
+        playerIDHighestScore = allPlayers[player.id];
+
+        let batterRunsCount = gameRunEvents.map(acc => {
+          console.log(acc);
+          if (acc.batterID === allPlayers[player.id]) {
+            console.log(acc.runsValue);
+            return [acc.runsValue];
+          }
+          else {
+              console.log(acc.runsValue);
+              return 0;
+            }
+          });
+
+          console.log('check 10');
+          console.log(batterRunsCount);
+
+          batterRuns = sum(batterRunsCount.map(acc => Number(acc)));
+
+          console.log(batterRuns);
+          console.log('check 11');
+
+        allPlayers[player.id].scoreOne = batterRuns;
+        allPlayers[player.id].scoreTwo = scoreTwo;
+        allPlayers[player.id].scoreThree = scoreThree;
+        allPlayers[player.id].highestScore = highestScore;
         allPlayers[player.id].outs = outs;
 
         console.log(allPlayers);
@@ -312,6 +393,89 @@ getNavigation = () => {
 
       }
   })
+
+  console.log(allPlayers + ' this is the allPlayers stroring to Redux after a wicket.');
+  console.log(facingBall);
+  this.setState({
+    players: allPlayers,
+    facingBall: facingBall,
+  }, function () {
+    const { players, facingBall } = this.state
+    this.props.dispatch(updatePlayers(this.state.players, this.state.facingBall));
+  })
+
+  /*
+  this.ref.doc("players").update({
+    players: allPlayers,
+    facingBall: facingBall,
+  });
+  */
+
+  //const highestPlayerScore = this.props.playerStats.highestPlayerScore;
+
+  console.log(batterRuns + ' batterRuns');
+  console.log(highestPlayerScore + ' highestPlayerScore');
+  console.log(highestTeamScore + ' highestTeamScore');
+
+  if (batterRuns > highestPlayerScore) {
+    this.setState({
+    winningStreak: winningStreak,
+    longestStreak: longestStreak,
+    highestPlayerScore: batterRuns,
+    highestPlayerScoreId: playerIDHighestScore,
+    highestTeamScore: highestTeamScore,
+    }, function () {
+      const { winningStreak, longestStreak, highestPlayerScore, highestPlayerScoreId, highestTeamScore } = this.state
+      this.props.dispatch(updatePlayerStats(this.state.winningStreak, this.state.longestStreak, this.state.highestPlayerScore, this.state.highestPlayerScoreId, this.state.highestTeamScore));
+    })
+  }
+
+  console.log('check 13');
+
+
+
+
+
+    this.props.navigation.navigate('HomeApp')
+   /*
+  }
+  else {
+
+  }
+  */
+
+  }
+
+getNewBatsman = () => {
+
+  let sum = a => a.reduce((acc, item) => acc + item);
+
+  const gameRunEvents = this.props.gameRuns.gameRunEvents;
+  const allPlayers = this.props.players.players;
+  let facingBall = this.props.players.facingBall;
+
+  let ball = 0;
+
+  /*
+  let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
+  let ballTotal = legitBall[0];
+  console.log(ballTotal);
+
+  ball = sum(ballTotal.map(acc => Number(acc)));
+  console.log(ball);
+  */
+
+  ball = gameRunEvents.length;
+  ball--
+
+  if (ball === 6 || ball === 12 || ball === 18 || ball === 24 || ball === 30 || ball === 36 || ball === 42 || ball === 48 || ball === 54 || ball === 60 || ball === 66 || ball === 72 || ball === 78 || ball === 84 || ball === 90 || ball === 96 || ball === 102 || ball === 108 || ball === 114 || ball === 120) {
+    //nothing
+    console.log('end of over hit');
+  }
+  else {
+    console.log(' not end of over. New batter to face.');
+    facingBall = 2;
+  }
 
   console.log(allPlayers);
   console.log(facingBall);
@@ -323,10 +487,14 @@ getNavigation = () => {
     this.props.dispatch(updatePlayers(this.state.players, this.state.facingBall));
   })
 
-  console.log('check 13');
-
-  this.props.navigation.navigate('GameListNew')
-
+  if (this.props.totalWickets >= 10) {
+    this.props.navigation.navigate('Game');
+  }
+  else {
+  this.props.navigation.navigate('OverBowled', {
+    fromWicket: true,
+    })
+  }
   }
 
 getNavigationText = () => {
@@ -351,9 +519,9 @@ getNavigationText = () => {
   else {
     return (
     <Button rounded large warning style={styles.largeButton}
-    onPress={() => this.props.navigation.navigate('Game')} >
+    onPress={() => this.getNewBatsman()} >
         <Text style={styles.buttonTextBack}><Icon name='ios-arrow-back' style={styles.buttonTextBack} /> Back to game</Text>
-      </Button>
+      </Button >
     )
   }
 
@@ -372,7 +540,7 @@ getNavigationText = () => {
        source={require('../../assets/4dot6logo-transparent.png')}
        style={{ height: '100%', width: 'auto', justifyContent: 'center', alignItems: 'center', resizeMode: 'contain' }}
       />
-      </Col>
+      </Col >
       <Right size={1} style={styles.colVerticleAlign}>
         </Right>
     </Header>
@@ -394,7 +562,7 @@ getNavigationText = () => {
       </Row>
     </Col>
     </Content>
-    </LinearGradient>
+    </LinearGradient >
     </ImageBackground>
     <Footer style={{ height: 100, backgroundColor: 'transparent', borderTopWidth: 0, backgroundColor: 'transparent', elevation: 0, shadowOpacity: 0 }}>
       <Row>
@@ -416,6 +584,7 @@ const mapStateToProps = state => ({
   games: state.games,
   playerStats: state.playerStats,
   autoNotOut: state.autoNotOut,
+  playerRuns: state.playerRuns,
 });
 
 export default connect(mapStateToProps)(WicketOut);

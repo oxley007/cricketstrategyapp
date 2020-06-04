@@ -127,12 +127,17 @@ class Dot extends Component {
     let over = this.props.ball.over;
     let ball = 0;
 
+    /*
     let legitBall = BallDiff.getLegitBall(ball, runEvents);
     let ballTotal = legitBall[0];
     console.log(ballTotal);
 
     ball = sum(ballTotal.map(acc => Number(acc)));
     console.log(ball);
+    */
+
+    ball = gameRunEvents.length;
+    ball--
 
     let totalBallDiff = BallDiff.getpartnershipDiffTotal(ball);
     let totalOver = totalBallDiff[0];

@@ -3,7 +3,7 @@ import firebase from 'react-native-firebase';
 import LinearGradient from 'react-native-linear-gradient';
 import { Header, Left, Right, Icon, Content, Container, H1, H2, H3, Footer, Button } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
-import { StyleSheet, PixelRatio, ScrollView, View, Text, TextInput, Platform, Image, FlatList, Dimensions, TouchableHighlight, TouchableOpacity } from 'react-native';
+import { StyleSheet, PixelRatio, ScrollView, View, Text, TextInput, Platform, Image, FlatList, Dimensions, TouchableHighlight, TouchableOpacity, Alert } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
 
 import { connect } from "react-redux";
@@ -14,6 +14,7 @@ import { updateGames } from '../../Reducers/games';
 import { updateTeamPlayers } from '../../Reducers/teamPlayers';
 import { updateGamesList } from '../../Reducers/gamesList';
 import { updateFirstInningsRuns } from '../../Reducers/firstInningsRuns';
+import { updateToggle } from '../../Reducers/toggle';
 
 import BallDiff from '../../Util/BallDiff.js';
 import CardBoard from '../../Util/CardBoard.js';
@@ -42,6 +43,8 @@ class SimulateFirstInnings extends React.Component {
         newGameFlag: 0,
         runRate: 'RR: ~',
         n: 0,
+        chalOption: 0,
+        keyId: ','
     };
   }
 
@@ -58,9 +61,11 @@ class SimulateFirstInnings extends React.Component {
     teamPlayers: this.props.teamPlayers.teamPlayers || [],
     gamesList: this.props.gamesList.gamesList || [],
     firstInningsRuns: this.props.firstInningsRuns.firstInningsRuns || 0,
+    togglePremium: this.props.toggle.togglePremium || true,
+    toggleHomeLoad: this.props.toggle.toggleHomeLoad || true,
   };
 
-  handleChange = ( gameID, gameRuns, ball, players, games, teamPlayers, gamesList ) => {
+  handleChange = ( gameID, gameRuns, ball, players, games, teamPlayers, gamesList, toggle ) => {
     this.setState({ gameID });
     this.setState({ gameRuns });
     this.setState({ ball });
@@ -68,6 +73,7 @@ class SimulateFirstInnings extends React.Component {
     this.setState({ games });
     this.setState({ teamPlayers });
     this.setState({ gamesList });
+    this.setState({ toggle });
   };
 
   incrementer = () => {
@@ -79,15 +85,118 @@ class SimulateFirstInnings extends React.Component {
 
 
   componentDidMount() {
+    const games = this.props.games.games;
+    const gamesCount = games.length;
 
+    const { currentUser } = firebase.auth()
+    this.setState({ currentUser })
+    //this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate)
+    this.refPlayers.onSnapshot(this.onDocCollectionUpdate)
 
+    if (gamesCount <= 2) {
+    Alert.alert("Simulate first innings.", "On the next screen you will simulate the first innings to give yourself a target to chase. Click 'Generate innings' on the next page to start the innings. An average score is about 175. Enjoy!" )
+    }
 
   }
 
   componentWillUnmount() {
-    this.unsubscribe();
+    //this.unsubscribe();
     clearInterval(this.interval);
   }
+
+  onCollectionUpdate = (querySnapshot) => {
+    console.log(this.props.games.games);
+    const games = [];
+    console.log(this.props.games.games);
+    let keyId = "";
+    querySnapshot.forEach((doc) => {
+      const { gameId, gameName } = doc.data();
+      keyId = doc.id
+      games.push({
+        key: doc.id,
+        doc, // DocumentSnapshot
+        gameId,
+        gameName,
+      });
+    });
+
+    console.log(keyId);
+
+    this.setState({
+      games,
+      loading: false,
+      keyId: keyId,
+   });
+   console.log(this.props.games.games);
+   console.log(this.state.games + ' state gaem onCollectionUpdate');
+  }
+
+  onDocCollectionUpdate = (documentSnapshot) => {
+    console.log(this.state.facingBall);
+    console.log(this.props.players.facingBall);
+
+    //let allPlayers = this.props.players.players;
+
+    let facingBall = this.props.players.facingBall;
+    //let facingBall = this.state.facingBall;
+
+    console.log(allPlayers);
+    console.log(facingBall);
+
+    let teamPlayers = this.props.teamPlayers.teamPlayers;
+    if (teamPlayers === [] || teamPlayers === undefined || teamPlayers === null || teamPlayers.length < 1 ) {
+      console.log('allplays null hit?');
+      teamPlayers = documentSnapshot.data().players;
+    }
+    else {
+      console.log('else all players from redux.');
+      teamPlayers = this.props.teamPlayers.teamPlayers;
+    }
+
+    console.log(teamPlayers);
+
+    const teamPlayersSet = teamPlayers.map(player => {
+      console.log(player);
+      console.log(player.id);
+
+      if (player.id === 1 || player.id === 2) {
+        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: 0, highestScore: player.highestScore};
+      }
+      else {
+        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: 0, highestScore: player.highestScore};
+      }
+    });
+
+    console.log(teamPlayersSet);
+
+      console.log('else all players from redux.');
+    const allPlayers = teamPlayersSet;
+
+
+    console.log(allPlayers);
+    console.log(facingBall);
+
+
+    this.setState({
+      players: allPlayers,
+      facingBall: 1,
+    }, function () {
+      const { players, facingBall } = this.state
+      this.props.dispatch(updatePlayers(this.state.players, this.state.facingBall));
+    })
+
+    this.setState({
+      teamPlayers: teamPlayersSet,
+    }, function () {
+      const { teamPlayers } = this.state
+      this.props.dispatch(updateTeamPlayers(this.state.teamPlayers));
+    })
+
+    console.log(this.props.players.players);
+
+    console.log('finished onDocCollectionUpdate');
+
+    }
 
   simulateInnings = () => {
     console.log(this.props.games.games);
@@ -119,6 +228,21 @@ class SimulateFirstInnings extends React.Component {
 
       let time = 250
       n = 0;
+
+      //const { navigation } = this.props;
+      const chalScore = this.state.chalOption;
+
+      console.log(chalScore + ' chalScore value.');
+
+      /*
+      if (fromStats > 1) {
+        console.log('Fromstats hit?');
+        //n = 121;
+        //let newGameFlag = 2;
+        //this.setState({newGameFlag: newGameFlag});
+      }
+      */
+
       const simRuns = 0;
       this.setState({ simRuns: simRuns });
 
@@ -131,9 +255,14 @@ class SimulateFirstInnings extends React.Component {
         console.log(n);
         console.log(this.state.newGameFlag);
         console.log(this.state.totalWickets);
-        //if (n < 19 && this.state.totalWickets < 10 && this.state.newGameFlag === 1) {
-      if (n < 121 && this.state.totalWickets < 10 && this.state.newGameFlag === 1) {
+        if (n < 19 && this.state.totalWickets < 10 && this.state.newGameFlag === 1) {
+      //if (n < 121 && this.state.totalWickets < 10 && this.state.newGameFlag === 1) {
         this.simulateRuns();
+
+        if (chalScore > 1 && n > 60) {
+          n = 121
+        }
+
       }
       else if (this.state.newGameFlag === 0) {
         n = 0;
@@ -163,7 +292,22 @@ class SimulateFirstInnings extends React.Component {
 
         }
       else {
-        const firstInningsRuns = this.state.totalRuns;
+
+        let firstInningsRuns = this.state.totalRuns;
+
+        console.log(chalScore);
+
+        if (chalScore > 1) {
+          //const { navigation } = this.props;
+          console.log('chalScore hit 2.');
+          const score = this.state.chalOption;
+          console.log(score);
+          firstInningsRuns = score;
+          //const { currentUser } = firebase.auth()
+          //this.setState({ currentUser })
+          //this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate)
+          //this.ref
+        }
 
         this.setState({
           firstInningsRuns: firstInningsRuns,
@@ -175,9 +319,20 @@ class SimulateFirstInnings extends React.Component {
         const gameId = this.props.gameID.gameID;
         const teamPlayers = this.props.teamPlayers.teamPlayers;
 
-        console.log(this.props.games.games);
-        let currentKey = this.state.games.map(acc => {
+        console.log(this.state.games + ' state games');
+
+        const stateGames = this.state.games;
+
+        console.log(stateGames + ' State games.');
+
+        //if (stateGames > 0) {
+
+        //const newGame = this.ref.onSnapshot(this.onCollectionUpdate)
+
+        let currentKey = stateGames.map(acc => {
           console.log(acc);
+          console.log(acc.gameId + ' acc.gameId');
+          console.log(gameId + ' gameId for acc' );
           if (acc.gameId  === gameId) {
             console.log(acc.gameId);
             console.log(acc.key);
@@ -186,11 +341,16 @@ class SimulateFirstInnings extends React.Component {
           });
           console.log(currentKey);
 
+          const keyId = this.state.keyId;
+          /*
           let filtered = currentKey.filter(t=>t != undefined);
           console.log(filtered);
           console.log(filtered[0]);
+          */
 
-        this.ref.doc(filtered[0]).update({
+
+        //this.ref.doc(filtered[0]).update({
+        this.ref.doc(keyId).update({
             firstInningsRuns: firstInningsRuns,
         });
 
@@ -202,7 +362,7 @@ class SimulateFirstInnings extends React.Component {
         const displayId = navigation.getParam('displayId', gameId);  //.it might need tobe 'displayId' (in brackets)
         console.log(displayId);
 
-        console.log(filtered[0]);
+        console.log(keyId + 'this should show keyID form state.');
 
         const game = {
           displayId: displayId,
@@ -212,7 +372,7 @@ class SimulateFirstInnings extends React.Component {
           gameResult: 0,
           gameRunEvents: [],
           players: teamPlayers,
-          key: filtered[0],
+          key: keyId,
           topScore: 0,
           topScoreBalls: 0,
           topScorePlayer: '',
@@ -259,14 +419,34 @@ class SimulateFirstInnings extends React.Component {
         })
         console.log(this.props.gamesList.gamesList);
         */
+      //}
 
+      //const gameId = this.props.gameID.gameID;
+
+      //const { currentUser } = firebase.auth();
+
+      //const { navigation } = this.props;
+      const dateTimeInt = navigation.getParam('displayId', gameId);  //.it might need tobe 'displayId' (in brackets)
+      const gameID = navigation.getParam('gameID', gameId);
+
+
+      firebase.firestore().collection(currentUser.uid).add({
+        gameId: gameID,
+        gameName: 'Cricket Strategy Simulator',
+        displayId: dateTimeInt,
+        gameResult: 0
+      }).then(ref => {
+      console.log('Added document with ID: ', currentUser.uid);
+      });
 
         clearInterval(this.interval);
+
 
 
       }
         console.log(n);
       }, time);
+
   }
 
 
@@ -300,103 +480,13 @@ class SimulateFirstInnings extends React.Component {
 
   }
 
-  onCollectionUpdate = (querySnapshot) => {
-    console.log(this.props.games.games);
-    const games = [];
-    console.log(this.props.games.games);
-    let keyId = "";
-    querySnapshot.forEach((doc) => {
-      const { gameId, gameName } = doc.data();
-      keyId = doc.id
-      games.push({
-        key: doc.id,
-        doc, // DocumentSnapshot
-        gameId,
-        gameName,
-      });
-    });
-
-    console.log(keyId);
-
-    this.setState({
-      games,
-      loading: false,
-      keyId: keyId,
-   });
-   console.log(this.props.games.games);
-  }
-
-  onDocCollectionUpdate = (documentSnapshot) => {
-    console.log(this.state.facingBall);
-
-    //let allPlayers = this.props.players.players;
-    let facingBall = this.state.facingBall;
-
-    console.log(allPlayers);
-    console.log(facingBall);
-
-    let teamPlayers = this.props.teamPlayers.teamPlayers;
-    if (teamPlayers === [] || teamPlayers === undefined || teamPlayers === null || teamPlayers.length < 1 ) {
-      console.log('allplays null hit?');
-      teamPlayers = documentSnapshot.data().players;
-    }
-    else {
-      console.log('else all players from redux.');
-      teamPlayers = this.props.teamPlayers.teamPlayers;
-    }
-
-    console.log(teamPlayers);
-
-    const teamPlayersSet = teamPlayers.map(player => {
-      console.log(player);
-      console.log(player.id);
-
-      if (player.id === 1 || player.id === 2) {
-        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: 0};
-      }
-      else {
-        return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: 0};
-      }
-    });
-
-    console.log(teamPlayersSet);
-
-      console.log('else all players from redux.');
-    const allPlayers = teamPlayersSet;
-
-
-    console.log(allPlayers);
-    console.log(facingBall);
-
-
-    this.setState({
-      players: allPlayers,
-      facingBall: 1,
-    }, function () {
-      const { players, facingBall } = this.state
-      this.props.dispatch(updatePlayers(this.state.players, this.state.facingBall));
-    })
-
-    this.setState({
-      teamPlayers: teamPlayersSet,
-    }, function () {
-      const { teamPlayers } = this.state
-      this.props.dispatch(updateTeamPlayers(this.state.teamPlayers));
-    })
-
-    console.log(this.props.players.players);
-
-    console.log('finished onDocCollectionUpdate');
-
-    }
-
 
 simulateRuns = () => {
   console.log(this.props.games.games);
   let gameRunEvents = this.state.simRunEvents;
   const min = 0;
   const max = 27;
-  const n = 0;
+  let n = 0;
 
   //setTimeout('', 5000);
 
@@ -436,6 +526,9 @@ simulateRuns = () => {
       wicketEvent = false;
     }
   }
+
+  const chalScore = this.state.chalOption;
+
 
   console.log(runs);
   this.setState({ simRuns: runs });
@@ -483,10 +576,15 @@ getDisplayRunsTotal() {
   //let over = this.props.ball.over;
   let ball = 0;
 
+  /*
   let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
   let ballTotal = legitBall[0];
 
   ball = sum(ballTotal.map(acc => Number(acc)));
+  */
+
+  ball = gameRunEvents.length;
+  ball--
 
   let totalBallDiff = BallDiff.getpartnershipDiffTotal(ball);
   let totalOver = totalBallDiff[0];
@@ -516,14 +614,16 @@ getDisplayRunsTotal() {
 goToSefcondInnings = () => {
 
   console.log(this.state.totalRuns);
-  const firstInningsRuns = this.state.totalRuns
+  const firstInningsRuns = this.state.chalOption;
   console.log(firstInningsRuns);
+
   console.log(this.props.games.games);
   const { navigation } = this.props;
   const displayId = navigation.getParam('displayId');  //.it might need tobe 'displayId' (in brackets)
   console.log(displayId);
   let newGameFlag = 0;
   this.setState({newGameFlag: newGameFlag});
+  this.setState({chalOption: 0});
 
 
   const teamPlayers  = this.props.teamPlayers.teamPlayers;
@@ -533,10 +633,10 @@ goToSefcondInnings = () => {
     console.log(player.id);
 
     if (player.id === 1 || player.id === 2) {
-      return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: 0};
+      return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: 0, highestScore: player.highestScore};
     }
     else {
-      return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: 0}
+      return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: 0, highestScore: player.highestScore};
     }
   });
 
@@ -579,10 +679,35 @@ goToSefcondInnings = () => {
   const runRateReset = 0;
   this.setState({ runRate: runRateReset });
 
+  const games = this.props.games.games;
+  const gamesCount = games.length;
+
+  console.log(gamesCount);
+
+  this.setState({
+    togglePremium: true,
+    toggleHomeLoad: true,
+  }, function () {
+    const { togglePremium, toggleHomeLoad } = this.state
+    this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+  })
+
+  console.log();
+
+
+  if (gamesCount <= 260) {
+    this.props.navigation.navigate('ExplainerImageOne', {
+      displayId: displayId,
+      firstInningsRuns: firstInningsRuns,
+    });
+  }
+  else {
   this.props.navigation.navigate('Game', {
     displayId: displayId,
     firstInningsRuns: firstInningsRuns,
   });
+  }
+
 }
 
 getSimRuns = () => {
@@ -595,15 +720,43 @@ getSimRuns = () => {
         onPress={() => this.changeGameFlag()} >
         <Text style={styles.generateInningsButtonText}>Generatre innings <Icon name='ios-arrow-forward' style={styles.generateInningsButtonText} /></Text>
       </Button>
-    </Col>
+    </Col >
     )
   }
   else {
+
+    const { navigation } = this.props;
+    const chalScore = this.state.chalOption;
+    let n = this.state.n;
+    n++
+    //this.setState({n: n});
+    //const score = navigation.getParam('score', false);
+
+    console.log(n + ' n...');
+    console.log(chalScore + ' chalScore...');
+
+
+    if (chalScore > 1 && n < 1) {
+      return (
+        <Col style={styles.ballCircle}>
+          <Text style={styles.textBall}>Generating...</Text>
+        </Col>
+      )
+     }
+     else if (chalScore > 1) {
+       return (
+         <Col style={styles.ballCircle}>
+           <Text style={styles.textBall}>{chalScore}</Text >
+         </Col>
+       )
+      }
+     else {
   return (
     <Col style={styles.ballCircle}>
-      <Text style={styles.textBall}>{this.state.simRuns}</Text>
+      <Text style={styles.textBall}>{this.state.simRuns}</Text >
     </Col>
   )
+}
 }
 }
 
@@ -614,6 +767,10 @@ changeGameFlag = () => {
 
   console.log(this.state.n);
   console.log(this.state.newGameFlag);
+
+
+
+
   this.simulateInnings();
   //console.log(this.props.games.games);
   //let newGameFlag = 1;
@@ -630,8 +787,8 @@ displayStartSecondInnings = () => {
     return (
     <Button rounded large warning style={styles.largeButton}
       onPress={() => this.goToSefcondInnings()} >
-      <Text style={styles.buttonTextBack}>Start second innings <Icon name='ios-arrow-back' style={styles.buttonTextBack} /></Text>
-    </Button>
+      <Text style={styles.buttonTextBack}>Start second innings <Icon name='ios-arrow-forward' style={styles.buttonTextBack} /></Text>
+    </Button >
     )
   }
   else {
@@ -639,6 +796,450 @@ displayStartSecondInnings = () => {
   }
 }
 
+goToChalSelect = (chalOption) => {
+
+  const chalSelect = this.state.chalOption;
+
+  if (chalSelect === chalOption) {
+    this.setState({chalOption: 0});
+  }
+  else if (chalOption === 210) {
+    this.setState({chalOption: chalOption});
+  }
+  else if (chalOption === 220) {
+    this.setState({chalOption: chalOption});
+  }
+  else if (chalOption === 230) {
+    this.setState({chalOption: chalOption});
+  }
+  else if (chalOption === 240) {
+    this.setState({chalOption: chalOption});
+  }
+  else if (chalOption === 250) {
+    this.setState({chalOption: chalOption});
+  }
+  else if (chalOption === 300) {
+    this.setState({chalOption: chalOption});
+  }
+  else {
+    this.setState({chalOption: 0});
+  }
+
+}
+
+getChalScore = () =>  {
+
+  const chalSelect = this.state.chalOption;
+
+  if (this.state.newGameFlag === 0) {
+  if (chalSelect === 210) {
+  return (
+    <Row size={2} >
+      <Col style={{paddingTop: 5, paddingBottom: 5}}>
+        <Row style={{paddingTop: 5, paddingBottom: 5}}>
+          <Text style={styles.textChalHeader}>Or select a challenge score:</Text>
+        </Row>
+        <Row size={1}>
+          <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5}} >
+          <Button large success style={styles.largeButton}
+            onPress={() => this.goToChalSelect(210)} >
+            <Text style={styles.buttonTextScore}>210</Text >
+          </Button>
+          </Col>
+          <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5, paddingLeft: 5}}>
+          <Button large warning style={styles.largeButtonScore}
+            onPress={() => this.goToChalSelect(220)} >
+            <Text style={styles.buttonTextNonSelect}>220</Text >
+          </Button>
+          </Col>
+          <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingLeft: 5}}>
+          <Button large warning style={styles.largeButtonScore}
+            onPress={() => this.goToChalSelect(230)} >
+            <Text style={styles.buttonTextNonSelect}>230</Text >
+          </Button>
+          </Col>
+        </Row>
+        <Row size={1}>
+          <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5}}>
+          <Button large warning style={styles.largeButtonScore}
+            onPress={() => this.goToChalSelect(240)} >
+            <Text style={styles.buttonTextNonSelect}>240</Text>
+          </Button>
+          </Col>
+          <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5, paddingLeft: 5}}>
+          <Button large warning style={styles.largeButtonScore}
+            onPress={() => this.goToChalSelect(250)} >
+            <Text style={styles.buttonTextNonSelect}>250</Text>
+          </Button>
+          </Col>
+          <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingLeft: 5}}>
+          <Button large warning style={styles.largeButtonScore}
+            onPress={() => this.goToChalSelect(300)} >
+            <Text style={styles.buttonTextNonSelect}>300</Text>
+          </Button>
+          </Col>
+        </Row>
+      </Col >
+    </Row >
+  )
+}
+else if (chalSelect === 220) {
+return (
+  <Row size={2}>
+    <Col style={{paddingTop: 5, paddingBottom: 5}}>
+      <Row style={{paddingTop: 5, paddingBottom: 5}}>
+        <Text style={styles.textChalHeader}>Or select a challenge score:</Text>
+      </Row >
+      <Row size={1}>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5}}>
+        <Button large success style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(210)} >
+          <Text style={styles.buttonTextNonSelect}>210</Text >
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButton}
+          onPress={() => this.goToChalSelect(220)} >
+          <Text style={styles.buttonTextScore}>220</Text>
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(230)} >
+          <Text style={styles.buttonTextNonSelect}>230</Text >
+        </Button>
+        </Col>
+      </Row>
+      <Row size={1}>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(240)} >
+          <Text style={styles.buttonTextNonSelect}>240</Text>
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(250)} >
+          <Text style={styles.buttonTextNonSelect}>250</Text>
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(300)} >
+          <Text style={styles.buttonTextNonSelect}>300</Text>
+        </Button>
+        </Col>
+      </Row>
+    </Col>
+  </Row>
+)
+}
+else if (chalSelect === 230) {
+return (
+  <Row size={2}>
+    <Col style={{paddingTop: 5, paddingBottom: 5}}>
+      <Row style={{paddingTop: 5, paddingBottom: 5}}>
+        <Text style={styles.textChalHeader}>Or select a challenge score:</Text>
+      </Row >
+      <Row size={1}>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5}}>
+        <Button large success style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(210)} >
+          <Text style={styles.buttonTextNonSelect}>210</Text >
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(220)} >
+          <Text style={styles.buttonTextNonSelect}>220</Text>
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButton}
+          onPress={() => this.goToChalSelect(230)} >
+          <Text style={styles.buttonTextScore}>230</Text >
+        </Button>
+        </Col>
+      </Row>
+      <Row size={1}>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(240)} >
+          <Text style={styles.buttonTextNonSelect}>240</Text>
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(250)} >
+          <Text style={styles.buttonTextNonSelect}>250</Text>
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(300)} >
+          <Text style={styles.buttonTextNonSelect}>300</Text>
+        </Button >
+        </Col >
+      </Row>
+    </Col>
+  </Row>
+)
+}
+else if (chalSelect === 240) {
+return (
+  <Row size={2}>
+    <Col style={{paddingTop: 5, paddingBottom: 5}}>
+      <Row style={{paddingTop: 5, paddingBottom: 5}}>
+        <Text style={styles.textChalHeader}>Or select a challenge score:</Text>
+      </Row >
+      <Row size={1}>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5}}>
+        <Button large success style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(210)} >
+          <Text style={styles.buttonTextNonSelect}>210</Text >
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(220)} >
+          <Text style={styles.buttonTextNonSelect}>220</Text>
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(230)} >
+          <Text style={styles.buttonTextNonSelect}>230</Text >
+        </Button>
+        </Col>
+      </Row>
+      <Row size={1}>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5}}>
+        <Button large warning style={styles.largeButton}
+          onPress={() => this.goToChalSelect(240)} >
+          <Text style={styles.buttonTextScore}>240</Text>
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(250)} >
+          <Text style={styles.buttonTextNonSelect}>250</Text>
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(300)} >
+          <Text style={styles.buttonTextNonSelect}>300</Text>
+        </Button>
+        </Col>
+      </Row>
+    </Col>
+  </Row>
+)
+}
+else if (chalSelect === 250) {
+return (
+  <Row size={2}>
+    <Col style={{paddingTop: 5, paddingBottom: 5}}>
+      <Row style={{paddingTop: 5, paddingBottom: 5}}>
+        <Text style={styles.textChalHeader}>Or select a challenge score:</Text>
+      </Row >
+      <Row size={1}>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5}}>
+        <Button large success style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(210)} >
+          <Text style={styles.buttonTextNonSelect}>210</Text >
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(220)} >
+          <Text style={styles.buttonTextNonSelect}>220</Text>
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(230)} >
+          <Text style={styles.buttonTextNonSelect}>230</Text >
+        </Button>
+        </Col>
+      </Row>
+      <Row size={1}>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(240)} >
+          <Text style={styles.buttonTextNonSelect}>240</Text>
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButton}
+          onPress={() => this.goToChalSelect(250)} >
+          <Text style={styles.buttonTextScore}>250</Text>
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(300)} >
+          <Text style={styles.buttonTextNonSelect}>300</Text>
+        </Button>
+        </Col>
+      </Row>
+    </Col>
+  </Row>
+)
+}
+else if (chalSelect === 300) {
+return (
+  <Row size={2}>
+    <Col style={{paddingTop: 5, paddingBottom: 5}}>
+      <Row style={{paddingTop: 5, paddingBottom: 5}}>
+        <Text style={styles.textChalHeader}>Or select a challenge score:</Text>
+      </Row >
+      <Row size={1}>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5}}>
+        <Button large success style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(210)} >
+          <Text style={styles.buttonTextNonSelect}>210</Text >
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(220)} >
+          <Text style={styles.buttonTextNonSelect}>220</Text>
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(230)} >
+          <Text style={styles.buttonTextNonSelect}>230</Text >
+        </Button>
+        </Col>
+      </Row>
+      <Row size={1}>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(240)} >
+          <Text style={styles.buttonTextNonSelect}>240</Text>
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButtonScore}
+          onPress={() => this.goToChalSelect(250)} >
+          <Text style={styles.buttonTextNonSelect}>250</Text>
+        </Button>
+        </Col>
+        <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingLeft: 5}}>
+        <Button large warning style={styles.largeButton}
+          onPress={() => this.goToChalSelect(300)} >
+          <Text style={styles.buttonTextScore}>300</Text>
+        </Button>
+        </Col>
+      </Row>
+    </Col>
+  </Row>
+)
+}
+else {
+  return (
+    <Row size={2}>
+      <Col style={{paddingTop: 5, paddingBottom: 5}}>
+        <Row style={{paddingTop: 5, paddingBottom: 5}}>
+          <Text style={styles.textChalHeader}>Or select a challenge score:</Text>
+        </Row >
+        <Row size={1}>
+          <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5}}>
+          <Button large success style={styles.largeButton}
+            onPress={() => this.goToChalSelect(210)}>
+            <Text style={styles.buttonTextScore}>210</Text>
+          </Button>
+          </Col>
+          <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5, paddingLeft: 5}}>
+          <Button large warning style={styles.largeButton}
+            onPress={() => this.goToChalSelect(220)} >
+            <Text style={styles.buttonTextScore}>220</Text>
+          </Button>
+          </Col>
+          <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingLeft: 5}}>
+          <Button large warning style={styles.largeButton}
+            onPress={() => this.goToChalSelect(230)} >
+            <Text style={styles.buttonTextScore}>230</Text>
+          </Button>
+          </Col>
+        </Row>
+        <Row size={1}>
+          <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5}}>
+          <Button large warning style={styles.largeButton}
+            onPress={() => this.goToChalSelect(240)} >
+            <Text style={styles.buttonTextScore}>240</Text>
+          </Button>
+          </Col>
+          <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingRight: 5, paddingLeft: 5}}>
+          <Button large warning style={styles.largeButton}
+            onPress={() => this.goToChalSelect(250)} >
+            <Text style={styles.buttonTextScore}>250</Text>
+          </Button>
+          </Col>
+          <Col size={1} style={{paddingTop: 5, paddingBottom: 5, paddingLeft: 5}}>
+          <Button large warning style={styles.largeButton}
+            onPress={() => this.goToChalSelect(300)} >
+            <Text style={styles.buttonTextScore}>300</Text>
+          </Button>
+          </Col>
+        </Row>
+      </Col>
+    </Row>
+  )
+}
+}
+}
+
+getScoreDisplay = () => {
+
+  const score = this.state.chalOption;
+
+
+  if (score > 1 && this.state.newGameFlag === 1) {
+    return (
+  <Col style={styles.ballCircleRuns}>
+  <Row size={1}>
+    <Text style={styles.textChalOvers}>Generating challange innings...</Text>
+  </Row>
+    <Row size={1}>
+      <Text style={styles.textBallOvers}>{this.state.totalOver} of 10 setup steps.</Text>
+    </Row>
+  </Col>
+  )
+  }
+  else if (score > 1 && this.state.newGameFlag === 2) {
+    return (
+  <Col style={styles.ballCircleRuns}>
+    <Row size={1}>
+      <Text style={styles.textChalOvers}>(Ready for second innings)</Text>
+    </Row>
+  </Col>
+)
+  }
+  else if (score > 1) {
+    return (
+  <Col style={styles.ballCircleRuns}>
+    <Row size={1}>
+      <Text style={styles.textChalOvers}>(Click 'Generating innings' above to start...)</Text>
+    </Row>
+  </Col>
+)
+  }
+    else {
+    return (
+  <Col style={styles.ballCircleRuns}>
+    <Row>
+      <Text style={styles.textBallRuns}>{this.state.totalRuns}/{this.state.totalWickets}</Text >
+    </Row >
+    <Row size={1}>
+      <Text style={styles.textBallOvers}>({this.state.totalOver}.{this.state.totalBall} overs, {this.state.runRate})</Text>
+    </Row>
+  </Col>
+)
+}
+}
 
   render() {
     console.log(this.props.games.games);
@@ -666,7 +1267,7 @@ displayStartSecondInnings = () => {
       />
       </Col>
       <Right size={1} style={styles.colVerticleAlign}>
-        </Right>
+        </Right >
     </Header>
     <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
     locations={[0,0.9,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradient}>
@@ -674,28 +1275,22 @@ displayStartSecondInnings = () => {
       <Row size={2}>
         <Col>
         <View style={styles.horizontalRule} />
-          <Row>
+          <Row >
           <Text style={styles.headingText}>Simulate First Innings</Text>
           </Row>
-          <Row>
+          <Row >
           <Text style={styles.headingTextSmall}>Generate score to chase in the second innings</Text>
           </Row>
           <View style={styles.horizontalRule} />
-        </Col>
+        </Col >
       </Row>
       <Row size={5}>
         {this.getSimRuns()}
       </Row>
       <Row size={2}>
-        <Col style={styles.ballCircleRuns}>
-          <Row>
-            <Text style={styles.textBallRuns}>{this.state.totalRuns}/{this.state.totalWickets}</Text>
-          </Row>
-          <Row size={1}>
-            <Text style={styles.textBallOvers}>({this.state.totalOver}.{this.state.totalBall} overs, {this.state.runRate})</Text>
-          </Row>
-        </Col>
+        {this.getScoreDisplay()}
       </Row>
+      {this.getChalScore()}
     </Content>
     <Footer style={{ height: 60, backgroundColor: 'transparent', borderTopWidth: 0, backgroundColor: 'transparent', elevation: 0, shadowOpacity: 0 }}>
       {this.displayStartSecondInnings()}
@@ -715,6 +1310,7 @@ const mapStateToProps = state => ({
   teamPlayers: state.teamPlayers,
   gamesList: state.gamesList,
   firstInningsRuns: state.firstInningsRuns,
+  toggle: state.toggle,
 });
 
 export default connect(mapStateToProps)(SimulateFirstInnings);
@@ -751,6 +1347,11 @@ const styles = StyleSheet.create({
       fontSize: 40,
       lineHeight: 40,
     },
+    textChalHeader: {
+      color: '#fff',
+      fontSize: 30,
+      lineHeight: 30,
+    },
     colCenter: {
       alignItems: 'center',
     },
@@ -773,6 +1374,16 @@ const styles = StyleSheet.create({
       elevation: 0,
       shadowOpacity: 0,
     },
+    largeButtonScore: {
+      width: '100%',
+      backgroundColor: 'transparent',
+      alignItems: 'center',
+      justifyContent: 'center',
+      elevation: 0,
+      shadowOpacity: 0,
+      borderWidth: 2,
+      borderColor: '#fff'
+    },
     generateInningsLargeButton: {
       width: '100%',
       backgroundColor: '#fff',
@@ -794,6 +1405,15 @@ const styles = StyleSheet.create({
       marginLeft: 'auto',
       fontWeight: '200',
     },
+    buttonTextNonSelect: {
+      fontSize: PixelRatio.get() === 1 ? 28 : PixelRatio.get() === 1.5 ? 32 : PixelRatio.get() === 2 ? 36 : 40,
+      color: '#fff',
+      marginTop: 'auto',
+      marginRight: 'auto',
+      marginBottom: 'auto',
+      marginLeft: 'auto',
+      fontWeight: '200',
+    },
     buttonTextBack: {
       fontSize: 20,
       color: '#c471ed',
@@ -802,6 +1422,15 @@ const styles = StyleSheet.create({
       marginBottom: 'auto',
       marginLeft: 'auto',
       fontWeight: '200',
+    },
+    buttonTextScore: {
+      fontSize: 30,
+      color: '#c471ed',
+      marginTop: 'auto',
+      marginRight: 'auto',
+      marginBottom: 'auto',
+      marginLeft: 'auto',
+      fontWeight: '300',
     },
     generateInningsButtonText: {
       fontSize: 40,
@@ -889,6 +1518,15 @@ const styles = StyleSheet.create({
   textBallOvers: {
     color: '#fff',
     fontSize: 30,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 'auto',
+    marginBottom: 'auto',
+    fontWeight: 'bold',
+  },
+  textChalOvers: {
+    color: '#fff',
+    fontSize: 15,
     marginLeft: 'auto',
     marginRight: 'auto',
     marginTop: 'auto',

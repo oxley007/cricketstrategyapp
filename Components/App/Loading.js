@@ -13,7 +13,7 @@ export default class Loading extends React.Component {
   componentDidMount() {
     //SplashScreen.hide()
     firebase.auth().onAuthStateChanged(user => {
-      this.props.navigation.navigate(user ? 'GameListNew' : 'SignUp')
+      this.props.navigation.navigate(user ? 'HomeApp' : 'SignUp')
     })
   }
 

@@ -3,7 +3,8 @@ import firebase from 'react-native-firebase';
 import LinearGradient from 'react-native-linear-gradient';
 import { Header, Left, Right, Icon, Content, Container, H1, H3, Footer, Button, Tab, Tabs, TabHeading } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
-import { StyleSheet, PixelRatio, ScrollView, View, Text, TextInput, Platform, Image, FlatList, Dimensions, ImageBackground, Alert } from 'react-native';
+import { StyleSheet, PixelRatio, ScrollView, View, Text, TextInput, Platform, Image, FlatList, Dimensions, ImageBackground, Alert, ActivityIndicator } from 'react-native';
+import { WebView } from 'react-native-webview';
 
 import { connect } from "react-redux";
 import { updateGameId } from '../../Reducers/gameId';
@@ -17,8 +18,10 @@ import { updateGameCards } from '../../Reducers/gameCards';
 import { updateTeamPlayers } from '../../Reducers/teamPlayers';
 import { updateMomentum } from '../../Reducers/momentum';
 import { updateAutoNotOut } from '../../Reducers/autoNotOut';
+import { updateToggle } from '../../Reducers/toggle';
 
 import DisplayGames from '../Game/DisplayGames';
+//import Loader from '../App/Loader';
 import TabOne from './GameMain';
 import DisplayBattingCard from '../Board/DisplayBattingCard';
 import BallDiff from '../../Util/BallDiff.js';
@@ -33,8 +36,10 @@ class Game extends React.Component {
     this.refPlayers = firebase.firestore().collection(currentUser.uid).doc('players');
     this.state = {
         loading: true,
-        isLoaded: false,
+        isLoaded: true,
         players: [],
+        isLoading: true,
+        visible: true,
     };
   }
 
@@ -66,9 +71,11 @@ class Game extends React.Component {
     momentum: this.props.momentum.momentumPrevOver || 0,
     momentumThisOver: this.props.momentum.momentumThisOver || [],
     autoNotOut: this.props.autoNotOut.autoNotOut || 0,
+    togglePremium: this.props.toggle.togglePremium || true,
+    toggleHomeLoad: this.props.toggle.toggleHomeLoad || true,
   };
 
-  handleChange = ( gameID, gameRuns, ball, players, games, gamesList, firstInningsRuns, playerStats, gameCards, teamPlayers, momentum, autoNotOut ) => {
+  handleChange = ( gameID, gameRuns, ball, players, games, gamesList, firstInningsRuns, playerStats, gameCards, teamPlayers, momentum, autoNotOut, toggle ) => {
     this.setState({ gameID });
     this.setState({ gameRuns });
     this.setState({ ball });
@@ -81,6 +88,7 @@ class Game extends React.Component {
     this.setState({ teamPlayers });
     this.setState({ momentum });
     this.setState({ autoNotOut });
+    this.setState({ toggle });
   };
 
   componentDidMount() {
@@ -184,7 +192,7 @@ class Game extends React.Component {
 })
 */
 
-
+//this.setState({ isLoading: false });
 
 }
 
@@ -203,11 +211,12 @@ onCollectionUpdate = (querySnapshot) => {
  });
 }
 
-
+/*
 componentWillUnmount() {
   console.log('componentWillUnmount');
     this.unsubscribe();
 }
+*/
 
 /*
 onCollectionUpdate = (querySnapshot) => {
@@ -245,12 +254,47 @@ endGame = () => {
     {text: 'Exit Game', onPress: () => {
       this.processLoss();
       const { navigation } = this.props;
-      this.props.navigation.navigate('GameListNew')
+      this.props.navigation.navigate('HomeApp')
 
     }},
   ],
   {cancelable: false},
 );
+}
+
+hideSpinner = () => {
+  console.log('hit lead?' );
+  console.log(this.props.toggle.togglePremium);
+  const visible = this.props.toggle.togglePremium;
+  this.setState({ visible: visible });
+  /*
+  this.setState({
+    togglePremium: false,
+  }, function () {
+    const { togglePremium } = this.state
+    this.props.dispatch(updateToggle(this.state.togglePremium));
+  })
+  */
+  //console.log(this.props.toggle.togglePremium);
+}
+
+getWebViewOne = () => {
+  console.log('getWebViewOn function');
+  if (this.props.toggle.togglePremium === true) {
+    return (
+      <Col style={{justifyContent: 'center', textAlign: 'center', height: '100%', height: '100%', backgroundColor: '#c471ed', width: 'auto', justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator
+        style={{ color: '#fff', height: 200, width: 'auto' }}
+        size="large"
+        color="#fff"
+      />
+      <Text style={{ color: '#fff', fontSize: 30, width: 'auto' }}>Loading...2</Text >
+      </Col>
+    )
+  }
+  else {
+      //nothing.
+  }
 }
 
 processLoss = () => {
@@ -378,14 +422,16 @@ this.ref.doc(filtered[0]).update({
     winningStreak: winningStreak,
 });
 
-
+const highestPlayerScore = this.props.playerStats.highestPlayerScore;
+const highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
+const highestTeamScore = this.props.playerStats.highestTeamScore;
 
 this.ref.doc("playerStats").update({
   winningStreak: winningStreak,
   longestStreak: longestStreak,
-  highestPlayerScore: 0,
-  highestPlayerScoreId: 0,
-  highestTeamScore: 0,
+  highestPlayerScore: highestPlayerScore,
+  highestPlayerScoreId: highestPlayerScoreId,
+  highestTeamScore: highestTeamScore,
   autoNotOut: autoNotOut,
 });
 
@@ -444,13 +490,16 @@ console.log(this.props.games.games);
 
 console.log(winningStreak);
 console.log(longestStreak);
+//const highestPlayerScore = this.props.playerStats.highestPlayerScore;
+//const highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
+//const highestTeamScore = this.props.playerStats.highestTeamScore;
 
 this.setState({
 winningStreak: winningStreak,
 longestStreak: longestStreak,
-highestPlayerScore: 0,
-highestPlayerScoreId: 0,
-highestTeamScore: 0,
+highestPlayerScore: highestPlayerScore,
+highestPlayerScoreId: highestPlayerScoreId,
+highestTeamScore: highestTeamScore,
 }, function () {
   const { winningStreak, longestStreak, highestPlayerScore, highestPlayerScoreId, highestTeamScore } = this.state
   this.props.dispatch(updatePlayerStats(this.state.winningStreak, this.state.longestStreak, this.state.highestPlayerScore, this.state.highestPlayerScoreId, this.state.highestTeamScore));
@@ -512,6 +561,14 @@ console.log(this.props.playerStats.longestStreak);
       allPlayers[player.id].scoreThree = scoreThree;
       allPlayers[player.id].outs = outs;
 
+      let batterRunsThisInnings  = allPlayers[player.id].highestScore;
+
+      if ((batterRuns > batterRunsThisInnings) || (batterRunsThisInnings === undefined)) {
+        batterRunsThisInnings = batterRuns;
+      }
+
+      teamPlayers[player.id].highestScore = batterRunsThisInnings;
+
       console.log(allPlayers);
 
       teamPlayers[player.id].scoreOne = batterRuns;
@@ -530,10 +587,10 @@ const teamPlayersSet = allPlayers.map(player => {
   console.log(player.id);
 
   if ((player.id === 1 || player.id === 2)) {
-    return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: player.autoNotOut};
+    return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: player.autoNotOut, highestScore: player.highestScore};
   }
   else {
-    return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: player.autoNotOut}
+    return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: player.autoNotOut, highestScore: player.highestScore}
   }
 });
 
@@ -574,12 +631,62 @@ this.setState({
 
 }
 
+getWebView = () => {
+  console.log('getWebView function');
+  if (this.props.toggle.toggleHomeLoad === true) {
+    return (
+      /*
+  <View>
+  <WebView
+
+    />
+    {this.props.toggle.toggleHomeLoad && (
+    */
+      <Col style={{justifyContent: 'center', textAlign: 'center', height: '100%', height: '100%', backgroundColor: '#c471ed', width: 'auto', justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator
+        style={{ color: '#fff', height: 200, width: 'auto' }}
+        size="large"
+        color="#fff"
+      />
+      <Text style={{ color: '#fff', fontSize: 30, width: 'auto' }}>Loading...68</Text >
+
+      </Col>
+    //)}
+    //</View>
+  )
+  }
+  /*
+  else {
+    return (
+  <View style={{ height: 0 }}>
+  <WebView
+
+    />
+    {this.props.toggle.toggleHomeLoad && (
+      <Col style={{justifyContent: 'center', textAlign: 'center', height: '100%', height: '100%', backgroundColor: '#c471ed', width: 'auto', justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator
+        style={{ color: '#fff', height: 200, width: 'auto' }}
+        size="large"
+        color="#fff"
+      />
+      <Text style={{ color: '#fff', fontSize: 30, width: 'auto' }}>Loading...7</Text >
+
+      </Col >
+    )}
+    </View>
+  )
+  }
+  */
+}
+
   render() {
     console.log('Hit Game!');
-    console.log(this.props.players.players);
-
+    //console.log(this.props.players.players);
+    //{this.getWebViewOne()}
     return (
-    <Container>
+    <Container >
+
+    {this.getWebView()}
     <Header hasTabs style={styles.headerStyle}>
       <Left size={1} >
         <Button style={styles.goButton} rounded large success
@@ -615,15 +722,34 @@ this.setState({
               style={{marginTop: 15, marginRight: 10, marginLeft: 10}}
               renderItem={({ item }) => <DisplayBattingCard {...item} />}
               />
-
+              <Row>
+                <Text style={{fontSize: 11, padding: 10}}><Text style={{fontSize: 12, fontWeight: '400'}}>Question: What does 'Form' for each batsman above mean?</Text> 'Form' is each batsmans average score in their last 3 innings. i.e. if the batsmans total runs in the <Text style={{fontWeight: '400'}}>last three innings is 96</Text> and they were <Text style={{fontWeight: '400'}}>out 3 times</Text>. Their 'form' score would be <Text style={{fontWeight: '400'}}>32</Text>.</Text>
+              </Row>
             </LinearGradient>
-            </ImageBackground >
+            </ImageBackground>
           </Tab>
-        </Tabs >
+        </Tabs>
   </Container>
   );
   }
 }
+
+/*
+<WebView
+    style={{ height: 0 }}
+  />
+  {this.props.toggle.toggleHomeLoad && (
+    <Col style={{justifyContent: 'center', textAlign: 'center', height: '100%', height: '100%', backgroundColor: '#c471ed', width: 'auto', justifyContent: 'center', alignItems: 'center'}}>
+    <ActivityIndicator
+      style={{ color: '#fff', height: 200, width: 'auto' }}
+      size="large"
+      color="#fff"
+    />
+    <Text style={{ color: '#fff', fontSize: 30, width: 'auto' }}>Loading...6</Text >
+
+    </Col >
+  )}
+  */
 
 const mapStateToProps = state => ({
   gameID: state.gameID,
@@ -638,6 +764,7 @@ const mapStateToProps = state => ({
   teamPlayers: state.teamPlayers,
   momentum: state.momentum,
   autoNotOut: state.autoNotOut,
+  toggle: state.toggle,
 });
 
 export default connect(mapStateToProps)(Game);

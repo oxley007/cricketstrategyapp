@@ -17,6 +17,7 @@ import { updateFirstInningsRuns } from '../../Reducers/firstInningsRuns';
 import { updateGames } from '../../Reducers/games';
 import { updatePlayerStats } from '../../Reducers/playerStats';
 import { updateAutoNotOut } from '../../Reducers/autoNotOut';
+import { updatePlayerRuns } from '../../Reducers/playerRuns';
 
 class TooCloseToCall extends React.Component {
   constructor(props) {
@@ -43,9 +44,15 @@ class TooCloseToCall extends React.Component {
     games: this.props.games.games || [],
     longestStreak: this.props.playerStats.longestStreak || 0,
     autoNotOut: this.props.autoNotOut.autoNotOut || 0,
+    winningStreak: this.props.playerStats.winningStreak || 0,
+    highestPlayerScore: this.props.playerStats.highestPlayerScore || 0,
+    highestPlayerScoreId: this.props.playerStats.highestPlayerScoreId || 0,
+    highestTeamScore: this.props.playerStats.highestTeamScore || 0,
+    playerRuns: this.props.playerRuns.wickets || 0,
+    playerRuns: this.props.playerRuns.totalRuns || 0,
   };
 
-  handleChange = ( gameRuns, gameID, players, firstInningsRuns, games, playerStats, autoNotOut ) => {
+  handleChange = ( gameRuns, gameID, players, firstInningsRuns, games, playerStats, autoNotOut, playerRuns ) => {
     this.setState({ gameID });
     this.setState({ gameRuns });
     this.setState({ players });
@@ -53,6 +60,7 @@ class TooCloseToCall extends React.Component {
     this.setState({ games });
     this.setState({ playerStats });
     this.setState({ autoNotOut });
+    this.setState({ playerRuns });
   };
 /*
   componentDidMount() {
@@ -81,10 +89,12 @@ getNavigation = () => {
     const { navigation } = this.props;
     const displayId = navigation.getParam('displayId');
     console.log(displayId);
-    const totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+    //const totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+    const totalRuns = this.props.playerRuns.totalRuns;
     console.log(totalRuns);
-    let getWicketCount = BallDiff.getWicketCount(gameRunEvents);
-    let totalWickets = getWicketCount[0];
+    //let getWicketCount = BallDiff.getWicketCount(gameRunEvents);
+    //let totalWickets = getWicketCount[0];
+    const totalWickets = this.props.playerRuns.wickets;
     console.log(totalWickets);
     const games = this.props.games.games;
     const longestStreak = this.props.playerStats.longestStreak;
@@ -160,12 +170,17 @@ getNavigation = () => {
   winningStreak = 0;
   const autoNotOut = this.props.autoNotOut.autoNotOut;
 
+  const highestPlayerScore = this.props.playerStats.highestPlayerScore;
+  const highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
+  const highestTeamScore = this.props.playerStats.highestTeamScore;
+
+
   this.ref.doc("playerStats").update({
     winningStreak: winningStreak,
     longestStreak: longestStreak,
-    highestPlayerScore: 0,
-    highestPlayerScoreId: 0,
-    highestTeamScore: 0,
+    highestPlayerScore: highestPlayerScore,
+    highestPlayerScoreId: highestPlayerScoreId,
+    highestTeamScore: highestTeamScore,
     autoNotOut: autoNotOut,
   });
 
@@ -237,12 +252,15 @@ getNavigation = () => {
   console.log(winningStreak);
   console.log(longestStreak);
 
+  //const highestPlayerScore = this.props.playerStats.highestPlayerScore;
+  //const highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
+
   this.setState({
   winningStreak: winningStreak,
   longestStreak: longestStreak,
-  highestPlayerScore: 0,
-  highestPlayerScoreId: 0,
-  highestTeamScore: 0,
+  highestPlayerScore: highestPlayerScore,
+  highestPlayerScoreId: highestPlayerScoreId,
+  highestTeamScore: highestTeamScore,
   }, function () {
     const { winningStreak, longestStreak, highestPlayerScore, highestPlayerScoreId, highestTeamScore } = this.state
     this.props.dispatch(updatePlayerStats(this.state.winningStreak, this.state.longestStreak, this.state.highestPlayerScore, this.state.highestPlayerScoreId, this.state.highestTeamScore));
@@ -270,6 +288,7 @@ getNavigation = () => {
       if (player.batterFlag === 0) {
         const scoreTwo = allPlayers[player.id].scoreOne;
         const scoreThree = allPlayers[player.id].scoreTwo;
+        const highestScore = allPlayers[player.id].highestScore;
         console.log('check 9');
 
         let outs = 0;
@@ -304,6 +323,7 @@ getNavigation = () => {
         allPlayers[player.id].scoreOne = batterRuns;
         allPlayers[player.id].scoreTwo = scoreTwo;
         allPlayers[player.id].scoreThree = scoreThree;
+        allPlayers[player.id].highestScore = highestScore;
         allPlayers[player.id].outs = outs;
 
         console.log(allPlayers);
@@ -324,7 +344,7 @@ getNavigation = () => {
 
   console.log('check 13');
 
-  this.props.navigation.navigate('GameListNew')
+  this.props.navigation.navigate('HomeApp')
 
   }
 
@@ -417,6 +437,7 @@ const mapStateToProps = state => ({
   games: state.games,
   playerStats: state.playerStats,
   autoNotOut: state.autoNotOut,
+  playerRuns: state.playerRuns,
 });
 
 export default connect(mapStateToProps)(TooCloseToCall);

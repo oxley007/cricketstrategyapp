@@ -32,7 +32,7 @@ export default class Login extends React.Component {
           games: [],
        });
       })
-      .then(() => this.props.navigation.navigate('GameListNew'))
+      .then(() => this.props.navigation.navigate('HomeApp'))
       .catch(error => this.setState({ errorMessage: error.message }))
   }
 

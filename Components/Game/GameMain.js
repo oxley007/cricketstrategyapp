@@ -3,7 +3,8 @@ import firebase from 'react-native-firebase';
 import LinearGradient from 'react-native-linear-gradient';
 import { Header, Left, Right, Icon, Content, Container, H1, H3, Footer, Button, Tab, Tabs } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
-import { StyleSheet, PixelRatio, ScrollView, View, Text, TextInput, Platform, Image, FlatList, Dimensions, ImageBackground } from 'react-native';
+import { StyleSheet, PixelRatio, ScrollView, View, Text, TextInput, Platform, Image, FlatList, Dimensions, ImageBackground, ActivityIndicator } from 'react-native';
+import { WebView } from 'react-native-webview';
 
 import { connect } from "react-redux";
 
@@ -13,6 +14,7 @@ import { updateBatterRuns } from '../../Reducers/batterRuns';
 import { updateGameId } from '../../Reducers/gameId';
 import { updateGames } from '../../Reducers/games';
 import { updatePlayers } from '../../Reducers/players';
+import { updateToggle } from '../../Reducers/toggle';
 
 import GameDisplayRuns from './GameDisplayRuns';
 import DisplayScorecard from '../Game/DisplayScorecard';
@@ -31,10 +33,11 @@ class Game extends React.Component {
     this.state = {
         textInput: '',
         textInputBatter: '',
-        loading: true,
+        loading: false,
         scorecard: [],
         docID: '',
-        scorecardTest: [{gameId: 111, title: 'AO', runs: 100, complete: 0}]
+        scorecardTest: [{gameId: 111, title: 'AO', runs: 100, complete: 0}],
+        visible: true,
     };
   }
 
@@ -44,13 +47,17 @@ class Game extends React.Component {
     games: this.props.games.games || [],
     players: this.props.players.players || [],
     facingBall: this.props.players.facingBall || 1,
+    togglePremium: this.props.toggle.togglePremium || true,
+    toggleHomeLoad: this.props.toggle.toggleHomeLoad || true,
+
   };
 
-  handleChange = ( batterRuns, gameID, games, players ) => {
+  handleChange = ( batterRuns, gameID, games, players, toggle ) => {
     this.setState({ batterRuns });
     this.setState({ gameID });
     this.setState({ games });
     this.setState({ players });
+    this.setState({ toggle });
   };
 
   componentDidMount() {
@@ -85,6 +92,8 @@ onCollectionUpdate = (querySnapshot) => {
     loading: false,
  });
 
+ this.hideSpinner();
+
  console.log(this.state.scorecard);
 }
 
@@ -101,11 +110,22 @@ onCollectionUpdate = (querySnapshot) => {
     });
   }
 
+  hideSpinner = () => {
+    console.log('hit lead 2?' );
+    this.setState({
+      togglePremium: false,
+      toggleHomeLoad: false,
+    }, function () {
+      const { togglePremium, toggleHomeLoad } = this.state
+      this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+    })
+  }
+
   scorecardList = () => {
     console.log(this.state.scorecard.item );
     return (
-      <Col>
-      <Row>
+      <Col >
+      <Row >
     <ScrollView>
       <Text>Scorecard:</Text>
     </ScrollView>
@@ -137,7 +157,7 @@ onCollectionUpdate = (querySnapshot) => {
     <ScrollView>
       <Text>Total:</Text>
     </ScrollView>
-    </Row>
+    </Row >
       <Row>
       <FlatList
           data={this.state.scorecard}
@@ -269,13 +289,21 @@ onCollectionUpdate = (querySnapshot) => {
     return (<BoardDisplayTopAttack style={{paddingLeft: 15, paddingRight: 15}} aggBoardValue={aggBoardValue} overPageFlag={false} />)
   }
 
-  render() {
-    if (this.state.loading) {
-    return null; // or render a loading icon
-  }
+  getView = () => {
+    if (this.state.loading === true) {
+      <Col style={{justifyContent: 'center', textAlign: 'center', height: '100%', height: '100%', backgroundColor: '#c471ed', width: 'auto', justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator
+        style={{ color: '#fff', height: 200, width: 'auto' }}
+        size="large"
+        color="#fff"
+      />
+      <Text style={{ color: '#fff', fontSize: 30, width: 'auto' }}>Loading...4</Text >
 
+      </Col >
+    }
+    else {
     return (
-    <Container style={{height: '100%', flex: 1, justifyContent: 'flex-end'}}>
+      <Col>
     <ImageBackground source={require(`../../assets/4dot6-sky-for-board.png`)} style={styles.backgroundImage}>
       <LinearGradient start={{x: 3, y: 2}} end={{x: 0, y: 0}}
       locations={[0,0.9,0.9]} colors={['#c471ed', '#12c2e9']} style={styles.linearGradientTwo}>
@@ -295,17 +323,74 @@ onCollectionUpdate = (querySnapshot) => {
         <Board navigation={this.props.navigation} />
       </ImageBackground>
     </Footer>
+    </Col>
+  )
+}
+  }
+
+  hideSpinner() {
+    console.log('when is this hit hideSpinnder?');
+this.setState({ loading: false });
+}
+
+getWebView = () => {
+if (this.props.toggle.toggleHomeLoad === true) {
+
+  return (
+    <Col style={{justifyContent: 'center', textAlign: 'center', height: '100%', height: '100%', backgroundColor: '#c471ed', width: 'auto', justifyContent: 'center', alignItems: 'center'}}>
+    <ActivityIndicator
+      style={{ color: '#fff', height: 200, width: 'auto' }}
+      size="large"
+      color="#fff"
+    />
+    <Text style={{ color: '#fff', fontSize: 30, width: 'auto' }}>Loading...6</Text >
+
+    </Col >
+  )
+}
+else {
+  return (
+    <Text>Hello!</Text>
+  )
+}
+}
+
+  render() {
+    /*
+    if (this.state.loading) {
+    return null; // or render a loading icon
+  }
+  */
+
+  console.log(this.props.toggle.toggleHomeLoad + ' this one here to cehk noe ok9');
+
+  const test = true;
+
+    return (
+    <Container style={{height: '100%', flex: 1, justifyContent: 'flex-end'}}>
+
+
+    {this.getView()}
+
 
   </Container>
   );
   }
 }
 
+/*
+<WebView
+  onLoad={() => this.getWebView()}
+  style={{ height: 0 }}
+/>
+*/
+
 const mapStateToProps = state => ({
   batterRuns: state.batterRuns,
   gameID: state.gameID,
   games: state.games,
   players: state.players,
+  toggle: state.toggle,
 });
 
 export default connect(mapStateToProps)(Game);
@@ -415,7 +500,7 @@ const styles = StyleSheet.create({
         resizeMode: 'cover', // or 'stretch'
     },
     footerStyle: {
-      height: 250, 
+      height: 250,
       backgroundColor: 'transparent',
       borderTopWidth: 0,
       elevation: 0,

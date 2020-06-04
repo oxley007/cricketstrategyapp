@@ -142,12 +142,16 @@ class Iap extends Component {
       autoNotOut = autoNotOut + 10;
     }
 
+    const highestPlayerScore = this.props.playerStats.highestPlayerScore;
+    const highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
+    const highestTeamScore = this.props.playerStats.highestTeamScore;
+
     this.ref.doc("playerStats").update({
       winningStreak: winningStreak,
       longestStreak: longestStreak,
-      highestPlayerScore: 0,
-      highestPlayerScoreId: 0,
-      highestTeamScore: 0,
+      highestPlayerScore: highestPlayerScore,
+      highestPlayerScoreId: highestPlayerScoreId,
+      highestTeamScore: highestTeamScore,
       autoNotOut: autoNotOut,
     });
 

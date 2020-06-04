@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { ScrollView, View, Text, TextInput, StyleSheet, PixelRatio, Platform, Image, FlatList } from 'react-native';
+import { ScrollView, View, Text, TextInput, StyleSheet, PixelRatio, Platform, Image, FlatList, ActivityIndicator } from 'react-native';
 import {Header,Left,Right,Icon,Content,Grid,Row,Col,Container,H1,H3,Footer,Button,FooterTab} from 'native-base';
 import LinearGradient from 'react-native-linear-gradient';
 import SplashScreen from 'react-native-splash-screen';
+import { WebView } from 'react-native-webview';
 
 import { connect } from "react-redux";
 import firebase from 'react-native-firebase';
@@ -13,6 +14,9 @@ import { updateGames } from '../../Reducers/games';
 import { updateGamesList } from '../../Reducers/gamesList';
 import { updatePlayerStats } from '../../Reducers/playerStats';
 import { updatePlayers } from '../../Reducers/players';
+import { updateToggle } from '../../Reducers/toggle';
+import { updateWideCount } from '../../Reducers/wideCount';
+
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -49,15 +53,20 @@ class GameList extends React.Component {
     highestTeamScore: this.props.playerStats.highestTeamScore || 0,
     players: this.props.players.players || [],
     facingBall: this.props.players.facingBall || 1,
+    togglePremium: this.props.toggle.togglePremium || true,
+    toggleHomeLoad: this.props.toggle.toggleHomeLoad || true,
+    widecount: this.props.widecount.widecount || 0,
   };
 
-  handleChange = ( gameID, gameRuns, games, gamesList, playerStats, players ) => {
+  handleChange = ( gameID, gameRuns, games, gamesList, playerStats, players, toggle, widecount ) => {
     this.setState({ gameID });
     this.setState({ gameRuns });
     this.setState({ games });
     this.setState({ gamesList });
     this.setState({ playerStats });
     this.setState({ players });
+    this.setState({ toggle });
+    this.setState({ widecount });
   };
 
  //state = { currentUser: null }
@@ -82,10 +91,12 @@ componentWillMount() {
   console.log('is this hit right now #3?');
 }
 
+/*
 componentWillUnmount() {
     this.unsubscribe();
     console.log('is this hit right now #2?');
 }
+*/
 
 onDocCollectionUpdate = (documentSnapshot) => {
 
@@ -131,6 +142,7 @@ onDocCollectionUpdate = (documentSnapshot) => {
   })
 
   console.log(this.props.players.players);
+
   }
 
 }
@@ -245,7 +257,7 @@ this.props.navigation.addListener('didFocus', payload => {
 
 addnewGame = () => {
   console.log(this.props.games.games);
-  const { currentUser } = this.state
+  //const { currentUser } = this.state
 
   //const uuidv4 = require('uuid/v4');
   uuidv4();
@@ -262,13 +274,13 @@ addnewGame = () => {
     let now = new Date();
     let isoString = now.toISOString();
     console.log(isoString);
-    dateTime = isoString.replace(/T/, '').replace(/\..+/, '').replace(/-/, '').replace(/:/, '').replace(/-/, '').replace(/:/, '');
+    const dateTime = isoString.replace(/T/, '').replace(/\..+/, '').replace(/-/, '').replace(/:/, '').replace(/-/, '').replace(/:/, '');
     console.log(dateTime);
     const dateTimeInt = parseInt(dateTime);
     console.log(this.state.gamesDb);
     const games = this.state.gamesDb
 
-
+    /*
     console.log(this.props.games.games);
     if (this.props.games.games === undefined || this.props.games.games === null || this.props.games.games.length < 1 || this.props.games.games === []) {
       console.log('add new game hit');
@@ -282,52 +294,71 @@ addnewGame = () => {
         const { games } = this.state
         this.props.dispatch(updateGames(this.state.games));
       })
-      */
+
 
 
     }
 
+    this.setState({
+      togglePremium: false,
+      toggleHomeLoad: false,
+    }, function () {
+      const { togglePremium, toggleHomeLoad } = this.state
+      this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+    })
+    */
 
+    //console.log(currentUser.uid + ' uid current user.');
+    console.log(gameID);
+    console.log(dateTimeInt);
 
+    const { navigation } = this.props;
 
+    /*
   firebase.firestore().collection(currentUser.uid).add({
     gameId: gameID,
     gameName: 'Cricket Strategy Simulator',
     displayId: dateTimeInt,
     gameResult: 0,
   })
-  .then(this.setState({
+  .then(
+  */
+  this.setState({
     gameID: gameID,
   }, function () {
     console.log('gameID redux set hit ' + gameID);
     const { gameID } = this.state
     this.props.dispatch(updateGameId(this.state.gameID));
-  }))
+  })
+  //).then(
+
+    this.props.navigation.navigate('SimulateFirstInnings', {
+      displayId: dateTimeInt,
+      gameID: gameID
+      })
+  //)
+
   /*
-  .then(this.setState({
-    games: games,
-  }, function () {
-    console.log('gameID redux set hit ' + games);
-    const { games } = this.state
-    this.props.dispatch(updateGames(this.state.games));
-  }))
-  */
-  //.then(this.props.navigation.navigate('Game'))
-  .then(this.props.navigation.navigate('SimulateFirstInnings', {
-    displayId: dateTimeInt,
-    gameID: gameID
-    }))
+      setTimeout(function () {
+          const test = 'test';
+          console.log(test + ' this is a teting.');
+      }, 5000);
+      */
+
+}
+
+navigateSim = () => {
 
 }
 
 onCollectionUpdate = (querySnapshot) => {
   console.log(this.props.games.games);
-  let games = [];
+  let games = this.props.games.games;
+
+
   querySnapshot.forEach((doc) => {
     console.log(doc.data());
     const { gameId, gameName, firstInningsRuns, totalRuns, topScore, topScorePlayer, topSecondScore, topSecondScorePlayer, topScoreBalls, topSecondBalls, displayId, totalWickets, gameResult } = doc.data();
-
-
 
     games.push({
       key: doc.id,
@@ -366,6 +397,7 @@ onCollectionUpdate = (querySnapshot) => {
        return 0;
      });
 
+
  this.setState({
    games: games,
  }, function () {
@@ -373,9 +405,37 @@ onCollectionUpdate = (querySnapshot) => {
    this.props.dispatch(updateGames(this.state.games));
   })
   }
+  else {
+
+  let countGames = 0;
+
+  /*
+  games = games.map(acc => {
+  console.log(acc);
+  console.log(acc.gameResult + ' gameResult 1');
+  console.log(countGames + ' countGames 1');
+  if (acc.gameResult === 0 && countGames === 0) {
+    console.log(acc.gameResult + ' gameResult 2');
+    countGames++
+    return {displayId: acc.displayId, firstInningsRuns: acc.firstInningsRuns, gameId: acc.gameId, gameName: acc.gameName, gameResult: 3, gameRunEvents: acc.gameRunEvents, players: acc.players, key: acc.key, topScore: acc.topScore, topScoreBalls: acc.topScoreBalls, topScorePlayer: acc.topScorePlayer, topSecondBalls: acc.topSecondBalls, topSecondScore: acc.topSecondScore, topSecondScorePlayer: acc.topSecondScorePlayer, totalRuns: acc.totalRuns, totalWickets: acc.totalWickets, keyId: acc.keyId};
+  }
+  else {
+    countGames++
+    return acc;
+  }
+  });
+  */
+
+  this.setState({
+    games: games,
+  }, function () {
+    const { games } = this.state
+    this.props.dispatch(updateGames(this.state.games));
+   })
+ }
 
 
-  gamesLength = games.length;
+  const gamesLength = games.length;
   console.log(gamesLength);
   this.setState({
     gamesLength: gamesLength,
@@ -391,7 +451,7 @@ onCollectionUpdate = (querySnapshot) => {
     console.log(this.props.games.games);
     console.log(this.props.games.games);
 
-/*
+
 if (this.props.games.games === undefined || this.props.games.games === null || this.props.games.games.length < 1) {
 
 const games = this.state.gamesDb.sort((a, b) => {
@@ -416,7 +476,9 @@ const games = this.state.gamesDb.sort((a, b) => {
     )
   }
   else {
-  */
+
+
+
     console.log('redux games hit');
     const games = this.props.games.games.sort((a, b) => {
           if (a.displayId < b.displayId) return -1;
@@ -442,11 +504,13 @@ const games = this.state.gamesDb.sort((a, b) => {
         )
         */
 
+
+
         return (
-          <Col>
+          <Col >
           <Row>
             <DisplayGames navigation={this.props.navigation} />
-          </Row>
+          </Row >
         </Col>
         )
       //}
@@ -457,6 +521,33 @@ const games = this.state.gamesDb.sort((a, b) => {
     drawerIcon : ({tintColor}) => (
       <Icon name="sync" style={{fontSize: 24, color: tintColor}} />
     )
+  }
+
+  goToStats = ()  => {
+    const { navigation } = this.props;
+    this.props.navigation.navigate('StatsMain');
+  }
+
+  getWebView = () => {
+
+    console.log(this.props.toggle.toggleHomeLoad);
+    console.log('getwebview please.');
+
+    if (this.props.toggle.toggleHomeLoad === true) {
+      return (
+        <Col style={{justifyContent: 'center', textAlign: 'center', height: '100%', height: '100%', backgroundColor: '#c471ed', width: 'auto', justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator
+          style={{ color: '#fff', height: 200, width: 'auto' }}
+          size="large"
+          color="#fff"
+        />
+        <Text style={{ color: '#fff', fontSize: 30, width: 'auto' }}>Loading...2</Text>
+        </Col>
+      )
+    }
+    else {
+        //nothing.
+    }
   }
 
   render() {
@@ -472,6 +563,7 @@ const games = this.state.gamesDb.sort((a, b) => {
 
     return (
     <Container>
+    {this.getWebView()}
     <Header style={styles.headerStyle}>
       <Left size={1}>
         <Icon name="menu" onPress={() => this.props.navigation.openDrawer()} style={{color: '#fff', paddingLeft: 20, marginTop: 'auto', marginBottom: 'auto' }} />
@@ -483,7 +575,7 @@ const games = this.state.gamesDb.sort((a, b) => {
       />
       </Col>
       <Right size={1} style={styles.colVerticleAlign}>
-        </Right>
+        </Right >
     </Header>
     <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
     locations={[0,0.9,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradient}>
@@ -499,6 +591,20 @@ const games = this.state.gamesDb.sort((a, b) => {
           UID: {currentUser.uid}!
         </Text>
       </View>
+      <View>
+      <Button
+        vertical
+        success
+        style={{height: '100%'}}
+        onPress={() => this.props.navigation.navigate('SimulateFirstInnings', {
+          displayId: 87889798,
+          gameID: 54343543
+          })} >
+        <Icon type="AntDesign" name="forward" style={{color: '#666'}} />
+        <Text style={{color: '#fff'}}>New</Text>
+        <Text style={{color: '#fff'}}>Game</Text>
+      </Button>
+      </View>
     </Content>
     <Footer style={{ height: 120, backgroundColor: 'transparent', borderTopWidth: 0, backgroundColor: 'transparent', elevation: 0, shadowOpacity: 0 }}>
       <FooterTab>
@@ -506,8 +612,9 @@ const games = this.state.gamesDb.sort((a, b) => {
           vertical
           light
           style={{height: '100%'}}
-          onPress={() => props.navigation.navigate("CricStratIap")}>
-          <Icon name="bowtie" />
+          onPress={() => this.goToStats()}>
+          <Icon name="ios-stats" type="Ionicons" />
+          <Text>Game</Text>
           <Text>Stats</Text>
         </Button>
         <Button vertical
@@ -523,11 +630,12 @@ const games = this.state.gamesDb.sort((a, b) => {
           success
           style={{height: '100%'}}
           onPress={() => this.addnewGame()} >
-          <Icon name="headset" />
-          <Text>New Game</Text>
+          <Icon type="AntDesign" name="forward" style={{color: '#666'}} />
+          <Text style={{color: '#fff'}}>New</Text>
+          <Text style={{color: '#fff'}}>Game3</Text>
         </Button>
       </FooterTab>
-    </Footer>
+    </Footer >
     </LinearGradient>
   </Container>
   );
@@ -542,6 +650,8 @@ const mapStateToProps = state => ({
   gamesList: state.gamesList,
   playerStats: state.playerStats,
   players: state.players,
+  toggle: state.toggle,
+  widecount: state.widecount,
 });
 
 export default connect(mapStateToProps)(GameList);
