@@ -41,7 +41,7 @@ class ExplainerImageSix extends React.PureComponent {
             )} >
             <Col style={{alignItems: 'flex-start', marginTop: 40}}>
               <Row>
-                <Text style={styles.buttonTextExplain}>Choose <Text style={{backgroundColor: '#7CFC00', color: '#000'}}>Defensive</Text> if you want to keep wickets and build momentum for big hitting at the end of the innings. Or, if you lose early wickets and need to  rescue the innings.</Text>
+                <Text style={styles.buttonTextExplain}>Choose <Text style={{backgroundColor: '#7CFC00', color: '#000'}}>Defensive</Text> if you want to keep wickets and build momentum for big hitting at the end of the innings. Or, choose <Text style={{backgroundColor: '#7CFC00', color: '#000'}}>Defensive</Text> if you lose early wickets and need to rescue the innings.</Text>
               </Row>
               <Row>
                 <Text style={styles.buttonTextExplain}>With the three options availble for each batsman, it's up to you to choose the right aggression to control the innnigs and chase down the total.</Text>
@@ -143,7 +143,7 @@ var styles = StyleSheet.create({
       justifyContent: 'center',
       elevation: 0,
       shadowOpacity: 0,
-      height: 250
+      height: 300
     },
     buttonTextBackLoad: {
       fontSize: 30,

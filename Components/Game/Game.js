@@ -5,6 +5,7 @@ import { Header, Left, Right, Icon, Content, Container, H1, H3, Footer, Button, 
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { StyleSheet, PixelRatio, ScrollView, View, Text, TextInput, Platform, Image, FlatList, Dimensions, ImageBackground, Alert, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
+//import NetInfo from "@react-native-community/netinfo";
 
 import { connect } from "react-redux";
 import { updateGameId } from '../../Reducers/gameId';
@@ -27,6 +28,16 @@ import DisplayBattingCard from '../Board/DisplayBattingCard';
 import BallDiff from '../../Util/BallDiff.js';
 import CardBoard from '../../Util/CardBoard.js';
 
+/*
+// Subscribe
+const unsubscribe = NetInfo.addEventListener(state => {
+console.log("Connection type", state.type);
+console.log("Is connected?", state.isConnected);
+});
+
+// Unsubscribe
+unsubscribe();
+*/
 
 class Game extends React.Component {
   constructor(props) {
@@ -40,6 +51,7 @@ class Game extends React.Component {
         players: [],
         isLoading: true,
         visible: true,
+        continueGameArray: [],
     };
   }
 
@@ -91,6 +103,7 @@ class Game extends React.Component {
     this.setState({ toggle });
   };
 
+
   componentDidMount() {
     console.log(this.props.players.facingBall);
     //SplashScreen.hide()
@@ -103,10 +116,15 @@ class Game extends React.Component {
     let allPlayers = this.props.players.players
     console.log(allPlayers);
 
+    const { navigation } = this.props;
+    const continueGame = navigation.getParam('continueGame', false);
+    console.log(continueGame + ' continueGame here..');
+
     let id = 0
     let batterFlag = 2;
+    if (continueGame != true) {
     allPlayers.map(player => {
-      console.log('hit 3');
+      console.log('hit 3 game here..');
       console.log(player);
       if (id === 1 || id === 2) {
         batterFlag = 0;
@@ -126,6 +144,10 @@ class Game extends React.Component {
       id++
       console.log(id);
       });
+    }
+    else {
+      this.setState({ continueGameArray: allPlayers });
+    }
 
       console.log('hit');
       console.log(allPlayers);
@@ -397,12 +419,12 @@ let game = {
   players: allPlayers,
   gameRunEvents: gameRunEvents,
   key: filtered[0],
-  topScore: battersHighestScore[0][0],
-  topScorePlayer: battersNameHighestScore[0].player,
-  topScoreBalls: highestScoreBallCount,
-  topSecondScore: battersSecondHighestScore[0][0],
-  topSecondScorePlayer: battersNameSecondHighestScore[0].player,
-  topSecondBalls: secondHighestScoreBallCount,
+  topScore: 0,
+  topScorePlayer: 'Game',
+  topScoreBalls: 0,
+  topSecondScore: 0,
+  topSecondScorePlayer: 'Abandoned',
+  topSecondBalls: 0,
   totalRuns: totalRunsRefresh,
   totalWickets: totalWickets,
   winningStreak: winningStreak,
@@ -411,12 +433,12 @@ this.ref.doc(filtered[0]).update({
     gameRunEvents: gameRunEvents,
     totalRuns: totalRunsRefresh,
     players: allPlayers,
-    topScore: battersHighestScore[0][0],
-    topScorePlayer: battersNameHighestScore[0].player,
-    topScoreBalls: highestScoreBallCount,
-    topSecondScore: battersSecondHighestScore[0][0],
-    topSecondScorePlayer: battersNameSecondHighestScore[0].player,
-    topSecondBalls: secondHighestScoreBallCount,
+    topScore: 0,
+    topScorePlayer: 'Game',
+    topScoreBalls: 0,
+    topSecondScore: 0,
+    topSecondScorePlayer: 'Abandoned',
+    topSecondBalls: 0,
     totalWickets: totalWickets,
     gameResult: 1,
     winningStreak: winningStreak,
@@ -444,12 +466,12 @@ let gameComplete = {
   players: allPlayers,
   gameRunEvents: gameRunEvents,
   key: filtered[0],
-  topScore: battersHighestScore[0][0],
-  topScorePlayer: battersNameHighestScore[0].player,
-  topScoreBalls: highestScoreBallCount,
-  topSecondScore: battersSecondHighestScore[0][0],
-  topSecondScorePlayer: battersNameSecondHighestScore[0].player,
-  topSecondBalls: secondHighestScoreBallCount,
+  topScore: 0,
+  topScorePlayer: 'Game',
+  topScoreBalls: 0,
+  topSecondScore: 0,
+  topSecondScorePlayer: 'Abandoned',
+  topSecondBalls: 0,
   totalRuns: totalRunsRefresh,
   totalWickets: totalWickets,
 }
@@ -515,8 +537,12 @@ this.setState({
 console.log(this.props.playerStats.winningStreak);
 console.log(this.props.playerStats.longestStreak);
 
+const facingBall = this.props.players.facingBall;
+const teamPlayers = this.props.teamPlayers.teamPlayers;
+
 //Add not out batsman runs here to player's Form attribute.
 
+/*
   allPlayers = this.props.players.players;
   const facingBall = this.props.players.facingBall;
   const teamPlayers = this.props.teamPlayers.teamPlayers;
@@ -581,6 +607,7 @@ console.log(this.props.playerStats.longestStreak);
 
     }
 })
+*/
 
 const teamPlayersSet = allPlayers.map(player => {
   console.log(player);
@@ -708,7 +735,7 @@ getWebView = () => {
           <Tab heading={<TabHeading style={styles.activeTabStyle}>
                  <Text style={styles.activeTextStyle}>Scoreboard</Text>
                </TabHeading>}>
-            <TabOne navigation={this.props.navigation} />
+            <TabOne navigation={this.props.navigation} continueGameArray={this.state.continueGameArray}/>
           </Tab>
           <Tab heading={<TabHeading style={styles.activeTabStyle}>
                  <Text style={styles.activeTextStyle}>Batting Card</Text>

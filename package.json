@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/netinfo": "^5.9.3",
     "dimensions": "^0.1.0",
     "native-base": "^2.13.8",
     "react": "16.9.0",
@@ -19,10 +20,12 @@
     "react-native-cli": "^2.0.1",
     "react-native-firebase": "^5.6.0",
     "react-native-gesture-handler": "^1.6.0",
+    "react-native-get-random-values": "^1.4.0",
     "react-native-haptic-feedback": "^1.9.0",
     "react-native-iap": "^4.4.2",
     "react-native-iphone-x-helper": "^1.2.1",
     "react-native-linear-gradient": "^2.5.6",
+    "react-native-netinfo": "^1.1.0",
     "react-native-reanimated": "^1.7.0",
     "react-native-restart": "0.0.14",
     "react-native-screens": "^2.2.0",

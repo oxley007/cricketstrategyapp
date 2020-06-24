@@ -357,7 +357,7 @@ getMomentum = () => {
       backgroundColor: '#FF69B4',
       position: 'absolute',}}>
       </Animated.View>
-          <Text style={styles.strikeRateWValueText}>Momentum: {momentumScore}</Text>
+          <Text style={styles.strikeRate100ValueTextMoRed}>Momentum: {momentumScore}</Text>
       </Row>
   )
   }
@@ -374,7 +374,7 @@ getMomentum = () => {
       backgroundColor: '#C68642',
       position: 'absolute',}}>
       </Animated.View>
-          <Text style={styles.strikeRate100ValueText}>Momentum: {momentumScore}</Text>
+          <Text style={styles.strikeRate100ValueTextMo}>Momentum: {momentumScore}</Text>
       </Row>
   )
   }
@@ -753,7 +753,7 @@ getForm = () => {
       backgroundColor: '#7CFC00',
       position: 'absolute',}}>
       </Animated.View>
-          <Text style={styles.strikeRate141ValueText}>Form: {formScore}</Text>
+          <Text style={styles.strikeRate141ValueTextHigh}>Form: {formScore}</Text>
       </Row>
   )
   }
@@ -867,6 +867,7 @@ const styles = StyleSheet.create({
     marginBottom: 'auto',
     //fontWeight: 'bold',
     padding: 5,
+    fontSize: 14, //here change.
   },
   strikeRate140ValueSquareDarkOpacity: {
     width: '100%',
@@ -902,6 +903,7 @@ const styles = StyleSheet.create({
     marginBottom: 'auto',
     //fontWeight: 'bold',
     padding: 5,
+    fontSize: 14, //here change.
   },
   strikeRate141ValueSquareDarkOpacity: {
     width: '100%',
@@ -937,6 +939,17 @@ const styles = StyleSheet.create({
     marginBottom: 'auto',
     //fontWeight: 'bold',
     padding: 5,
+    fontSize: 14, //here change.
+  },
+  strikeRate141ValueTextHigh: {
+    color: '#555',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 'auto',
+    marginBottom: 'auto',
+    //fontWeight: 'bold',
+    padding: 5,
+    fontSize: 12, //here change.
   },
   strikeRate100ValueSquareDarkOpacity: {
     width: '100%',
@@ -972,6 +985,27 @@ const styles = StyleSheet.create({
     marginBottom: 'auto',
     //fontWeight: 'bold',
     padding: 5,
+    fontSize: 14, //here change.
+  },
+  strikeRate100ValueTextMo: {
+    color: '#fff',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 'auto',
+    marginBottom: 'auto',
+    //fontWeight: 'bold',
+    padding: 5,
+    fontSize: 13, //here change.
+  },
+  strikeRate100ValueTextMoRed: {
+    color: '#fff',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 'auto',
+    marginBottom: 'auto',
+    //fontWeight: 'bold',
+    padding: 5,
+    fontSize: 12, //here change.
   },
   strikeRate60ValueSquareDarkOpacity: {
     width: '100%',
@@ -1007,6 +1041,7 @@ const styles = StyleSheet.create({
     marginBottom: 'auto',
     //fontWeight: 'bold',
     padding: 5,
+    fontSize: 14, //here change.
   },
   strikeRateWValueSquareDarkOpacity: {
     width: '100%',
@@ -1042,6 +1077,7 @@ const styles = StyleSheet.create({
     marginBottom: 'auto',
     //fontWeight: 'bold',
     padding: 5,
+    fontSize: 14, //here change.
   },
   greyValueSquare: {
     width: '100%',

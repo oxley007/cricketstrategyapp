@@ -2971,8 +2971,28 @@ let currentKey = games.map(acc => {
   console.log(filtered);
   //console.log(filtered[0]);
 
+    let filterCount = 0;
 
-  let filterCount = -1
+  if (filtered === 2) {
+    filterCount = -2
+  }
+  else if (filtered === 3) {
+    filterCount = -3
+  }
+  else if (filtered === 4) {
+    filterCount = -4
+  }
+  else if (filtered === 5) {
+    filterCount = -5
+  }
+  else if (filtered === 6) {
+    filterCount = -6
+  }
+  else {
+    filterCount = -1
+  }
+
+
   //let filterIndex = filtered[0].map(acc => {
 
   const filterLength = filtered.length;
@@ -2985,17 +3005,25 @@ let currentKey = games.map(acc => {
 
     console.log(' is this the bug thats happening?');
 
-  let filterIndex = filtered[0].map(acc => {
-    console.log(acc);
-    filterCount++;
-    console.log(filterCount);
-    if (acc === null || acc === undefined) {
-      return 0;
-    }
-    else {
-        return filterCount;
-      }
-    });
+    console.log(filtered);
+    console.log(filtered[0]);
+
+    let filterIndex = [];
+
+    try {
+      let filterIndex = filtered[0].map(acc => {
+        console.log(acc);
+        filterCount++;
+        console.log(filterCount);
+        if (acc === null || acc === undefined) {
+          return 0;
+        }
+        else {
+            return filterCount;
+          }
+        });
+
+
 
     console.log(filterIndex);
 
@@ -3011,7 +3039,11 @@ let currentKey = games.map(acc => {
   console.log(filtered[filterIndexTotal]);
   return filtered[0][filterIndexTotal];
   //return filtered;
+} catch (error) {
+  return 999999999;
+}
   }
+
 },
 
 
@@ -4055,6 +4087,8 @@ getMomentumEndOfOver(requiredRunRate, gameRunEvents, momentum) {
 
   const runsCountTotal = sum(runsCount.map(acc => Number(acc)));
   console.log(runsCountTotal);
+
+  let momentumRRR = false;
 
   if (runsCountTotal >= requiredRunRate) {
     momentum = 5;

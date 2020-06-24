@@ -6,6 +6,7 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import { StyleSheet, PixelRatio, ScrollView, View, Text, TextInput, Platform, Image, FlatList, Dimensions } from 'react-native';
 
 import { connect } from "react-redux";
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 import OverBowledBoard from './OverBowledBoard';
 import BoardDisplayStats from '../Board/BoardDisplayStats';
@@ -63,6 +64,7 @@ componentWillUnmount() {
 
 gameNavigateBack = () => {
 
+  ReactNativeHapticFeedback.trigger('notificationSuccess', true);
   const players = this.props.players.players;
 
   let playerOneName = '';
@@ -178,7 +180,7 @@ gameNavigateBack = () => {
     <Container>
     <Header style={styles.headerStyle}>
       <Left size={1}>
-        <Icon name="menu" onPress={() => this.props.navigation.openDrawer()} style={{color: '#fff', paddingLeft: 20, marginTop: 'auto', marginBottom: 'auto' }} />
+
       </Left>
       <Col size={1} style={ styles.logoStylingCol }>
       <Image

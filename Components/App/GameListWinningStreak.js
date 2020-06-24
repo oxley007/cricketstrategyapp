@@ -29,7 +29,7 @@ class GameListWinningStreak extends React.Component {
     highestPlayerScoreId: this.props.playerStats.highestPlayerScoreId || 0,
     highestTeamScore: this.props.playerStats.highestTeamScore || 0,
     games: this.props.games.games || [],
-    autoNotOut: this.props.autoNotOut.autoNotOut || 0,
+    autoNotOut: this.props.autoNotOut.autoNotOut || 3,
   };
 
   handleChange = ( playerStats, games, autoNotOut ) => {
@@ -62,23 +62,39 @@ onDocCollectionUpdate = (documentSnapshot) => {
   let highestTeamScore = 0
   let highestPlayerScore = 0
   let highestPlayerScoreId = []
-  const autoNotOut = documentSnapshot.data().autoNotOut;
+  let autoNotOut = 0;
+  try {
+    autoNotOut = documentSnapshot.data().autoNotOut;
+} catch (error) {
+console.log('hit should nav to AddPlayers.');
+  autoNotOut = this.props.autoNotOut.autoNotOut;
+}
+
 
   if (documentSnapshot.data() === undefined || documentSnapshot.data() === null) {
     //longestStreak = 0;
     //winningStreak = 0;
-    longestStreak = documentSnapshot.data().longestStreak;
-    winningStreak = documentSnapshot.data().winningStreak;
-    highestTeamScore = documentSnapshot.data().highestTeamScore;
-    highestPlayerScore = documentSnapshot.data().highestPlayerScore;
-    highestPlayerScoreId = documentSnapshot.data().highestPlayerScoreId;
+    try {
+      longestStreak = documentSnapshot.data().longestStreak;
+      winningStreak = documentSnapshot.data().winningStreak;
+      highestTeamScore = documentSnapshot.data().highestTeamScore;
+      highestPlayerScore = documentSnapshot.data().highestPlayerScore;
+      highestPlayerScoreId = documentSnapshot.data().highestPlayerScoreId;
+  } catch (error) {
+    winningStreak = this.props.playerStats.winningStreak;
+    longestStreak = this.props.playerStats.longestStreak;
+    highestTeamScore = this.props.playerStats.highestTeamScore;
+    highestPlayerScore = this.props.playerStats.highestPlayerScore;
+    highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
+  }
+
   }
   else {
     //longestStreak = documentSnapshot.data().longestStreak;
     //winningStreak = documentSnapshot.data().winningStreak;
     winningStreak = this.props.playerStats.winningStreak;
     longestStreak = this.props.playerStats.longestStreak;
-    highestTeamScore = this.props.playerStats.highestPlayerScore;
+    highestTeamScore = this.props.playerStats.highestTeamScore;
     highestPlayerScore = this.props.playerStats.highestPlayerScore;
     highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
   }

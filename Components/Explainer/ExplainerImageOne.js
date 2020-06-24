@@ -44,10 +44,10 @@ class ExplainerImageOne extends React.PureComponent {
               <Text style={styles.buttonTextExplainHow}>How to play:</Text>
             </Row>
             <Row>
-              <Text style={styles.buttonTextExplain}>The aim of the game is to not lose early wickets and score boundaries to gain innings momentum.</Text>
+              <Text style={styles.buttonTextExplain}>The key to sucess is to not lose early wickets and score boundaries to gain innings momentum.</Text>
             </Row>
               <Row>
-                <Text style={styles.buttonTextExplain}>If the momentum is going well you'll see all <Text style={{backgroundColor: '#7CFC00', color: '#000'}}>green</Text> as shown above</Text>
+                <Text style={styles.buttonTextExplain}>If the momentum is going well you'll see all <Text style={{backgroundColor: '#7CFC00', color: '#000'}}>green</Text> as highlighted above</Text>
               </Row>
               <Row>
                 <Text style={styles.buttonTextBack}>Next <Icon name='ios-arrow-forward' style={styles.buttonTextBack} /></Text>

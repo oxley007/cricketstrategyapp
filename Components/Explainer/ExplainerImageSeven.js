@@ -32,14 +32,14 @@ class ExplainerImageSeven extends React.PureComponent {
       return (
       <Container>
         <ImageBackground source={require('../../assets/ExplainerImageSeven.png')} style={styles.backgroundImageBg}>
-          <Row style={{bottom: 0, position: 'absolute'}}>
+          <Row style={{top: 0, position: 'absolute'}}>
             <Button large warning style={styles.largeButton}
             onPress={() => this.props.navigation.navigate('ExplainerImageEight', {
               gameId: gameId,
               displayId: displayId,
               }
             )} >
-            <Col style={{alignItems: 'flex-start'}}>
+            <Col style={{alignItems: 'flex-start', marginTop: 40}}>
               <Row>
                 <Text style={styles.buttonTextExplain}>When the board lands on a <Text style={{backgroundColor: '#FF69B4', color: '#fff'}}>wicket</Text> you'll go to a thrid unpire decision.</Text>
               </Row>

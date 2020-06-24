@@ -5,13 +5,13 @@ import {Row,Col,Container,Content} from 'native-base';
 
 import LinearGradient from 'react-native-linear-gradient';
 
-//import SplashScreen from 'react-native-splash-screen';
+import SplashScreen from 'react-native-splash-screen';
 import firebase from 'react-native-firebase'
 
 export default class Loading extends React.Component {
 
   componentDidMount() {
-    //SplashScreen.hide()
+    SplashScreen.hide()
     firebase.auth().onAuthStateChanged(user => {
       this.props.navigation.navigate(user ? 'HomeApp' : 'SignUp')
     })

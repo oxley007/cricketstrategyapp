@@ -91,26 +91,41 @@ const CustomDrawerComponent = (props) => (
 
 const RootStack = createDrawerNavigator(
   {
-    HomeApp: {
-      screen: HomeApp,
-    },
     Loading: {
       screen: Loading,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
     },
     Login: {
       screen: Login,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
+    },
+    HomeApp: {
+      screen: HomeApp,
     },
     HitRuns: {
       screen: HitRuns,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
     },
     CricStratIap: {
       screen: CricStratIap,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
     },
     StatsMain: {
       screen: StatsMain,
     },
     SimulateFirstInningsSpecial: {
       screen: SimulateFirstInningsSpecial,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
     },
     ExplainerImageThree: {
       screen: ExplainerImageThree,
@@ -123,7 +138,7 @@ const RootStack = createDrawerNavigator(
     },
     ExplainerImageFour: {
       screen: ExplainerImageFour,
-    },
+    }, 
     ExplainerImageFive: {
       screen: ExplainerImageFive,
     },
@@ -147,43 +162,89 @@ const RootStack = createDrawerNavigator(
     },
     IapTrue: {
       screen: IapTrue,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
     },
     SignUp: {
       screen: SignUp,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
     },
     SimulateFirstInnings: {
       screen: SimulateFirstInnings,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
     },
     SimulateFirstInningsNew: {
       screen: SimulateFirstInningsNew,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
     },
     GameAddPlayers: {
       screen: GameAddPlayers,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
     },
     SignOut: {
       screen: SignOut,
     },
     Game: {
       screen: Game,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
     },
     OverBowled: {
       screen: OverBowled,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
     },
     WicketCheck: {
       screen: WicketCheck,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
     },
     WicketOut: {
       screen: WicketOut,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
     },
     WicketNotOut: {
       screen: WicketNotOut,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
     },
     TooCloseToCall: {
       screen: TooCloseToCall,
+      navigationOptions: {
+      drawerLabel: <Hidden />
+    }
     },
     GameAddPreBuiltTeam: {
       screen: GameAddPreBuiltTeam,
+      navigationOptions: {
+      drawerLabel: <Hidden />
     }
+    }
+    /*
+    GameListings: {
+      screen: GameListings,
+    },
+    GameListNew: {
+      screen: GameListNew,
+    },
+    GameListingsNew: {
+      screen: GameListingsNew,
+    },*/
   },
   {
     contentComponent: CustomDrawerComponent,

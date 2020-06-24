@@ -146,7 +146,7 @@ var styles = StyleSheet.create({
       justifyContent: 'center',
       elevation: 0,
       shadowOpacity: 0,
-      height: 250
+      height: 300
     },
     buttonTextBackLoad: {
       fontSize: 30,

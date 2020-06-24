@@ -3139,7 +3139,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
         backgroundColor: '#f7ff00',
         position: 'absolute',}}>
         </Animated.View>
-        <Text style={styles.sixValueText}>{data.run}a</Text>
+        <Text style={styles.sixValueText}>{data.run}</Text>
         </Row>
     )
     }
@@ -3174,7 +3174,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
             backgroundColor: '#7CFC00',
             position: 'absolute',}}>
             </Animated.View>
-                <Text style={styles.sixValueText}>{data.run}b</Text>
+                <Text style={styles.sixValueText}>{data.run}</Text>
             </Row >
         )
         }
@@ -3196,7 +3196,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#FF69B4',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRateWValueText}>{data.run}.d</Text>
+              <Text style={styles.strikeRateWValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3213,7 +3213,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
         backgroundColor: '#ff8300',
         position: 'absolute',}}>
         </Animated.View>
-            <Text style={styles.strikeRateWValueText}>{data.run}cc</Text >
+            <Text style={styles.strikeRateWValueText}>{data.run}</Text >
         </Row>
     )
     }
@@ -3230,7 +3230,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#FF69B4',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRateWValueText}>{data.run}iii</Text>
+              <Text style={styles.strikeRateWValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3248,7 +3248,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
             backgroundColor: '#C68642',
             position: 'absolute',}}>
             </Animated.View>
-                <Text style={styles.strikeRateWValueText}>{data.run}]</Text>
+                <Text style={styles.strikeRateWValueText}>{data.run}</Text>
             </Row>
           )
         }
@@ -3266,7 +3266,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#FF8300',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRateWickerValueText}>{data.run}.j</Text>
+              <Text style={styles.strikeRateWickerValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3283,7 +3283,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#FF8300',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRate100ValueText}>{data.run}.e</Text>
+              <Text style={styles.strikeRate100ValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3303,7 +3303,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#FF8300',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRate100ValueText}>{data.run}.h</Text>
+              <Text style={styles.strikeRate100ValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3358,7 +3358,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#f7ff00',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRate120ValueText}>{data.run}t.</Text>
+              <Text style={styles.strikeRate120ValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3392,7 +3392,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#5bd1fc',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRate140ValueText}>{data.run}c</Text>
+              <Text style={styles.strikeRate140ValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3409,7 +3409,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#7CFC00',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRate141ValueText}>{data.run}d</Text>
+              <Text style={styles.strikeRate141ValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3426,14 +3426,14 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#ffbf00',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRate141ValueText}>{data.run}i</Text>
+              <Text style={styles.strikeRate141ValueText}>{data.run}</Text>
           </Row>
       )
       }
       else {
         return (
           <Row style={styles.runValueSquare}>
-              <Text style={styles.rundValueText}>{data.run}v</Text>
+              <Text style={styles.rundValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3519,7 +3519,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
   if (data.col === cardNumberValue && data.header === 1) {
     return (
     <Row style={styles.CardValueSquare}>
-      <Text style={styles.CardValueText}>{data.run}.e</Text>
+      <Text style={styles.CardValueText}>{data.run}</Text>
     </Row>
   )
   }
@@ -3541,7 +3541,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#f7ff00',
           position: 'absolute',}}>
           </Animated.View>
-          <Text style={styles.sixValueText}>{data.run}f</Text>
+          <Text style={styles.sixValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3558,7 +3558,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#FF69B4',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.rundValueText}>{data.run}fff</Text>
+              <Text style={styles.rundValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3579,7 +3579,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
             backgroundColor: '#7CFC00',
             position: 'absolute',}}>
             </Animated.View>
-                <Text style={styles.sixValueText}>{data.run}g</Text>
+                <Text style={styles.sixValueText}>{data.run}</Text>
             </Row>
         )
         }
@@ -3599,7 +3599,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#C68642',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRateWValueText}>{data.run}hh</Text>
+              <Text style={styles.strikeRateWValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3617,7 +3617,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#FF69B4',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRateWValueText}>{data.run}.u</Text >
+              <Text style={styles.strikeRateWValueText}>{data.run}</Text >
           </Row>
       )
       }
@@ -3634,7 +3634,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
         backgroundColor: '#ff8300',
         position: 'absolute',}}>
         </Animated.View>
-            <Text style={styles.strikeRateWValueText}>{data.run}cd</Text>
+            <Text style={styles.strikeRateWValueText}>{data.run}</Text>
         </Row>
     )
     }
@@ -3651,7 +3651,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#FF69B4',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRateWValueText}>{data.run}ii.</Text >
+              <Text style={styles.strikeRateWValueText}>{data.run}</Text >
           </Row>
       )
       }
@@ -3669,7 +3669,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#C68642',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRateWickerValueTextRedBG}>{data.run}aa</Text>
+              <Text style={styles.strikeRateWickerValueTextRedBG}>{data.run}</Text>
           </Row>
       )
       }
@@ -3687,7 +3687,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#FF8300',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRateWickerValueTextRedBG}>{data.run}av</Text >
+              <Text style={styles.strikeRateWickerValueTextRedBG}>{data.run}</Text >
           </Row >
       )
       }
@@ -3704,7 +3704,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#FF8300',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRate100ValueText}>{data.run}jjj</Text>
+              <Text style={styles.strikeRate100ValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3722,7 +3722,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#C68642',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRateWickerValueText}>{data.run}kk</Text>
+              <Text style={styles.strikeRateWickerValueText}>{data.run}</Text>
           </Row>
         )
       }
@@ -3739,7 +3739,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#fff',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRate120ValueText}>{data.run}n.</Text>
+              <Text style={styles.strikeRate120ValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3757,7 +3757,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#f7ff00',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRateWickerValueText}>{data.run}LL</Text >
+              <Text style={styles.strikeRateWickerValueText}>{data.run}</Text >
           </Row>
       )
     }
@@ -3774,7 +3774,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
         backgroundColor: '#f7ff00',
         position: 'absolute',}}>
         </Animated.View>
-            <Text style={styles.strikeRate120ValueText}>{data.run}m.</Text>
+            <Text style={styles.strikeRate120ValueText}>{data.run}</Text>
         </Row>
     )
     }
@@ -3792,7 +3792,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#fff',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRate120ValueText}>{data.run}nn</Text>
+              <Text style={styles.strikeRate120ValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3809,7 +3809,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#5bd1fc',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRate140ValueText}>{data.run}h</Text>
+              <Text style={styles.strikeRate140ValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3826,7 +3826,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#7CFC00',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRate141ValueText}>{data.run}ix</Text>
+              <Text style={styles.strikeRate141ValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3843,7 +3843,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           backgroundColor: '#ffbf00',
           position: 'absolute',}}>
           </Animated.View>
-              <Text style={styles.strikeRate141ValueText}>{data.run}oo</Text>
+              <Text style={styles.strikeRate141ValueText}>{data.run}</Text>
           </Row>
       )
       }
@@ -3933,7 +3933,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
       return (
         <Animated.View style={{opacity}}>
         <Row style={styles.fourValueSquareOpacity}>
-          <Text style={styles.rundValueTextOpacity}>{data.run}j</Text>
+          <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
         </Row>
         </Animated.View>
     )
@@ -3951,7 +3951,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           return (
             <Animated.View style={{opacity}}>
             <Row style={styles.sixValueSquareOpacity}>
-                <Text style={styles.rundValueTextOpacity}>{data.run}zz</Text>
+                <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
             </Row>
             </Animated.View>
         )
@@ -3980,7 +3980,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
         <View style={styles.strikeRate60ValueSquareDarkOpacityUnderLB}>
         <Row style={styles.strikeRateWValueSquareDarkOpacityLB}>
 
-            <Text style={styles.rundValueTextOpacity}>{data.run}xx</Text>
+            <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
 
         </Row>
           </View>
@@ -3993,7 +3993,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRateWValueSquareDarkOpacityUnder}>
           <Row style={styles.strikeRateWValueSquareDarkOpacity}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}yy</Text >
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text >
 
           </Row>
             </View>
@@ -4033,7 +4033,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRate120ValueSquareDarkOpacityUnder}>
           <Row style={styles.strikeRate120ValueSquareDarkOpacity}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}.x</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
 
           </Row>
             </View>
@@ -4046,7 +4046,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRate100ValueSquareDarkOpacityUnder}>
           <Row style={styles.strikeRate100ValueSquareDarkOpacity}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}ua</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
 
           </Row>
             </View>
@@ -4059,7 +4059,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
         <View style={styles.strikeRate60ValueSquareDarkOpacityUnderYellow}>
         <Row style={styles.strikeRate60ValueSquareDarkOpacityYellow}>
 
-            <Text style={styles.rundValueTextOpacityDark}>{data.run}.f</Text>
+            <Text style={styles.rundValueTextOpacityDark}>{data.run}</Text>
 
         </Row>
           </View>
@@ -4072,7 +4072,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRate120ValueSquareDarkOpacityUnder}>
           <Row style={styles.strikeRate120ValueSquareDarkOpacity}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}ya</Text >
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text >
 
           </Row>
             </View>
@@ -4085,7 +4085,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRateValueSquareDarkOpacityUnderLightBlue}>
           <Row style={styles.strikeRateValueSquareDarkOpacityLightBlue}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}.n</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
 
           </Row>
             </View>
@@ -4098,7 +4098,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRate140ValueSquareDarkOpacityUnder}>
           <Row style={styles.strikeRate140ValueSquareDarkOpacity}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}m</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
 
           </Row>
             </View>
@@ -4111,7 +4111,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRate141ValueSquareDarkOpacityUnder}>
           <Row style={styles.strikeRate141ValueSquareDarkOpacity}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}n</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
 
           </Row>
             </View>
@@ -4122,7 +4122,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
         return (
           <Animated.View style={{opacity}}>
           <Row style={styles.runValueSquareOpacity}>
-              <Text style={styles.rundValueTextOpacity}>{data.run}..</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
           </Row>
           </Animated.View>
       )
@@ -4193,7 +4193,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
       return (
         <Animated.View style={{opacity}}>
         <Row style={styles.fourValueSquareDarkOpacity}>
-          <Text style={styles.rundValueTextOpacity}>{data.run}o</Text>
+          <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
         </Row>
         </Animated.View >
     )
@@ -4202,7 +4202,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
         return (
           <Animated.View style={{opacity}}>
           <Row style={styles.wicketValueSquareDarkOpacity}>
-              <Text style={styles.rundValueTextOpacity}>{data.run}.k</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
           </Row>
           </Animated.View>
       )
@@ -4211,7 +4211,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           return (
             <Animated.View style={{opacity}}>
             <Row style={styles.sixValueSquareDarkOpacity}>
-                <Text style={styles.rundValueTextOpacity}>{data.run}q</Text>
+                <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
             </Row>
             </Animated.View>
         )
@@ -4226,7 +4226,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRateWValueSquareDarkOpacityUnder}>
           <Row style={styles.strikeRateWValueSquareDarkOpacity}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}t</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
 
           </Row>
             </View>
@@ -4239,7 +4239,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRate140ValueSquareDarkOpacityUnder2}>
           <Row style={styles.strikeRate140ValueSquareDarkOpacity2}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}q</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
 
           </Row>
             </View>
@@ -4252,7 +4252,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRate60ValueSquareDarkOpacityUnder}>
           <Row style={styles.strikeRate60ValueSquareDarkOpacity}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}uc</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
 
           </Row>
             </View>
@@ -4265,7 +4265,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRate60ValueSquareDarkOpacityUnderLB}>
           <Row style={styles.strikeRateWValueSquareDarkOpacityLB}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}xc</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
 
           </Row>
             </View>
@@ -4278,7 +4278,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRate120ValueSquareDarkOpacityUnder}>
           <Row style={styles.strikeRate120ValueSquareDarkOpacity}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}.x</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
 
           </Row>
             </View>
@@ -4293,7 +4293,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRate60ValueSquareDarkOpacityUnderYellow}>
           <Row style={styles.strikeRate60ValueSquareDarkOpacityYellow}>
 
-              <Text style={styles.rundValueTextOpacityDark}>{data.run}.b</Text>
+              <Text style={styles.rundValueTextOpacityDark}>{data.run}</Text>
 
           </Row>
             </View>
@@ -4306,7 +4306,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRate120ValueSquareDarkOpacityUnder}>
           <Row style={styles.strikeRate120ValueSquareDarkOpacity}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}.z</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
 
           </Row>
             </View>
@@ -4319,7 +4319,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRateValueSquareDarkOpacityUnderLightBlue}>
           <Row style={styles.strikeRateValueSquareDarkOpacityLightBlue}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}s.</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
 
           </Row>
             </View>
@@ -4332,7 +4332,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRate140ValueSquareDarkOpacityUnder}>
           <Row style={styles.strikeRate140ValueSquareDarkOpacity}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}r</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
 
           </Row>
             </View>
@@ -4345,7 +4345,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
           <View style={styles.strikeRate141ValueSquareDarkOpacityUnder}>
           <Row style={styles.strikeRate141ValueSquareDarkOpacity}>
 
-              <Text style={styles.rundValueTextOpacity}>{data.run}x</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
 
           </Row>
             </View>
@@ -4356,7 +4356,7 @@ if ((data.id === 55 && (data.run === "W" || data.run === "1" || data.run === "0"
         return (
           <Animated.View style={{opacity}}>
           <Row style={styles.runValueSquareDarkOpacity}>
-              <Text style={styles.rundValueTextOpacity}>{data.run}.</Text>
+              <Text style={styles.rundValueTextOpacity}>{data.run}</Text>
           </Row>
           </Animated.View>
       )
@@ -4410,7 +4410,7 @@ getView = () => {
         size="large"
         color="#fff"
       />
-      <Text style={{ color: '#fff', fontSize: 30, width: 'auto' }}>Loading...3</Text >
+      <Text style={{ color: '#fff', fontSize: 30, width: 'auto' }}>Loading...</Text >
 
       </Col >
     )

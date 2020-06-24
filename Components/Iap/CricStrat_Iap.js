@@ -7,10 +7,13 @@ import {
     PixelRatio,
     Image,
     ImageBackground,
+    ActivityIndicator,
 } from "react-native";
 import {Header,Left,Right,Icon,Content,Grid,Row,Col,Container,H1,Button,Footer} from 'native-base';
 import LinearGradient from 'react-native-linear-gradient';
 import firebase from 'react-native-firebase';
+import { WebView } from 'react-native-webview';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 //Redux imports
 import { connect } from "react-redux";
@@ -75,7 +78,7 @@ class Iap extends Component {
       productList: [],
       receipt: '',
       availableItemsMessage: '',
-      loading: true,
+      loading: false,
       sku: '',
     };
   }
@@ -136,10 +139,10 @@ class Iap extends Component {
 
 
     if (sku === 'AUTONOTOUT01') {
-      autoNotOut = autoNotOut + 4;
+      autoNotOut = autoNotOut + 8;
     }
     else {
-      autoNotOut = autoNotOut + 10;
+      autoNotOut = autoNotOut + 22;
     }
 
     const highestPlayerScore = this.props.playerStats.highestPlayerScore;
@@ -198,12 +201,13 @@ class Iap extends Component {
 
   getItems = async (): void => {
     console.log(this.state.loading);
+    this.setState({loading: true});
+    console.log(this.state.loading)
     try {
       const products = await RNIap.getProducts(itemSkus);
       // const products = await RNIap.getSubscriptions(itemSkus);
       console.log('Products', products);
-      this.setState({loading: false});
-      console.log(this.state.loading);
+      ;
       this.setState({productList: products});
     } catch (err) {
       console.warn(err.code, err.message);
@@ -311,6 +315,102 @@ getAvailablePurchases = async (): void => {
     }
   };
 
+  getProductsView = (product, i) => {
+    return (
+      <View
+        key={i}
+        style={{
+          flexDirection: 'column',
+        }}>
+
+        <ImageBackground source={require(`../../assets/4dot6-cricekt-sim-bg-image-2.png`)} style={styles.backgroundImage}>
+        <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
+        locations={[0,0.9,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradientOpacity}>
+
+            <Col size={1} style={styles.rowPaddingCoachChat}>
+        {this.getDescription(JSON.stringify(product.description))}
+        </Col>
+        </LinearGradient>
+        </ImageBackground>
+        <Button large warning style={styles.lightGreenButton}
+        onPress={(): void =>
+          this.requestPurchase(product.productId)
+        }>
+           <Icon type="AntDesign" name="plus" style={styles.autoNotOutIcon} />{this.getPrice(JSON.stringify(product.price))}<Text> </Text>{this.getTitle(JSON.stringify(product.title))}
+         </Button>
+         <WebView
+           onLoad={() => this.hideSpinner()}
+           style={{ flex: 1 }}
+         />
+        </View>
+    );
+  }
+
+  hideSpinner = () => {
+    this.setState({loading: false});
+    console.log(this.state.loading);
+  }
+
+  spinner = () => {
+    if (this.state.loading === true) {
+      return (
+      <ActivityIndicator
+        style={{ color: '#fff', height: 200, width: 'auto', position: 'absolute', width: '100%', backgroundColor: '#c471ed' }}
+        size="large"
+        color="#fff"
+      />
+    )
+  }
+}
+
+getButton = () => {
+  ReactNativeHapticFeedback.trigger('impactLight', true);
+  const { navigation } = this.props;
+  let iapGameOver = navigation.getParam('iapGameOver', false);
+  let iapWicket = navigation.getParam('iapWicket', false);
+  if (iapGameOver === true) {
+      return (
+      <Button large warning style={styles.lightGreenButton100}
+         // onPress={(): void => this.requestPurchase(product.productId)}
+         onPress={() => this.props.navigation.navigate('HomeApp')}>
+         <Col size={1} style={{alignItems: 'flex-end'}}>
+        <Icon type="AntDesign" name="back" style={styles.autoNotOutIcon} />
+        </Col>
+        <Col size={2}>
+        <Text style={styles.lightGreenButtonTextButton}>Go Back</Text>
+        </Col>
+       </Button>
+    )
+  }
+  if (iapWicket === true) {
+      return (
+      <Button large warning style={styles.lightGreenButton100}
+         // onPress={(): void => this.requestPurchase(product.productId)}
+         onPress={() => this.props.navigation.navigate('WicketCheck')}>
+          <Col size={1} style={{alignItems: 'flex-end'}}>
+         <Icon type="AntDesign" name="back" style={styles.autoNotOutIcon} />
+         </Col>
+         <Col size={2}>
+         <Text style={styles.lightGreenButtonTextButton}>Go Back</Text>
+         </Col>
+       </Button>
+    )
+  }
+  else {
+    return (
+    <Button large warning style={styles.lightGreenButton100}
+       onPress={() => this.props.navigation.navigate('HomeApp')}>
+       <Col size={1} style={{alignItems: 'flex-end'}}>
+      <Icon type="AntDesign" name="back" style={styles.autoNotOutIcon} />
+      </Col>
+      <Col size={2}>
+      <Text style={styles.lightGreenButtonTextButton}>Go Back</Text>
+      </Col>
+     </Button>
+   )
+  }
+}
+
     render() {
       const purchase = this.props.toggle.togglePremium;
       const { productList, receipt, availableItemsMessage } = this.state;
@@ -319,7 +419,7 @@ getAvailablePurchases = async (): void => {
           <Container>
           <Header style={styles.headerStyle}>
           <Left size={1}>
-            <Icon name="menu" onPress={() => this.props.navigation.openDrawer()} style={{color: '#fff', paddingLeft: 20, marginTop: 'auto', marginBottom: 'auto' }} />
+
           </Left>
           <Col size={1} style={ styles.logoStylingCol }>
           <Image
@@ -358,6 +458,8 @@ getAvailablePurchases = async (): void => {
              <Text style={styles.lightGreenButtonText}>Choose auto-notout options...</Text>
              <Icon type="AntDesign" name="downcircleo" style={styles.autoNotOutIcon} />
            </Button>
+           <Col>
+
            {productList.map((product, i) => {
              return (
                <View
@@ -365,8 +467,7 @@ getAvailablePurchases = async (): void => {
                  style={{
                    flexDirection: 'column',
                  }}>
-                 <Loader
-                 loading={this.state.loading} />
+
                  <ImageBackground source={require(`../../assets/4dot6-cricekt-sim-bg-image-2.png`)} style={styles.backgroundImage}>
                  <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
                  locations={[0,0.9,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradientOpacity}>
@@ -382,21 +483,24 @@ getAvailablePurchases = async (): void => {
                  }>
                     <Icon type="AntDesign" name="plus" style={styles.autoNotOutIcon} />{this.getPrice(JSON.stringify(product.price))}<Text> </Text>{this.getTitle(JSON.stringify(product.title))}
                   </Button>
+                  <WebView
+                    onLoad={() => this.hideSpinner()}
+                    style={{ flex: 1 }}
+                  />
                  </View>
              );
            })}
 
+            </Col>
                 </Col>
-
+                <Col style={{height: 200}}>
+                {this.spinner()}
+                </Col>
                 </Content>
                 </LinearGradient>
                 </ImageBackground>
                 <Footer style={{ height: 100, backgroundColor: 'transparent', borderTopWidth: 0, backgroundColor: 'transparent', elevation: 0, shadowOpacity: 0 }}>
-                <Button large warning style={styles.lightGreenButton100}
-                   // onPress={(): void => this.requestPurchase(product.productId)}
-                   onPress={() => this.props.navigation.navigate('WicketCheck')}>
-                   <Icon type="AntDesign" name="back" style={styles.autoNotOutIcon} /><Text style={styles.lightGreenButtonText}>Go Back</Text>
-                 </Button>
+                {this.getButton()}
                 </Footer>
 
               </Container>
@@ -573,6 +677,10 @@ const styles = StyleSheet.create({
   lightGreenButtonText: {
     color: '#fff',
     fontSize: 18,
+  },
+  lightGreenButtonTextButton: {
+    color: '#fff',
+    fontSize: 36,
   },
   lightGreenButton100: {
     width: '100%',

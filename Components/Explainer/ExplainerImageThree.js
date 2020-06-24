@@ -31,7 +31,7 @@ class ExplainerImageThree extends React.PureComponent {
 
       return (
       <Container>
-        <ImageBackground source={require('../../assets/ExplainerImageTwo.png')} style={styles.backgroundImageBg}>
+        <ImageBackground source={require('../../assets/ExplainerImageThree.png')} style={styles.backgroundImageBg}>
           <Row style={{bottom: 0, position: 'absolute'}}>
             <Button large warning style={styles.largeButton}
             onPress={() => this.props.navigation.navigate('ExplainerImageFour', {
@@ -44,7 +44,7 @@ class ExplainerImageThree extends React.PureComponent {
               <Text style={styles.buttonTextExplain}>If you lose wickets in clusters you'll lose momentum points!</Text>
               </Row>
               <Row>
-              <Text style={styles.buttonTextExplain}>You'll lose -5 momenutm points for a wicket, and -20 if you lose 2 wickets within 6 balls!</Text>
+              <Text style={styles.buttonTextExplain}>You'll lose -6 momenutm points for a wicket, and -10 if you lose 2 wickets within 6 balls!</Text>
               </Row>
               <Row>
                 <Text style={styles.buttonTextExplain}>Which means you'll see <Text style={{backgroundColor: '#FF69B4', color: '#fff'}}>red</Text>. And lots of wickets will show on the board. Oh no!</Text>
@@ -58,7 +58,7 @@ class ExplainerImageThree extends React.PureComponent {
             </Button>
           </Row>
         </ImageBackground>
-      </Container>
+      </Container >
         );
     }
 

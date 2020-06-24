@@ -4,6 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView, View, Text, TextInput, StyleSheet, PixelRatio, Platform, Image, FlatList, TouchableHighlight, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import {Header,Left,Right,Icon,Content,Grid,Row,Col,Container,H1,H3,Footer,Button,FooterTab} from 'native-base';
 import { WebView } from 'react-native-webview';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 import { connect } from "react-redux";
 import { updateGameId } from '../../Reducers/gameId';
@@ -220,9 +221,10 @@ onDocCollectionUpdate = (documentSnapshot) => {
 
   let id = 0;
   let batterFlag = 2;
+  console.log(ball + ' is ball' + over + ' is over');
   if (ball === 0 && over === 0) {
   allPlayers.map(player => {
-    console.log(player);
+    console.log(player + ' when is this one hit????');
 
 
 
@@ -365,6 +367,7 @@ let firstInningsRuns = games.map(acc => {
 
 
   handleCards = () => {
+    ReactNativeHapticFeedback.trigger('notificationSuccess', true);
     const randomClick = this.state.randomClick
     if (randomClick === 2) {
     clearInterval(this.incrementer)
@@ -473,6 +476,7 @@ let firstInningsRuns = games.map(acc => {
   }
 
   handleStopCardsOne = () => {
+    ReactNativeHapticFeedback.trigger('notificationSuccess', true);
     const randomClick = this.state.randomClick
     if (randomClick === 0) {
     this.setState({ randomClick: 1 });
@@ -589,36 +593,50 @@ let firstInningsRuns = games.map(acc => {
   }
 
     handleStopCards = () => {
+      ReactNativeHapticFeedback.trigger('notificationSuccess', true);
       const randomClick = this.state.randomClick
       if (randomClick === 1) {
       this.setState({ randomClick: 2 });
       var cardOne = this.state.cardOne;
       console.log(cardOne);
-      var cardTwo = this.state.cardTwo;
-
-      if ((cardOne === 1 && cardTwo === 4) || (cardOne === 1 && cardTwo === 1)) {
-        cardTwo === 7;
-      }
-      else if ((cardOne === 2 && cardTwo === 2) || (cardOne === 2 && cardTwo === 5)) {
-        cardTwo === 3;
-      }
-      else if ((cardOne === 3 && cardTwo === 2) || (cardOne === 3 && cardTwo === 3)) {
-        cardTwo === 1;
-      }
-      else if ((cardOne === 4 && cardTwo === 4) || (cardOne === 4 && cardTwo === 3)) {
-        cardTwo === 7;
-      }
-      else if ((cardOne === 5 && cardTwo === 5) || (cardOne === 5 && cardTwo === 7)) {
-        cardTwo === 2;
-      }
-      else if ((cardOne === 6 && cardTwo === 6) || (cardOne === 6 && cardTwo === 4)) {
-        cardTwo === 2;
-      }
-      else if ((cardOne === 7 && cardTwo === 6) || (cardOne === 7 && cardTwo === 7)) {
-        cardTwo === 5;
-      }
+      let cardTwo = this.state.cardTwo;
 
       let gameRunEvents = this.props.gameRuns.gameRunEvents;
+
+      let gameRunEventsLength = gameRunEvents.length;
+      //gameRunEventsLength++
+
+      console.log(gameRunEventsLength + ' gameRunEventsLength');
+
+      console.log(cardTwo + ' card two before if.');
+
+      if (gameRunEventsLength === 1 || gameRunEventsLength === '1' || gameRunEventsLength >= 120 || gameRunEventsLength === '120') {
+      if (((cardOne === 0 || cardOne === 7 || cardOne === 13 || cardOne === 21) && (cardTwo === 3 || cardTwo === 10 || cardTwo === 17 || cardTwo === 24 )) || ((cardOne === 0 || cardOne === 7 || cardOne === 13 || cardOne === 21) && (cardTwo === 0 || cardTwo === 7 || cardTwo === 13 || cardTwo === 21))) {
+        cardTwo === 6;
+      }
+      else if (((cardOne === 1 || cardOne === 8 || cardOne === 15 || cardOne === 22) && (cardTwo === 1 || cardTwo === 8 || cardTwo === 15 || cardTwo === 22)) || ((cardOne === 1 || cardOne === 8 || cardOne === 15 || cardOne === 22) && (cardTwo === 4 || cardTwo === 11 || cardTwo === 18 || cardTwo === 25))) {
+        cardTwo === 16;
+      }
+      else if (((cardOne === 2 || cardOne === 9 ||  cardOne === 16 || cardOne === 23) && (cardTwo === 1 || cardTwo === 8 || cardTwo === 15 || cardTwo === 22 )) || ((cardOne === 2 || cardOne === 9 ||  cardOne === 16 || cardOne === 23) && (cardTwo === 2 || cardTwo === 9 ||  cardTwo === 16 || cardTwo === 23))) {
+        cardTwo === 21;
+      }
+      else if (((cardOne === 3 || cardOne === 10 || cardOne === 17 || cardOne === 24) && (cardTwo === 3 || cardTwo === 10 || cardTwo === 17 || cardTwo === 24)) || ((cardOne === 3 || cardOne === 10 || cardOne === 17 || cardOne === 24) && (cardTwo === 2 || cardTwo === 9 ||  cardTwo === 16 || cardTwo === 23))) {
+        cardTwo === 27;
+      }
+      else if (((cardOne === 4 || cardOne === 11 || cardOne === 18 || cardOne === 25) && (cardTwo === 4 || cardTwo === 11 || cardTwo === 18 || cardTwo === 25)) || ((cardOne === 4 || cardOne === 11 || cardOne === 18 || cardOne === 25) && (cardTwo === 6 || cardTwo === 13 || cardTwo === 20 || cardTwo === 27))) {
+        cardTwo === 1;
+      }
+      else if (((cardOne === 5 || cardOne === 12 || cardOne === 19 || cardOne === 26) && (cardTwo === 5 || cardTwo === 12 || cardTwo === 19 || cardTwo === 26)) || ((cardOne === 5 || cardOne === 12 || cardOne === 19 || cardOne === 26) && (cardTwo === 3 || cardTwo === 10 || cardTwo === 17 || cardTwo === 24))) {
+        cardTwo === 15;
+      }
+      else if (((cardOne === 6 || cardOne === 13 || cardOne === 20 || cardOne === 27) && (cardTwo === 5 || cardTwo === 12 || cardTwo === 19 || cardTwo === 26)) || ((cardOne === 6 || cardOne === 13 || cardOne === 20 || cardOne === 27) && (cardTwo === 6 || cardTwo === 13 || cardTwo === 20 || cardTwo === 27))) {
+        cardTwo === 18;
+      }
+      }
+
+        console.log(cardTwo + '   card two after if.');
+
+
       const players =  this.props.players.players;
       let facingBall = this.props.players.facingBall;
       let autoNotOut = this.props.autoNotOut.autoNotOut;
@@ -831,7 +849,16 @@ let firstInningsRuns = games.map(acc => {
           //nothing
         }
 
+
+
+        try {
         console.log(facingBall);
+      } catch (error) {
+      facingBall = 1;
+      }
+
+      let facingBatter = 0;
+
         if (facingBall === 1) {
           facingBatter = idBatterOneNumber;
         }
@@ -1164,6 +1191,7 @@ let firstInningsRuns = games.map(acc => {
         this.props.navigation.navigate('OverBowled', {
           requiredRunRate: runRate,
           momentumEndOfOverRRR: momentumEndOfOverRRR,
+          fromWicket: false,
         });
     }, 2000);  //5000 milliseconds
 
@@ -1179,7 +1207,7 @@ let firstInningsRuns = games.map(acc => {
           console.log(gameRunEvents);
           //gameRunEvents = this.props.gameRuns.gameRunEvents;
           //console.log(gameRunEvents);
-          totalRunsRefresh = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+          const totalRunsRefresh = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
           console.log(totalRunsRefresh);
 
           console.log('naviagte not hit');
@@ -1730,8 +1758,8 @@ let firstInningsRuns = games.map(acc => {
 
     console.log(this.props.games.games);
 
-    console.log(winningStreak);
-    console.log(longestStreak);
+    console.log(winningStreak + ' winningStreak board');
+    console.log(longestStreak + ' longestStreak board');
 
     //const highestPlayerScore = this.props.playerStats.highestPlayerScore;
     //const highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
@@ -1815,23 +1843,28 @@ let firstInningsRuns = games.map(acc => {
             console.log('check 11');
 
             let batterRunsHighest  = allPlayers[player.id].highestScore;
-            let batterRunsInt;
+            let batterRunsInt = 0;
             let batterRunsHighestInt = 0;
 
-            console.log(batterRunsInt + ' wicket batterRuns ');
-            console.log(batterRunsHighestInt +  ' wicket batterRunsHighest ');
+            console.log(batterRunsInt + ' end innings batterRuns ');
+            console.log(batterRunsHighestInt +  ' end innings batterRunsHighest ');
 
-            if ((isNaN(batterRunsHighest)) && (isNaN(batterRuns))) {
+            //if ((isNaN(batterRunsHighest)) && (isNaN(batterRuns))) {
               batterRunsInt = parseInt(batterRuns, 10);
               batterRunsHighestInt  = parseInt(batterRunsHighest, 10);
 
+              console.log(batterRunsInt + ' end innings check batterRunsInt');
+              console.log(batterRunsHighestInt + ' end innings check batterRunsHighestInt');
+
               if (batterRunsInt > batterRunsHighestInt){
+                console.log('batterRunsInt > batterRunsHighestInt');
                 batterRunsHighestInt = batterRunsInt;
               }
               else {
+                console.log('else...');
                 batterRunsHighestInt = batterRunsHighestInt;
               }
-
+              /*
             }
             else if (batterRuns > batterRunsHighest) {
               batterRunsHighestInt = batterRuns;
@@ -1839,13 +1872,13 @@ let firstInningsRuns = games.map(acc => {
             else {
               batterRunsHighestInt = batterRunsHighest;
             }
+            */
 
 
-
-            console.log(batterRunsInt + ' wicket batterRunsInt ');
-            console.log(batterRuns + ' wicket batterRuns ');
-            console.log(batterRunsHighestInt +  ' wicket batterRunsHighestInt ');
-            console.log(batterRunsHighest +  ' wicket batterRunsHighest ');
+            console.log(batterRunsInt + ' end innings batterRunsInt ');
+            console.log(batterRuns + ' end innings batterRuns ');
+            console.log(batterRunsHighestInt +  ' end innings batterRunsHighestInt ');
+            console.log(batterRunsHighest +  ' end innings batterRunsHighest ');
 
             allPlayers[player.id].highestScore = batterRunsHighestInt;
 
@@ -2015,6 +2048,828 @@ let firstInningsRuns = games.map(acc => {
 
     playNewGame = () => {
 
+      const gameRunEvents = this.props.gameRuns.gameRunEvents;
+      const getWicketCount = BallDiff.getWicketCount(gameRunEvents);
+      const totalWickets = getWicketCount[0];
+
+      //const totalWickets = this.props.playerRuns.wickets;
+      console.log(totalWickets);
+
+      let sum = a => a.reduce((acc, item) => acc + item);
+
+      //Calculate the total runs
+      const totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+
+      //const totalRuns = this.props.playerRuns.totalRuns;
+      console.log(totalRuns);
+
+      const { navigation } = this.props;
+      const firstInningsRuns = this.props.firstInningsRuns.firstInningsRuns;
+      console.log(firstInningsRuns);
+
+      const highestPlayerScore = this.props.playerStats.highestPlayerScore;
+      const winningStreak = this.props.playerStats.winningStreak;
+      const longestStreak = this.props.playerStats.longestStreak;
+      const highestTeamScore = this.props.playerStats.highestTeamScore;
+
+      if (totalRuns >= firstInningsRuns) {
+
+      if (winningStreak <= 4) {
+      Alert.alert(
+      'Play Again!',
+      'Keep playing. If you get 5 wins in a row you win 2 FREE auto not-outs!',
+      [
+        {
+          text: 'Get more auto not-outs now!',
+          onPress: () => {
+
+            this.buyAutoNotOutsEndGame();
+
+          }
+        },
+        {text: 'Continue', onPress: () => {
+
+          this.continueGame();
+
+
+        }},
+      ],
+      {cancelable: false},
+    );
+  }
+  else if (winningStreak === 5) {
+  Alert.alert(
+    'You win TWO FREE auto not-outs!',
+    'Congratulations! You have 5 wins in a row and have TWO FREE auto not-outs! Keep going and if you get 10 wins a row you will win FOUR FREE auto not-outs!',
+    [
+    {
+      text: 'Get more auto not-outs now!',
+      onPress: () => {
+        this.buyAutoNotOutsEndGame();
+      }
+    },
+    {text: 'Continue', onPress: () => {
+
+      this.continueGame();
+
+    }},
+  ],
+  {cancelable: false},
+);
+}
+else if (winningStreak > 5 && winningStreak <= 9) {
+Alert.alert(
+'Play Again!',
+'Keep playing. If you get 10 wins in a row you win 4 FREE auto not-outs!',
+[
+  {
+    text: 'Get more auto not-outs now!',
+    onPress: () => {
+      this.buyAutoNotOutsEndGame();
+    }
+  },
+  {text: 'Continue', onPress: () => {
+
+    this.continueGame();
+
+  }},
+],
+{cancelable: false},
+);
+}
+else if (winningStreak === 10) {
+Alert.alert(
+  'You win FOUR FREE auto not-outs!',
+  'Congratulations! You have 10 wins in a row and have FOUR FREE auto not-outs! Keep going and if you get 20 wins a row you will win EIGHT FREE auto not-outs!',
+  [
+  {
+    text: 'Get more auto not-outs now!',
+    onPress: () => {
+      this.buyAutoNotOutsEndGame();
+    }
+  },
+  {text: 'Continue', onPress: () => {
+
+    this.continueGame();
+
+  }},
+],
+{cancelable: false},
+);
+}
+else if (winningStreak > 10 && winningStreak <= 19) {
+Alert.alert(
+'Play Again!',
+'Keep playing. If you get 20 wins in a row you win 8 FREE auto not-outs!',
+[
+  {
+    text: 'Get more auto not-outs now!',
+    onPress: () => {
+      this.buyAutoNotOutsEndGame();
+    }
+  },
+  {text: 'Continue', onPress: () => {
+
+    this.continueGame();
+
+  }},
+],
+{cancelable: false},
+);
+}
+else if (winningStreak === 20) {
+Alert.alert(
+  'You win EIGHT FREE auto not-outs!',
+  'Congratulations! You have 20 wins in a row and have EIGHT FREE auto not-outs! Keep going and if you get 50 wins a row you will win TWENTY FREE auto not-outs!',
+  [
+  {
+    text: 'Get more auto not-outs now!',
+    onPress: () => {
+      this.buyAutoNotOutsEndGame();
+    }
+  },
+  {text: 'Continue', onPress: () => {
+
+    this.continueGame();
+
+  }},
+],
+{cancelable: false},
+);
+}
+else if (winningStreak > 20 && winningStreak <= 49) {
+Alert.alert(
+'Play Again!',
+'Keep playing. If you get 50 wins in a row you win 20 FREE auto not-outs!',
+[
+  {
+    text: 'Get more auto not-outs now!',
+    onPress: () => {
+      this.buyAutoNotOutsEndGame();
+    }
+  },
+  {text: 'Continue', onPress: () => {
+
+    this.continueGame();
+
+  }},
+],
+{cancelable: false},
+);
+}
+else if (winningStreak === 50) {
+Alert.alert(
+  'You win TWENTY FREE auto not-outs!!!',
+  'Congratulations! You have 50 wins in a row and have TWENTY FREE auto not-outs! Keep going and if you get 100 wins a row you will win FOURTY-FIVE FREE auto not-outs!',
+  [
+  {
+    text: 'Get more auto not-outs now!',
+    onPress: () => {
+      this.buyAutoNotOutsEndGame();
+    }
+  },
+  {text: 'Continue', onPress: () => {
+
+    this.continueGame();
+
+  }},
+],
+{cancelable: false},
+);
+}
+else if (winningStreak > 50 && winningStreak <= 99) {
+Alert.alert(
+'Play Again!',
+'Keep playing. If you get 100 wins in a row you win 45 FREE auto not-outs!',
+[
+  {
+    text: 'Get more auto not-outs now!',
+    onPress: () => {
+      this.buyAutoNotOutsEndGame();
+    }
+  },
+  {text: 'Continue', onPress: () => {
+
+    this.continueGame();
+
+  }},
+],
+{cancelable: false},
+);
+}
+else if (winningStreak === 100) {
+Alert.alert(
+  'You win FOURTY-FIVE FREE auto not-outs!!!',
+  'Congratulations! You have 100 wins in a row and have FOURTY-FIVE FREE auto not-outs! Keep going and if you get 200 wins a row you will win ONE HUNDRED FREE auto not-outs!',
+  [
+  {
+    text: 'Get more auto not-outs now!',
+    onPress: () => {
+      this.buyAutoNotOutsEndGame();
+    }
+  },
+  {text: 'Continue', onPress: () => {
+
+    this.continueGame();
+
+  }},
+],
+{cancelable: false},
+);
+}
+else if (winningStreak > 100 && winningStreak <= 199) {
+Alert.alert(
+'Play Again!',
+'Keep playing. If you get 200 wins in a row you win 100 FREE auto not-outs!',
+[
+  {
+    text: 'Get more auto not-outs now!',
+    onPress: () => {
+      this.buyAutoNotOutsEndGame();
+    }
+  },
+  {text: 'Continue', onPress: () => {
+
+    this.continueGame();
+
+  }},
+],
+{cancelable: false},
+);
+}
+else if (winningStreak === 200) {
+Alert.alert(
+  'You win ONE HUNDRED FREE auto not-outs!!!',
+  'Congratulations! You have 200 wins in a row and have ONE HUNDRED FREE auto not-outs! Keep going and if you get 500 wins a row you will win THREE HUNDRED FREE auto not-outs!',
+  [
+  {
+    text: 'Get more auto not-outs now!',
+    onPress: () => {
+      this.buyAutoNotOutsEndGame();
+    }
+  },
+  {text: 'Continue', onPress: () => {
+
+    this.continueGame();
+
+  }},
+],
+{cancelable: false},
+);
+}
+else if (winningStreak > 200 && winningStreak <= 499) {
+Alert.alert(
+'Play Again!',
+'Keep playing. If you get 500 wins in a row you win 300 FREE auto not-outs!',
+[
+  {
+    text: 'Get more auto not-outs now!',
+    onPress: () => {
+      this.buyAutoNotOutsEndGame();
+    }
+  },
+  {text: 'Continue', onPress: () => {
+
+    this.continueGame();
+
+  }},
+],
+{cancelable: false},
+);
+}
+else if (winningStreak === 500) {
+Alert.alert(
+  'You win THREE HUNDRED FREE auto not-outs!!!',
+  'Congratulations! You have 500 wins in a row and have THREE HUNDRED FREE auto not-outs! Wow, you have finished the game. Keep going and email highscore@4dotsixdigital.com when you finaly lose. You might end up on the all-time highest winnig streask list. good luck!!',
+  [
+  {
+    text: 'Get more auto not-outs now!',
+    onPress: () => {
+      this.buyAutoNotOutsEndGame();
+    }
+  },
+  {text: 'Continue', onPress: () => {
+
+    this.continueGame();
+
+  }},
+],
+{cancelable: false},
+);
+}
+else if (winningStreak > 500) {
+Alert.alert(
+'Play Again!',
+'Keep playing. Keep going and email highscore@4dotsixdigital.com when you finaly lose. You might end up on the all-time highest winnig streask list. good luck!!',
+[
+  {
+    text: 'Get more auto not-outs now!',
+    onPress: () => {
+      this.buyAutoNotOutsEndGame();
+    }
+  },
+  {text: 'Continue', onPress: () => {
+
+    this.continueGame();
+
+  }},
+],
+{cancelable: false},
+);
+}
+    }
+    else {
+      console.log('missed popup.');
+      this.continueGame();
+      const { navigation } = this.props;
+      this.props.navigation.navigate('HomeApp');
+    }
+  }
+
+    winningStreakDisplay = () => {
+      const winningStreak = this.props.playerStats.winningStreak;
+
+      if (winningStreak === 5) {
+        return (
+            <Col size={1}>
+              <Row size={1}>
+                <Text style={styles.buttonTextBack}>{winningStreak} in a row: </Text>
+              </Row>
+              <Row size={2}>
+                <Text style={styles.buttonText}>+2</Text>
+              </Row>
+              <Row size={1}>
+                <Text style={styles.buttonTextBack}>Auto Not-Outs</Text>
+              </Row>
+            </Col>
+        )
+      }
+      else if (winningStreak === 10) {
+        return (
+          <Col size={1}>
+            <Row size={1}>
+              <Text style={styles.buttonTextBack}>{winningStreak} in a row: </Text>
+            </Row>
+            <Row size={2}>
+              <Text style={styles.buttonText}>+4</Text>
+            </Row>
+            <Row size={1}>
+              <Text style={styles.buttonTextBack}>Auto Not-Outs</Text>
+            </Row>
+          </Col>
+        )
+      }
+      else if (winningStreak === 20) {
+        return (
+          <Col size={1}>
+            <Row size={1}>
+              <Text style={styles.buttonTextBack}>{winningStreak} in a row: </Text>
+            </Row>
+            <Row size={2}>
+              <Text style={styles.buttonText}>+8</Text>
+            </Row>
+            <Row size={1}>
+              <Text style={styles.buttonTextBack}>Auto Not-Outs</Text >
+            </Row>
+          </Col>
+        )
+      }
+      else if (winningStreak === 50) {
+        return (
+          <Col size={1}>
+            <Row size={1}>
+              <Text style={styles.buttonTextBack}>{winningStreak} in a row: </Text>
+            </Row>
+            <Row size={2}>
+              <Text style={styles.buttonText}>+20</Text>
+            </Row >
+            <Row size={1}>
+              <Text style={styles.buttonTextBack}>Auto Not-Outs</Text >
+            </Row>
+          </Col>
+        )
+      }
+      else if (winningStreak === 100) {
+        return (
+          <Col size={1}>
+            <Row size={1}>
+              <Text style={styles.buttonTextBack}>{winningStreak} in a row: </Text>
+            </Row>
+            <Row size={2}>
+              <Text style={styles.buttonText}>+45</Text>
+            </Row>
+            <Row size={1}>
+              <Text style={styles.buttonTextBack}>Auto Not-Outs</Text >
+            </Row >
+          </Col>
+        )
+      }
+      else if (winningStreak === 200) {
+        return (
+          <Col size={1}>
+            <Row size={1}>
+              <Text style={styles.buttonTextBack}>{winningStreak} in a row: </Text>
+            </Row>
+            <Row size={2}>
+              <Text style={styles.buttonText}>+100</Text>
+            </Row>
+            <Row size={1}>
+              <Text style={styles.buttonTextBack}>Auto Not-Outs</Text>
+            </Row>
+          </Col>
+        )
+      }
+      else if (winningStreak === 500) {
+        return (
+          <Col size={1}>
+            <Row size={1}>
+              <Text style={styles.buttonTextBack}>{winningStreak} in a row: </Text>
+            </Row >
+            <Row size={2}>
+              <Text style={styles.buttonText}>+300</Text>
+            </Row>
+            <Row size={1}>
+              <Text style={styles.buttonTextBack}>Auto Not-Outs</Text>
+            </Row >
+          </Col>
+        )
+      }
+      else {
+        // nohting.
+      }
+
+    }
+
+    continueGame = () => {
+
+      const gameRunEvents = this.props.gameRuns.gameRunEvents;
+      const getWicketCount = BallDiff.getWicketCount(gameRunEvents);
+      const totalWickets = getWicketCount[0];
+
+      //const totalWickets = this.props.playerRuns.wickets;
+      console.log(totalWickets);
+
+      let sum = a => a.reduce((acc, item) => acc + item);
+
+      //Calculate the total runs
+      const totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
+
+      //const totalRuns = this.props.playerRuns.totalRuns;
+      console.log(totalRuns);
+
+      const { navigation } = this.props;
+      const firstInningsRuns = this.props.firstInningsRuns.firstInningsRuns;
+      console.log(firstInningsRuns);
+
+      if (totalWickets >= 10) {
+        console.log('should not be hit unless 10 wikcet or more...');
+        let ball = 0;
+
+        /*
+        let legitBall = BallDiff.getLegitBall(ball, gameRunEvents);
+        let ballTotal = legitBall[0];
+        console.log(ballTotal);
+
+        ball = sum(ballTotal.map(acc => Number(acc)));
+        console.log(ball);
+        */
+
+        ball = gameRunEvents.length;
+        ball--
+
+        const totalBallDiff = BallDiff.getpartnershipDiffTotal(ball);
+        const totalOver = totalBallDiff[0];
+          this.getGameResult(totalWickets, totalRuns, firstInningsRuns, totalOver);
+          console.log('after getGameResults.');
+      }
+
+
+
+        //**ENDS not out player runs**/
+
+        let batters = this.props.players.players
+        console.log(batters);
+
+        let findCurrentBatters = batters.map(acc => {
+          console.log(acc);
+          if (acc.batterFlag === 0) {
+            console.log(acc.batterFlag);
+            return {id: [acc.id]};
+          }
+            else {
+              console.log(acc.batterFlag);
+              return {id: [100]};
+            }
+          });
+        console.log(findCurrentBatters);
+
+        let idBatter = 0;
+        console.log('currentBatters about to start');
+        console.log(findCurrentBatters);
+        let currentBatters = findCurrentBatters.filter( batter => batter['id'] != 100)
+        console.log(currentBatters);
+
+        let idBatterOne = currentBatters[0].id;
+        console.log(idBatterOne);
+        let idBatterTwo = currentBatters[1].id
+        console.log(idBatterTwo);
+
+        let idBatterOneNumber = Number(idBatterOne);
+        console.log(idBatterOneNumber);
+        let idBatterTwoNumber = Number(idBatterTwo);
+        console.log(idBatterTwoNumber);
+
+        //worout who is facing.
+        console.log();
+        let facingBall = this.props.players.facingBall;
+
+        let allPlayers = this.props.players.players;
+        console.log(allPlayers + ' allPlayers check this.');
+        let batterRuns = 0;
+        let playerIDHighestScore = 0;
+
+        const teamPlayers = this.props.teamPlayers.teamPlayers;
+
+        allPlayers.map(player => {
+          console.log(player);
+          console.log(player.id);
+          const wicketsPlusTwo = totalWickets + 2;
+          if (player.id === idBatterOneNumber || player.id === idBatterTwoNumber) {
+            //batterFlag = 1;
+            console.log(allPlayers[player.id]);
+            playerIDHighestScore = allPlayers[player.id];
+            console.log(playerIDHighestScore + ' playerIDHighestScore');
+            //allPlayers[player.id].batterFlag = 1;
+            const scoreTwo = allPlayers[player.id].scoreOne;
+            const scoreThree = allPlayers[player.id].scoreTwo;
+            const highestScore = allPlayers[player.id].highestScore;
+            console.log(highestScore);
+
+            let sum = a => a.reduce((acc, item) => acc + item);
+            const gameRunEventsNew = this.props.gameRuns.gameRunEvents;
+
+            let ballCount = gameRunEventsNew.map(acc => {
+              console.log(acc);
+              return 1;
+            });
+
+            console.log(ballCount);
+
+            let ball = sum(ballCount.map(acc => Number(acc)));
+
+            let outs = 0;
+            if (allPlayers[player.id].outs >= 1) {
+              outs = allPlayers[player.id].outs
+              outs--
+            }
+            else {
+              outs = 0;
+            }
+
+            let batterRunsCount = gameRunEvents.map(acc => {
+              console.log(acc);
+              console.log(acc.batterID);
+              console.log(allPlayers[player.id]);
+              console.log(allPlayers[player.id].id);
+              if (acc.batterID === allPlayers[player.id].id) {
+                console.log(acc.runsValue + ' acc.runsValue is this one hit?');
+                return [acc.runsValue];
+              }
+              else {
+                  console.log(acc.runsValue + ' not hit for not out batsman.');
+                  return 0;
+                }
+              });
+
+              console.log(batterRunsCount);
+
+              batterRuns = sum(batterRunsCount.map(acc => Number(acc)));
+
+              console.log(batterRuns);
+              console.log(allPlayers[player.id]);
+
+
+            //allPlayers[player.id].batterFlag = 1;
+            allPlayers[player.id].scoreOne = batterRuns;
+            allPlayers[player.id].scoreTwo = scoreTwo;
+            allPlayers[player.id].scoreThree = scoreThree;
+            allPlayers[player.id].highestScore = highestScore;
+            allPlayers[player.id].outs = outs;
+
+            let batterRunsHighest = allPlayers[player.id].highestScore;
+            let batterRunsInt;
+            let batterRunsHighestInt = 0;
+
+            console.log(batterRunsInt + ' end of innings batterRuns');
+            console.log(batterRunsHighestInt +  ' end of innings batterRunsHighest ');
+            console.log(batterRunsHighest + ' end of innings batterRunsHighest');
+
+            if ((isNaN(batterRunsHighest)) && (isNaN(batterRuns))) {
+
+              console.log();
+              batterRunsInt = parseInt(batterRuns, 10);
+              batterRunsHighestInt  = parseInt(batterRunsHighest, 10);
+
+              if (batterRunsInt > batterRunsHighestInt){
+                batterRunsHighestInt = batterRunsInt;
+              }
+              else {
+                batterRunsHighestInt = batterRunsHighestInt;
+              }
+
+            }
+            else if (batterRuns > batterRunsHighest) {
+              batterRunsHighestInt = batterRuns;
+            }
+            else {
+              batterRunsHighestInt = batterRunsHighest;
+            }
+
+
+
+            console.log(batterRunsInt + ' wicket batterRunsInt ');
+            console.log(batterRuns + ' wicket batterRuns ');
+            console.log(batterRunsHighestInt +  ' wicket batterRunsHighestInt ');
+            console.log(batterRunsHighest +  ' wicket batterRunsHighest ');
+
+
+
+            teamPlayers[player.id].highestScore = batterRunsHighestInt;
+
+            console.log(allPlayers);
+
+            teamPlayers[player.id].scoreOne = batterRuns;
+            teamPlayers[player.id].scoreTwo = scoreTwo;
+            teamPlayers[player.id].scoreThree = scoreThree;
+            teamPlayers[player.id].outs = outs;
+
+            /*
+            if (teamPlayers[player.id].id === 1 || teamPlayers[player.id].id === 2) {
+              teamPlayers[player.id].batterFlag = 0;
+            }
+            else {
+              teamPlayers[player.id].batterFlag = 1;
+            }
+            */
+
+            console.log(teamPlayers);
+
+            this.setState({
+              teamPlayers: teamPlayers,
+            }, function () {
+              const { teamPlayers } = this.state
+              this.props.dispatch(updateTeamPlayers(this.state.players));
+            })
+
+            console.log(this.props.teamPlayers.teamPlayers + ' teamPlayers redux.');
+
+            const highestPlayerScore = this.props.playerStats.highestPlayerScore;
+            const winningStreak = this.props.playerStats.winningStreak;
+            const longestStreak = this.props.playerStats.longestStreak;
+            const highestTeamScore = this.props.playerStats.highestTeamScore;
+
+            console.log(batterRuns + ' batterRuns');
+            console.log(highestPlayerScore + ' highestPlayerScore');
+
+            if (batterRuns > highestPlayerScore) {
+              this.setState({
+              winningStreak: winningStreak,
+              longestStreak: longestStreak,
+              highestPlayerScore: batterRuns,
+              highestPlayerScoreId: playerIDHighestScore,
+              highestTeamScore: highestTeamScore,
+              }, function () {
+                const { winningStreak, longestStreak, highestPlayerScore, highestPlayerScoreId, highestTeamScore } = this.state
+                this.props.dispatch(updatePlayerStats(this.state.winningStreak, this.state.longestStreak, this.state.highestPlayerScore, this.state.highestPlayerScoreId, this.state.highestTeamScore));
+              })
+            }
+
+            /*
+
+            this.setState({
+              momentum: 0,
+              momentumPrevOver: 0,
+              momentumThisOver: [],
+            }, function () {
+              const { momentum, momentumPrevOver, momentumThisOver } = this.state
+              this.props.dispatch(updateMomentum(this.state.momentum, this.state.momentumPrevOver, this.state.momentumThisOver));
+            })
+            */
+
+          }
+          else {
+            //do nothing.
+          }
+      })
+
+      /*
+        console.log(allPlayers + ' this is the set of players that get prepared for final state in redux.');
+      const teamPlayersSet = allPlayers.map(player => {
+        console.log(player);
+        console.log(player.id);
+
+        if ((player.id === 1 || player.id === 2) && (idBatterOneScoreNumber != 1 || idBatterOneScoreNumber != 2)) {
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: player.autoNotOut, highestScore: player.highestScore};
+        }
+        else if (player.id === 1 && idBatterOneScoreNumber === 1) {
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: idBatterOneAutoNotOuts, highestScore: player.highestScore};
+        }
+        else if (player.id === 2 && idBatterTwoScoreNumber === 2) {
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: idBatterTwoScoreNumber, highestScore: player.highestScore};
+        }
+        else if (player.id === 2 && idBatterOneScoreNumber === 2) {
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: idBatterOneAutoNotOuts, highestScore: player.highestScore};
+        }
+        else if (player.id === idBatterOneScoreNumber) {
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: idBatterOneAutoNotOuts, highestScore: player.highestScore};
+        }
+        else if (player.id === idBatterTwoScoreNumber) {
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: idBatterTwoAutoNotOuts, highestScore: player.highestScore};
+        }
+        else {
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: player.autoNotOut, highestScore: player.highestScore}
+        }
+      });
+      */
+
+      const teamPlayersSet = this.props.teamPlayers.teamPlayers;
+      //const facingBall = this.props.players.facingBall;
+      console.log(teamPlayersSet + ' this gets set into redux state.');
+      console.log(facingBall);
+
+
+
+
+
+      /******** END CHCK IF PALYER SCORED 50 OR 100 ***************/
+
+      const winningStreak = this.props.playerStats.winningStreak;
+
+      this.setState({
+        firstInningsRuns: 0,
+      }, function () {
+        const { firstInningsRuns } = this.state
+        this.props.dispatch(updateFirstInningsRuns(this.state.firstInningsRuns));
+      })
+
+      /*
+      this.setState({
+        togglePremium: true,
+        toggleHomeLoad: true,
+      }, function () {
+        const { togglePremium, toggleHomeLoad } = this.state
+        this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+      })
+      */
+
+
+      this.setState({
+        wickets: 0,
+        totalRuns: 0,
+      }, function () {
+        const { wickets, totalRuns } = this.state
+        this.props.dispatch(updatePlayerRuns(this.state.wickets, this.state.totalRuns));
+      })
+
+      const teamPlayersSetNew = teamPlayersSet.map(player => {
+        console.log(player);
+        console.log(player.id);
+        if (player.id === 1 || player.id === 2) {
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 0, aggBoard: 0, autoNotOut: player.autoNotOut, highestScore: player.highestScore};
+        }
+        else {
+          return {player: player.player, id: player.id, scoreOne: player.scoreOne, scoreTwo: player.scoreTwo, scoreThree: player.scoreThree, outs: player.outs, batterFlag: 1, aggBoard: 0, autoNotOut: player.autoNotOut, highestScore: player.highestScore}
+        }
+      });
+
+      console.log(teamPlayersSetNew + ' teamPlayersSet last');
+
+      this.setState({
+        players: teamPlayersSetNew,
+        facingBall: facingBall,
+      }, function () {
+        const { players, facingBall } = this.state
+        this.props.dispatch(updatePlayers(this.state.players, this.state.facingBall));
+      })
+
+      this.ref.doc("players").update({
+        players: teamPlayersSetNew,
+        facingBall: facingBall,
+      });
+
+      //console.log(this.state.loadingWinGameTotalRuns + ' deos it break on the next line?');
+
+      this.setState({loadingWinGameTotalRuns: true})
+
+      console.log(this.state.loadingWinGameTotalRuns + ' the value before changing.');
+
+      console.log(this.props.playerRuns.totalRuns + ' should be zero.');
+
+    //const { navigation } = this.props;
+    this.props.navigation.navigate('HomeApp')
+    }
+
+    buyAutoNotOutsEndGame = () => {
 
       const gameRunEvents = this.props.gameRuns.gameRunEvents;
       const getWicketCount = BallDiff.getWicketCount(gameRunEvents);
@@ -2186,6 +3041,7 @@ let firstInningsRuns = games.map(acc => {
         let facingBall = this.props.players.facingBall;
 
         let allPlayers = this.props.players.players;
+        console.log(allPlayers + ' allPlayers check this.');
         let batterRuns = 0;
         let playerIDHighestScore = 0;
 
@@ -2199,10 +3055,12 @@ let firstInningsRuns = games.map(acc => {
             //batterFlag = 1;
             console.log(allPlayers[player.id]);
             playerIDHighestScore = allPlayers[player.id];
+            console.log(playerIDHighestScore + ' playerIDHighestScore');
             //allPlayers[player.id].batterFlag = 1;
             const scoreTwo = allPlayers[player.id].scoreOne;
             const scoreThree = allPlayers[player.id].scoreTwo;
             const highestScore = allPlayers[player.id].highestScore;
+            console.log(highestScore);
 
             let sum = a => a.reduce((acc, item) => acc + item);
             const gameRunEventsNew = this.props.gameRuns.gameRunEvents;
@@ -2229,12 +3087,13 @@ let firstInningsRuns = games.map(acc => {
               console.log(acc);
               console.log(acc.batterID);
               console.log(allPlayers[player.id]);
+              console.log(allPlayers[player.id].id);
               if (acc.batterID === allPlayers[player.id].id) {
-                console.log(acc.runsValue);
+                console.log(acc.runsValue + ' acc.runsValue is this one hit?');
                 return [acc.runsValue];
               }
               else {
-                  console.log(acc.runsValue);
+                  console.log(acc.runsValue + ' not hit for not out batsman.');
                   return 0;
                 }
               });
@@ -2258,8 +3117,9 @@ let firstInningsRuns = games.map(acc => {
             let batterRunsInt;
             let batterRunsHighestInt = 0;
 
-            console.log(batterRunsInt + ' wicket batterRuns ');
-            console.log(batterRunsHighestInt +  ' wicket batterRunsHighest ');
+            console.log(batterRunsInt + ' end of innings batterRuns');
+            console.log(batterRunsHighestInt +  ' end of innings batterRunsHighest ');
+            console.log(batterRunsHighest + ' end of innings batterRunsHighest');
 
             if ((isNaN(batterRunsHighest)) && (isNaN(batterRuns))) {
 
@@ -2317,6 +3177,8 @@ let firstInningsRuns = games.map(acc => {
               const { teamPlayers } = this.state
               this.props.dispatch(updateTeamPlayers(this.state.players));
             })
+
+            console.log(this.props.teamPlayers.teamPlayers + ' teamPlayers redux.');
 
             const highestPlayerScore = this.props.playerStats.highestPlayerScore;
             const winningStreak = this.props.playerStats.winningStreak;
@@ -2387,7 +3249,7 @@ let firstInningsRuns = games.map(acc => {
       });
       */
 
-      let teamPlayersSet = this.props.teamPlayers.teamPlayers;
+      const teamPlayersSet = this.props.teamPlayers.teamPlayers;
       //const facingBall = this.props.players.facingBall;
       console.log(teamPlayersSet + ' this gets set into redux state.');
       console.log(facingBall);
@@ -2407,7 +3269,7 @@ let firstInningsRuns = games.map(acc => {
         this.props.dispatch(updateFirstInningsRuns(this.state.firstInningsRuns));
       })
 
-
+      /*
       this.setState({
         togglePremium: true,
         toggleHomeLoad: true,
@@ -2415,7 +3277,8 @@ let firstInningsRuns = games.map(acc => {
         const { togglePremium, toggleHomeLoad } = this.state
         this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
       })
-      
+      */
+
 
       this.setState({
         wickets: 0,
@@ -2425,7 +3288,7 @@ let firstInningsRuns = games.map(acc => {
         this.props.dispatch(updatePlayerRuns(this.state.wickets, this.state.totalRuns));
       })
 
-      teamPlayersSet = allPlayers.map(player => {
+      const teamPlayersSetNew = teamPlayersSet.map(player => {
         console.log(player);
         console.log(player.id);
         if (player.id === 1 || player.id === 2) {
@@ -2436,8 +3299,10 @@ let firstInningsRuns = games.map(acc => {
         }
       });
 
+      console.log(teamPlayersSetNew + ' teamPlayersSet last');
+
       this.setState({
-        players: teamPlayersSet,
+        players: teamPlayersSetNew,
         facingBall: facingBall,
       }, function () {
         const { players, facingBall } = this.state
@@ -2445,7 +3310,7 @@ let firstInningsRuns = games.map(acc => {
       })
 
       this.ref.doc("players").update({
-        players: teamPlayersSet,
+        players: teamPlayersSetNew,
         facingBall: facingBall,
       });
 
@@ -2457,429 +3322,13 @@ let firstInningsRuns = games.map(acc => {
 
       console.log(this.props.playerRuns.totalRuns + ' should be zero.');
 
-      if (totalRuns >= firstInningsRuns) {
-
-      if (winningStreak <= 4) {
-      Alert.alert(
-      'Play Again!',
-      'Keep playing. If you get 5 wins in a row you win 2 FREE auto not-outs!',
-      [
-        {
-          text: 'Get more auto not-outs now!',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {text: 'Continue', onPress: () => {
-
-          const { navigation } = this.props;
-          this.props.navigation.navigate('HomeApp')
-
-        }},
-      ],
-      {cancelable: false},
-    );
-  }
-  else if (winningStreak === 5) {
-  Alert.alert(
-    'You win TWO FREE auto not-outs!',
-    'Congratulations! You have 5 wins in a row and have TWO FREE auto not-outs! Keep going and if you get 10 wins a row you will win FOUR FREE auto not-outs!',
-    [
-    {
-      text: 'Get more auto not-outs now!',
-      onPress: () => console.log('Cancel Pressed'),
-      style: 'cancel',
-    },
-    {text: 'Continue', onPress: () => {
-
-      const { navigation } = this.props;
-      this.props.navigation.navigate('HomeApp')
-
-    }},
-  ],
-  {cancelable: false},
-);
-}
-else if (winningStreak > 5 && winningStreak <= 9) {
-Alert.alert(
-'Play Again!',
-'Keep playing. If you get 10 wins in a row you win 4 FREE auto not-outs!',
-[
-  {
-    text: 'Get more auto not-outs now!',
-    onPress: () => console.log('Cancel Pressed'),
-    style: 'cancel',
-  },
-  {text: 'Continue', onPress: () => {
-
-    const { navigation } = this.props;
-    this.props.navigation.navigate('HomeApp')
-
-  }},
-],
-{cancelable: false},
-);
-}
-else if (winningStreak === 10) {
-Alert.alert(
-  'You win FOUR FREE auto not-outs!',
-  'Congratulations! You have 10 wins in a row and have FOUR FREE auto not-outs! Keep going and if you get 20 wins a row you will win EIGHT FREE auto not-outs!',
-  [
-  {
-    text: 'Get more auto not-outs now!',
-    onPress: () => console.log('Cancel Pressed'),
-    style: 'cancel',
-  },
-  {text: 'Continue', onPress: () => {
-
-    const { navigation } = this.props;
-    this.props.navigation.navigate('HomeApp')
-
-  }},
-],
-{cancelable: false},
-);
-}
-else if (winningStreak > 10 && winningStreak <= 19) {
-Alert.alert(
-'Play Again!',
-'Keep playing. If you get 20 wins in a row you win 8 FREE auto not-outs!',
-[
-  {
-    text: 'Get more auto not-outs now!',
-    onPress: () => console.log('Cancel Pressed'),
-    style: 'cancel',
-  },
-  {text: 'Continue', onPress: () => {
-
-    const { navigation } = this.props;
-    this.props.navigation.navigate('HomeApp')
-
-  }},
-],
-{cancelable: false},
-);
-}
-else if (winningStreak === 20) {
-Alert.alert(
-  'You win EIGHT FREE auto not-outs!',
-  'Congratulations! You have 20 wins in a row and have EIGHT FREE auto not-outs! Keep going and if you get 50 wins a row you will win TWENTY FREE auto not-outs!',
-  [
-  {
-    text: 'Get more auto not-outs now!',
-    onPress: () => console.log('Cancel Pressed'),
-    style: 'cancel',
-  },
-  {text: 'Continue', onPress: () => {
-
-    const { navigation } = this.props;
-    this.props.navigation.navigate('HomeApp')
-
-  }},
-],
-{cancelable: false},
-);
-}
-else if (winningStreak > 20 && winningStreak <= 49) {
-Alert.alert(
-'Play Again!',
-'Keep playing. If you get 50 wins in a row you win 20 FREE auto not-outs!',
-[
-  {
-    text: 'Get more auto not-outs now!',
-    onPress: () => console.log('Cancel Pressed'),
-    style: 'cancel',
-  },
-  {text: 'Continue', onPress: () => {
-
-    const { navigation } = this.props;
-    this.props.navigation.navigate('HomeApp')
-
-  }},
-],
-{cancelable: false},
-);
-}
-else if (winningStreak === 50) {
-Alert.alert(
-  'You win TWENTY FREE auto not-outs!!!',
-  'Congratulations! You have 50 wins in a row and have TWENTY FREE auto not-outs! Keep going and if you get 100 wins a row you will win FOURTY-FIVE FREE auto not-outs!',
-  [
-  {
-    text: 'Get more auto not-outs now!',
-    onPress: () => console.log('Cancel Pressed'),
-    style: 'cancel',
-  },
-  {text: 'Continue', onPress: () => {
-
-    const { navigation } = this.props;
-    this.props.navigation.navigate('HomeApp')
-
-  }},
-],
-{cancelable: false},
-);
-}
-else if (winningStreak > 50 && winningStreak <= 99) {
-Alert.alert(
-'Play Again!',
-'Keep playing. If you get 100 wins in a row you win 45 FREE auto not-outs!',
-[
-  {
-    text: 'Get more auto not-outs now!',
-    onPress: () => console.log('Cancel Pressed'),
-    style: 'cancel',
-  },
-  {text: 'Continue', onPress: () => {
-
-    const { navigation } = this.props;
-    this.props.navigation.navigate('HomeApp')
-
-  }},
-],
-{cancelable: false},
-);
-}
-else if (winningStreak === 100) {
-Alert.alert(
-  'You win FOURTY-FIVE FREE auto not-outs!!!',
-  'Congratulations! You have 100 wins in a row and have FOURTY-FIVE FREE auto not-outs! Keep going and if you get 200 wins a row you will win ONE HUNDRED FREE auto not-outs!',
-  [
-  {
-    text: 'Get more auto not-outs now!',
-    onPress: () => console.log('Cancel Pressed'),
-    style: 'cancel',
-  },
-  {text: 'Continue', onPress: () => {
-
-    const { navigation } = this.props;
-    this.props.navigation.navigate('HomeApp')
-
-  }},
-],
-{cancelable: false},
-);
-}
-else if (winningStreak > 100 && winningStreak <= 199) {
-Alert.alert(
-'Play Again!',
-'Keep playing. If you get 200 wins in a row you win 100 FREE auto not-outs!',
-[
-  {
-    text: 'Get more auto not-outs now!',
-    onPress: () => console.log('Cancel Pressed'),
-    style: 'cancel',
-  },
-  {text: 'Continue', onPress: () => {
-
-    const { navigation } = this.props;
-    this.props.navigation.navigate('HomeApp')
-
-  }},
-],
-{cancelable: false},
-);
-}
-else if (winningStreak === 200) {
-Alert.alert(
-  'You win ONE HUNDRED FREE auto not-outs!!!',
-  'Congratulations! You have 200 wins in a row and have ONE HUNDRED FREE auto not-outs! Keep going and if you get 500 wins a row you will win THREE HUNDRED FREE auto not-outs!',
-  [
-  {
-    text: 'Get more auto not-outs now!',
-    onPress: () => console.log('Cancel Pressed'),
-    style: 'cancel',
-  },
-  {text: 'Continue', onPress: () => {
-
-    const { navigation } = this.props;
-    this.props.navigation.navigate('HomeApp')
-
-  }},
-],
-{cancelable: false},
-);
-}
-else if (winningStreak > 200 && winningStreak <= 499) {
-Alert.alert(
-'Play Again!',
-'Keep playing. If you get 500 wins in a row you win 300 FREE auto not-outs!',
-[
-  {
-    text: 'Get more auto not-outs now!',
-    onPress: () => console.log('Cancel Pressed'),
-    style: 'cancel',
-  },
-  {text: 'Continue', onPress: () => {
-
-    const { navigation } = this.props;
-    this.props.navigation.navigate('HomeApp')
-
-  }},
-],
-{cancelable: false},
-);
-}
-else if (winningStreak === 500) {
-Alert.alert(
-  'You win THREE HUNDRED FREE auto not-outs!!!',
-  'Congratulations! You have 500 wins in a row and have THREE HUNDRED FREE auto not-outs! Wow, you have finished the game. Keep going and email highscore@4dotsixdigital.com when you finaly lose. You might end up on the all-time highest winnig streask list. good luck!!',
-  [
-  {
-    text: 'Get more auto not-outs now!',
-    onPress: () => console.log('Cancel Pressed'),
-    style: 'cancel',
-  },
-  {text: 'Continue', onPress: () => {
-
-    const { navigation } = this.props;
-    this.props.navigation.navigate('HomeApp')
-
-  }},
-],
-{cancelable: false},
-);
-}
-else if (winningStreak > 500) {
-Alert.alert(
-'Play Again!',
-'Keep playing. Keep going and email highscore@4dotsixdigital.com when you finaly lose. You might end up on the all-time highest winnig streask list. good luck!!',
-[
-  {
-    text: 'Get more auto not-outs now!',
-    onPress: () => console.log('Cancel Pressed'),
-    style: 'cancel',
-  },
-  {text: 'Continue', onPress: () => {
-
-    const { navigation } = this.props;
-    this.props.navigation.navigate('HomeApp')
-
-  }},
-],
-{cancelable: false},
-);
-}
-    }
-    else {
-      console.log('missed popup.');
-      const { navigation } = this.props;
-      this.props.navigation.navigate('HomeApp');
-    }
-  }
-
-    winningStreakDisplay = () => {
-      const winningStreak = this.props.playerStats.winningStreak;
-
-      if (winningStreak === 5) {
-        return (
-            <Col size={1}>
-              <Row size={1}>
-                <Text style={styles.buttonTextBack}>{winningStreak} in a row: </Text>
-              </Row>
-              <Row size={2}>
-                <Text style={styles.buttonText}>+2</Text>
-              </Row>
-              <Row size={1}>
-                <Text style={styles.buttonTextBack}>Auto Not-Outs</Text>
-              </Row>
-            </Col>
-        )
-      }
-      else if (winningStreak === 10) {
-        return (
-          <Col size={1}>
-            <Row size={1}>
-              <Text style={styles.buttonTextBack}>{winningStreak} in a row: </Text>
-            </Row>
-            <Row size={2}>
-              <Text style={styles.buttonText}>+4</Text>
-            </Row>
-            <Row size={1}>
-              <Text style={styles.buttonTextBack}>Auto Not-Outs</Text>
-            </Row>
-          </Col>
-        )
-      }
-      else if (winningStreak === 20) {
-        return (
-          <Col size={1}>
-            <Row size={1}>
-              <Text style={styles.buttonTextBack}>{winningStreak} in a row: </Text>
-            </Row>
-            <Row size={2}>
-              <Text style={styles.buttonText}>+8</Text>
-            </Row>
-            <Row size={1}>
-              <Text style={styles.buttonTextBack}>Auto Not-Outs</Text >
-            </Row>
-          </Col>
-        )
-      }
-      else if (winningStreak === 50) {
-        return (
-          <Col size={1}>
-            <Row size={1}>
-              <Text style={styles.buttonTextBack}>{winningStreak} in a row: </Text>
-            </Row>
-            <Row size={2}>
-              <Text style={styles.buttonText}>+20</Text>
-            </Row >
-            <Row size={1}>
-              <Text style={styles.buttonTextBack}>Auto Not-Outs</Text >
-            </Row>
-          </Col>
-        )
-      }
-      else if (winningStreak === 100) {
-        return (
-          <Col size={1}>
-            <Row size={1}>
-              <Text style={styles.buttonTextBack}>{winningStreak} in a row: </Text>
-            </Row>
-            <Row size={2}>
-              <Text style={styles.buttonText}>+45</Text>
-            </Row>
-            <Row size={1}>
-              <Text style={styles.buttonTextBack}>Auto Not-Outs</Text >
-            </Row >
-          </Col>
-        )
-      }
-      else if (winningStreak === 200) {
-        return (
-          <Col size={1}>
-            <Row size={1}>
-              <Text style={styles.buttonTextBack}>{winningStreak} in a row: </Text>
-            </Row>
-            <Row size={2}>
-              <Text style={styles.buttonText}>+100</Text>
-            </Row>
-            <Row size={1}>
-              <Text style={styles.buttonTextBack}>Auto Not-Outs</Text>
-            </Row>
-          </Col>
-        )
-      }
-      else if (winningStreak === 500) {
-        return (
-          <Col size={1}>
-            <Row size={1}>
-              <Text style={styles.buttonTextBack}>{winningStreak} in a row: </Text>
-            </Row >
-            <Row size={2}>
-              <Text style={styles.buttonText}>+300</Text>
-            </Row>
-            <Row size={1}>
-              <Text style={styles.buttonTextBack}>Auto Not-Outs</Text>
-            </Row >
-          </Col>
-        )
-      }
-      else {
-        // nohting.
-      }
+    //const { navigation } = this.props;
+    this.props.navigation.navigate('CricStratIap', {
+      iapGameOver: true,
+    });
 
     }
+
 
     playButtons = () => {
       console.log(this.props.gameRuns.gameRunEvents);
@@ -3062,7 +3511,7 @@ Alert.alert(
             this.props.dispatch(updateGames(this.state.games));
           })
           */
-
+          /*
           if (this.state.loadingWinGameTotalRuns === true) {
             return (
               <Row style={{height: 100}}>
@@ -3081,18 +3530,19 @@ Alert.alert(
             )
           }
           else {
+          */
         return (
         <Row style={{height: 100}}>
           <Col size={1}>
-            <Button style={styles.goButton} rounded large success
+            <Button style={styles.goButton} large success
               onPress={() => this.playNewGame()}
             >
-              <Text style={styles.goButtonText}>Play Again?</Text>
+              <Text style={styles.goButtonText}>All out. Play Again?</Text>
             </Button>
           </Col>
         </Row>
       )
-    }
+    //}
       }
       else if (totalRuns > firstInningsRuns) {
         /*
@@ -3165,7 +3615,7 @@ Alert.alert(
           */
 
           console.log(this.state.loadingWinGameTotalRuns + ' loadingWinGameTotalRuns');
-
+          /*
           if (this.state.loadingWinGameTotalRuns === true) {
             return (
               <Row style={{height: 100}}>
@@ -3184,18 +3634,19 @@ Alert.alert(
             )
           }
           else {
+          */
             return (
             <Row style={{height: 100}}>
               <Col size={1}>
                 <Button style={styles.goButton} large success
                   onPress={() => this.playNewGame()}
                 >
-                  <Text style={styles.goButtonText}>Play Again?</Text>
+                  <Text style={styles.goButtonText}>You win! Play Again?</Text>
                 </Button>
               </Col >
             </Row>
           )
-          }
+          //}
 
       }
       else if (over >= 20) {
@@ -3266,6 +3717,7 @@ Alert.alert(
             this.props.dispatch(updateGames(this.state.games));
           })
           */
+          /*
           if (this.state.loadingWinGameTotalRuns === true) {
             return (
               <Row style={{height: 100}}>
@@ -3284,18 +3736,19 @@ Alert.alert(
             )
           }
           else {
+          */
         return (
         <Row style={{height: 100}}>
           <Col size={1}>
-            <Button style={styles.goButton} rounded large success
+            <Button style={styles.goButton} large success
               onPress={() => this.playNewGame()}
             >
-              <Text style={styles.goButtonText}>Play Again?</Text>
+              <Text style={styles.goButtonText}>You Lose. Play Again?</Text>
             </Button>
           </Col>
         </Row>
       )
-    }
+    //}
       }
       else {
 
@@ -3400,7 +3853,7 @@ Alert.alert(
                 size="large"
                 color="#fff"
               />
-              <Text style={{ color: '#fff', fontSize: 30, width: 'auto' }}>Loading...5</Text >
+              <Text style={{ color: '#fff', fontSize: 30, width: 'auto' }}>Loading...</Text >
 
               </Col >
             )
@@ -3495,7 +3948,10 @@ Alert.alert(
       }
       else {
         const gameID = this.props.gameID.gameID;
-        console.log(gameID + ' GameID for props');
+        console.log(gameID + ' GameID for props.');
+        const { navigation } = this.props;
+        const gamesCount = navigation.getParam('gamesCount', 0);
+        const continueGame = navigation.getParam('continueGame', false);
         return (
           <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
           locations={[0,0.7,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradient}>
@@ -3503,7 +3959,7 @@ Alert.alert(
 
           <View style={styles.horizontalRule} />
           <Row size={1}>
-          <DisplayCurrentBatters gameTest={gameID} />
+          <DisplayCurrentBatters navigation={this.props.navigation} gameTest={gameID} gamesCount={gamesCount}  continueGame={continueGame} continueGameArray={this.props.continueGameArray}/>
           </Row>
 
           <Row size={2}>

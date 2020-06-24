@@ -4,6 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Header, Left, Right, Icon, Content, Container, H1, H3, Footer, Button } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { StyleSheet, PixelRatio, ScrollView, View, Text, TextInput, Platform, Image, FlatList, Dimensions, ImageBackground } from 'react-native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 import { connect } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
@@ -2348,7 +2349,10 @@ firebase.firestore().collection(currentUser.uid).add({
     <Row>
       <Col size={1}>
       <Button style={styles.goButton} large success
-        onPress={() => this.props.navigation.navigate('HomeApp')} >
+        onPress={() => {
+          ReactNativeHapticFeedback.trigger('impactLight', true);
+          this.props.navigation.navigate('HomeApp')
+        }} >
         <Text style={styles.goButtonText}>Back to home</Text>
       </Button>
       </Col >

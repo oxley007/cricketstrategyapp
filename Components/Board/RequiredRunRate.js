@@ -94,8 +94,9 @@ let numberOverValue = Number(overValue);
 //Calculate the total runs to go
 //let totalRuns = sum(gameRunEvents.map(acc => Number(acc.runsValue)));
 
-const totalRuns = this.props.playerRuns.totalRuns;
+let totalRuns = this.props.playerRuns.totalRuns;
 console.log(totalRuns);
+totalRuns++
 
 let runsRequired = this.props.firstInningsRuns - totalRuns;
 console.log(runsRequired);

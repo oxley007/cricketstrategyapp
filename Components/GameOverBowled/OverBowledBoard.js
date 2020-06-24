@@ -221,7 +221,7 @@ getCoachChat = (momentum) => {
           <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>"Play defensive for a few overs and try not to lose any wickets."</Text>
         </Row>
         <Row>
-          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>"if you lose two wickets within 12 balls you lose -20 momentum."</Text>
+          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>"if you lose two wickets within 12 balls you lose -10 momentum."</Text>
         </Row>
         <Row>
           <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>"So the key from here is to build a partnership. Good luck."</Text>
@@ -244,7 +244,7 @@ getCoachChat = (momentum) => {
           <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>If you think the runrate is under control, I'd suggest going defensive for a few overs. </Text>
         </Row>
         <Row>
-          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>if you lose two wickets within 12 balls you get -20 momentum points.</Text>
+          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>if you lose two wickets within 12 balls you get -10 momentum points.</Text>
         </Row>
         <Row>
           <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>if you're not comfortable with the runrate I'd suggest keeping one batsman as defensive and the other as medium.</Text>
@@ -270,7 +270,7 @@ getCoachChat = (momentum) => {
           <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>A few boundaries and you'll be back in the positives.</Text>
         </Row>
         <Row>
-          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>Just remember that if you lose 2 wickets within 12 balls you lose -20 momentum points.</Text>
+          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>Just remember that if you lose 2 wickets within 12 balls you lose -10 momentum points.</Text>
         </Row>
         <Row>
           <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>So just take it a bit easy, maybe go defensive if you are comfortable with the runrate..</Text>
@@ -290,7 +290,7 @@ getCoachChat = (momentum) => {
           <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>The momentum is in the balance here. A few boundaries and you'll gain good momentum. However, a few wickets and you'll lose momentum completely.</Text>
         </Row>
         <Row>
-          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>If you lose 2 wickets within 12 balls you lose -20 momentum points</Text>
+          <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>If you lose 2 wickets within 12 balls you lose -10 momentum points</Text>
         </Row>
         <Row>
           <Icon type="MaterialCommunityIcons" name="checkbox-blank-circle" style={styles.textCoachChatIcon} /><Text style={styles.textCoachChat}>If you are comfortable with the runrate then go with one defensive batsman and one medium or aggressive batsman</Text>

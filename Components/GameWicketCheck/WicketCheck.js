@@ -4,6 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Header, Left, Right, Icon, Content, Container, H1, H3, Footer, Button } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { StyleSheet, PixelRatio, ScrollView, View, Text, TextInput, Platform, Image, FlatList, Dimensions, TouchableHighlight, TouchableOpacity, ImageBackground, Alert } from 'react-native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 import { connect } from "react-redux";
 import { updateGameId } from '../../Reducers/gameId';
@@ -123,7 +124,7 @@ goOrCardDisplay = () => {
     return (
       <Col style={{flex: 1,paddingLeft: 15, paddingRight: 15, alignItems: 'center', justifyContent: 'center'}}>
       <Row style={{alignItems: 'center', justifyContent: 'center', paddingTop: 10, paddingBottom: 10, opacity: 1,}}>
-      <Button rounded large success style={{backgroundColor: '#77dd77', height: 200, opacity: 1}}
+      <Button rounded large success style={styles.goButtonStyle}
         onPress={() => this.handleWicketStart()}>
         <Text style={{width: '100%', color: '#fff', fontSize: 100, textAlign: 'center'}}>GO!</Text>
       </Button>
@@ -160,6 +161,8 @@ goOrCardDisplay = () => {
 handleWicketStart = () => {
 
   console.log('handleWicketStart');
+
+  ReactNativeHapticFeedback.trigger('notificationSuccess', true);
 
   const buttonDisplayFlag = 1;
   this.setState({buttonDisplayFlag: buttonDisplayFlag})
@@ -204,6 +207,7 @@ onDocCollectionUpdate = (allPlayers, facingBall) => {
 }
 
 handleWicket = () => {
+  ReactNativeHapticFeedback.trigger('notificationSuccess', true);
   const randomClick = this.state.randomClick
   if (randomClick === 0) {
     this.setState({ randomClick: 1 });
@@ -285,6 +289,13 @@ handleWicket = () => {
         //nothing
       }
 
+      try {
+      console.log(facingBall);
+    } catch (error) {
+    facingBall = 1;
+    }
+
+    let facingBatter = 0;
 
       console.log(facingBall);
       if (facingBall === 1) {
@@ -409,7 +420,8 @@ handleWicket = () => {
 
               batterRuns = sum(batterRunsCount.map(acc => Number(acc)));
 
-              console.log(batterRuns);
+              console.log(batterRuns + ' batter rund after wicket.');
+              console.log(allPlayers[player.id]);
 
 
             allPlayers[player.id].batterFlag = 1;
@@ -420,25 +432,30 @@ handleWicket = () => {
             allPlayers[player.id].outs = outs;
 
             let batterRunsHighest = allPlayers[player.id].highestScore;
-            let batterRunsInt;
+            let batterRunsInt = 0;
             let batterRunsHighestInt = 0;
 
             console.log(batterRunsInt + ' wicket batterRuns ');
             console.log(batterRunsHighestInt +  ' wicket batterRunsHighest ');
 
-            if ((isNaN(batterRunsHighest)) && (isNaN(batterRuns))) {
+            //if ((isNaN(batterRunsHighest)) && (isNaN(batterRuns))) {
 
               console.log();
               batterRunsInt = parseInt(batterRuns, 10);
               batterRunsHighestInt  = parseInt(batterRunsHighest, 10);
 
+              console.log(batterRunsInt + ' wicket check batterRunsInt');
+              console.log(batterRunsHighestInt + ' wicket check batterRunsHighestInt');
+
               if (batterRunsInt > batterRunsHighestInt){
+                console.log('batterRunsInt > batterRunsHighestInt');
                 batterRunsHighestInt = batterRunsInt;
               }
               else {
+                console.log('else...');
                 batterRunsHighestInt = batterRunsHighestInt;
               }
-
+              /*
             }
             else if (batterRuns > batterRunsHighest) {
               batterRunsHighestInt = batterRuns;
@@ -446,6 +463,7 @@ handleWicket = () => {
             else {
               batterRunsHighestInt = batterRunsHighest;
             }
+            */
 
 
 
@@ -465,6 +483,16 @@ handleWicket = () => {
             teamPlayers[player.id].scoreThree = scoreThree;
             teamPlayers[player.id].outs = outs;
 
+
+            //players[player.id].highestScore = batterRunsHighestInt;
+
+            //console.log(allPlayers);
+
+            //players[player.id].scoreOne = batterRuns;
+            //players[player.id].scoreTwo = scoreTwo;
+            //players[player.id].scoreThree = scoreThree;
+            //players[player.id].outs = outs;
+
             /*
             if (teamPlayers[player.id].id === 1 || teamPlayers[player.id].id === 2) {
               teamPlayers[player.id].batterFlag = 0;
@@ -480,8 +508,17 @@ handleWicket = () => {
               teamPlayers: teamPlayers,
             }, function () {
               const { teamPlayers } = this.state
-              this.props.dispatch(updateTeamPlayers(this.state.players));
+              this.props.dispatch(updateTeamPlayers(this.state.teamPlayers));
             })
+
+            /*
+            this.setState({
+              players: players,
+            }, function () {
+              const { players } = this.state
+              this.props.dispatch(updatePlayers(this.state.players));
+            })
+            */
 
             const highestPlayerScore = this.props.playerStats.highestPlayerScore;
             const winningStreak = this.props.playerStats.winningStreak;
@@ -1002,6 +1039,8 @@ handleWicket = () => {
 
 handleUseNotOut = () => {
 
+  ReactNativeHapticFeedback.trigger('impactLight', true);
+
   Alert.alert(
   'Use Auto Not-Out?',
   'Are you sure you want to use your auto not-out?',
@@ -1134,7 +1173,10 @@ handleUseNotOut = () => {
   }
 
   handleBuyNotOut = () => {
-    this.props.navigation.navigate('CricStratIap')
+    ReactNativeHapticFeedback.trigger('impactLight', true);
+    this.props.navigation.navigate('CricStratIap', {
+      iapWicket: true,
+    });
   }
 
 handleUseNotOutTeam = () => {
@@ -1192,19 +1234,6 @@ handleUseNotOutTeam = () => {
     const firstInningsRuns = this.props.firstInningsRuns.firstInningsRuns;
     return (
     <Container>
-    <Header style={styles.headerStyle}>
-      <Left size={1}>
-        <Icon name="menu" onPress={() => this.props.navigation.openDrawer()} style={{color: '#fff', paddingLeft: 20, marginTop: 'auto', marginBottom: 'auto' }} />
-      </Left >
-      <Col size={1} style={ styles.logoStylingCol }>
-      <Image
-       source={require('../../assets/4dot6logo-transparent.png')}
-       style={{ height: '100%', width: 'auto', justifyContent: 'center', alignItems: 'center', resizeMode: 'contain' }}
-      />
-      </Col>
-      <Right size={1} style={styles.colVerticleAlign}>
-        </Right>
-    </Header>
     <ImageBackground source={require(`../../assets/4dot6-cricekt-sim-bg-image-2.png`)} style={styles.backgroundImage}>
     <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
     locations={[0,0.9,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradientOpacity}>
@@ -1240,7 +1269,14 @@ handleUseNotOutTeam = () => {
     </ImageBackground>
     <Col style={styles.autoNotOutColMain}>
     <Row style={{backgroundColor: '#12c2e9', height: 75, width: '100%', alignItems: 'center', justifyContent: 'center'}}>
-      <Text style={{color: '#fff', fontSize: 30}}>Use Auto Not Out: </Text><Icon type="MaterialCommunityIcons" name="arrow-bottom-right" style={styles.autoNotOutIcon} />
+      <Text style={{color: '#fff', fontSize: 30}}>Use Auto Not Out: </Text><Icon type="MaterialCommunityIcons" name="arrow-bottom-left" style={styles.autoNotOutIcon} />
+    </Row>
+    <Row style={{width: '100%', flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
+      <Button full success style={{width: '100%', backgroundColor: '#77dd77', height: 75, alignItems: 'center', justifyContent: 'center'}}
+      onPress={() => this.handleBuyNotOut()}
+      >
+        <Text style={{color: '#fff', fontSize: 18,}}>No Auto Not-Outs? Get More Now</Text><Icon type="MaterialCommunityIcons" name="chevron-right" style={styles.autoNotOutIconBuy} />
+      </Button>
     </Row>
     <Row style={{width: '100%'}}>
       <Col >
@@ -1277,13 +1313,6 @@ handleUseNotOutTeam = () => {
         </Col>
       </Button>
       </Col>
-    </Row>
-    <Row style={{width: '100%', flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
-      <Button full success style={{width: '100%', backgroundColor: '#77dd77', height: 75, alignItems: 'center', justifyContent: 'center'}}
-      onPress={() => this.handleBuyNotOut()}
-      >
-        <Text style={{color: '#fff', fontSize: 18,}}>No Auto Not-Outs? Get More Now</Text><Icon type="MaterialCommunityIcons" name="chevron-right" style={styles.autoNotOutIconBuy} />
-      </Button>
     </Row>
     </Col>
     <Footer style={{ height: 50, backgroundColor: 'transparent', borderTopWidth: 0, backgroundColor: 'transparent', elevation: 0, shadowOpacity: 0 }}>
@@ -1454,7 +1483,7 @@ const styles = StyleSheet.create({
   autoNotOutIconBuy: {
     color: '#fff',
     fontSize: 40,
-    textAlign: 'right'
+    textAlign: 'left'
   },
   autoNotOutColNum: {
     justifyContent: 'center',
@@ -1475,6 +1504,11 @@ const styles = StyleSheet.create({
     flex: 1,
     opacity: 0.9,
   },
+  goButtonStyle: {
+    backgroundColor: '#77dd77',
+    height: 160,
+    opacity: 1
+},
 });
 
 /*

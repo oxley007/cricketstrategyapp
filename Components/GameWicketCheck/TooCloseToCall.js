@@ -386,7 +386,7 @@ getNavigationText = () => {
       <Container>
       <Header style={styles.headerStyle}>
         <Left size={1}>
-          <Icon name="menu" onPress={() => this.props.navigation.openDrawer()} style={{color: '#fff', paddingLeft: 20, marginTop: 'auto', marginBottom: 'auto' }} />
+          
         </Left>
         <Col size={1} style={ styles.logoStylingCol }>
         <Image

@@ -27,12 +27,59 @@ class IapTrue extends Component {
     this.setState({ toggle });
   };
 
+  getButton = () => {
+    const { navigation } = this.props;
+    let iapGameOver = navigation.getParam('iapGameOver', false);
+    let iapWicket = navigation.getParam('iapWicket', false);
+    if (iapGameOver === true) {
+        return (
+        <Button large warning style={styles.lightGreenButton100}
+           // onPress={(): void => this.requestPurchase(product.productId)}
+           onPress={() => this.props.navigation.navigate('HomeApp')}>
+           <Col size={1} style={{alignItems: 'flex-end'}}>
+          <Icon type="AntDesign" name="back" style={styles.autoNotOutIcon} />
+          </Col>
+          <Col size={2}>
+          <Text style={styles.lightGreenButtonTextButton}>Go Back</Text>
+          </Col>
+         </Button>
+      )
+    }
+    if (iapWicket === true) {
+        return (
+        <Button large warning style={styles.lightGreenButton100}
+           // onPress={(): void => this.requestPurchase(product.productId)}
+           onPress={() => this.props.navigation.navigate('WicketCheck')}>
+           <Col size={1} style={{alignItems: 'flex-end'}}>
+          <Icon type="AntDesign" name="back" style={styles.autoNotOutIcon} />
+          </Col>
+          <Col size={2}>
+          <Text style={styles.lightGreenButtonTextButton}>Go Back</Text>
+          </Col>
+         </Button>
+      )
+    }
+    else {
+      return (
+      <Button large warning style={styles.lightGreenButton100}
+         onPress={() => this.props.navigation.navigate('HomeApp')}>
+         <Col size={1} style={{alignItems: 'flex-end'}}>
+        <Icon type="AntDesign" name="back" style={styles.autoNotOutIcon} />
+        </Col>
+        <Col size={2}>
+        <Text style={styles.lightGreenButtonTextButton}>Go Back</Text>
+        </Col>
+       </Button>
+     )
+    }
+  }
+
     render() {
         return (
           <Container>
           <Header style={styles.headerStyle}>
           <Left size={1}>
-            <Icon name="menu" onPress={() => this.props.navigation.openDrawer()} style={{color: '#fff', paddingLeft: 20, marginTop: 'auto', marginBottom: 'auto' }} />
+            
           </Left>
           <Col size={1} style={ styles.logoStylingCol }>
           <Image
@@ -69,11 +116,7 @@ class IapTrue extends Component {
                 </LinearGradient>
                 </ImageBackground>
                 <Footer style={{ height: 100, backgroundColor: 'transparent', borderTopWidth: 0, backgroundColor: 'transparent', elevation: 0, shadowOpacity: 0 }}>
-                <Button large warning style={styles.lightGreenButton100}
-                   // onPress={(): void => this.requestPurchase(product.productId)}
-                   onPress={() => this.props.navigation.navigate('WicketCheck')}>
-                   <Icon type="AntDesign" name="back" style={styles.autoNotOutIcon} /><Text style={styles.lightGreenButtonText}>Back to game</Text>
-                 </Button>
+                {this.getButton()}
                 </Footer>
 
               </Container>
@@ -237,6 +280,10 @@ const styles = StyleSheet.create({
   lightGreenButtonText: {
     color: '#fff',
     fontSize: 18,
+  },
+  lightGreenButtonTextButton: {
+    color: '#fff',
+    fontSize: 36,
   },
   lightGreenButton100: {
     width: '100%',

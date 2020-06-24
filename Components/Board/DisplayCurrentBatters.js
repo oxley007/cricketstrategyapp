@@ -25,6 +25,7 @@ class DisplayCurrentBatters extends Component {
     this.refPlayers = firebase.firestore().collection(currentUser.uid).doc('players');
     this.state = {
         players: [],
+        continueGameFlag: 0,
     };
   }
 
@@ -37,6 +38,7 @@ class DisplayCurrentBatters extends Component {
     facingBall: this.props.players.facingBall || 1,
     togglePremium: this.props.toggle.togglePremium || true,
     toggleHomeLoad: this.props.toggle.toggleHomeLoad || true,
+    toggleHomeLoadTwo: this.props.toggle.toggleHomeLoadTwo || true,
   };
 
   handleChange = ( gameID, gameRuns, players, toggle ) => {
@@ -53,6 +55,26 @@ class DisplayCurrentBatters extends Component {
     this.refPlayers.onSnapshot(this.onDocCollectionUpdate)
   }
 
+
+  /*
+  componentDidUpdate() {
+      this.changeToggle();
+    }
+
+  changeToggle = () => {
+    this.setState({
+      togglePremium: false,
+      toggleHomeLoad: false,
+    }, function () {
+      const { togglePremium, toggleHomeLoad } = this.state
+      this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+    })
+
+    console.log(this.props.toggle.toggleHomeLoad + ' did update - or is this hit first toggleHomeLoad displayCurrent Batters?');
+
+  }
+  */
+
   onDocCollectionUpdate = (documentSnapshot) => {
 
     let allPlayers = this.props.players.players;
@@ -60,9 +82,16 @@ class DisplayCurrentBatters extends Component {
     console.log(allPlayers + ' display current batsman allPlayers');
     console.log(documentSnapshot.data().players);
 
+    const continueGame = this.props.continueGame;
+    console.log(continueGame + ' continueGame here on displayCurrentBatters..');
+
+
     if (allPlayers === [] || allPlayers === undefined || allPlayers === null || allPlayers.length < 1) {
       console.log('allplays null hit?');
       allPlayers = documentSnapshot.data().players;
+    }
+    else if (continueGame === true) {
+      allPlayers = this.props.continueGameArray;
     }
     else {
       console.log('else all players from redux.');
@@ -86,9 +115,10 @@ class DisplayCurrentBatters extends Component {
       this.setState({
         togglePremium: false,
         toggleHomeLoad: false,
+        toggleHomeLoadTwo: false,
       }, function () {
-        const { togglePremium, toggleHomeLoad } = this.state
-        this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+        const { togglePremium, toggleHomeLoad, toggleHomeLoadTwo } = this.state
+        this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad, this.state.toggleHomeLoadTwo));
       })
 
       console.log(this.props.toggle.toggleHomeLoad + ' or is this hit first toggleHomeLoad displayCurrent Batters?');
@@ -344,8 +374,9 @@ class DisplayCurrentBatters extends Component {
 
     getGameID = () => {
       return (
-        <View style={{ height: 0}}>
+        <View style={{height: 0}}>
         <Text>{this.props.gameTest}</Text>
+        <Text>{this.props.gamesCount}</Text >
         </View>
       )
     }

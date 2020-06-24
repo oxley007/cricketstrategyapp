@@ -44,9 +44,6 @@ class ExplainerImageTwo extends React.PureComponent {
               <Text style={styles.buttonTextExplain}>If you see all <Text style={{backgroundColor: '#7CFC00', color: '#000'}}>green</Text>, you'll see more 4's & 6's on the board.</Text>
             </Row>
             <Row>
-                <Text style={styles.buttonTextExplain}>However...</Text>
-            </Row>
-            <Row>
               <Col style={styles.buttonCenter}>
                   <Text style={styles.buttonTextBack}>Next <Icon name='ios-arrow-forward' style={styles.buttonTextBack} /></Text>
               </Col>
@@ -143,8 +140,8 @@ var styles = StyleSheet.create({
       justifyContent: 'center',
       elevation: 0,
       shadowOpacity: 0,
-      height: 250
-    },
+      height: 150
+    }, 
     buttonTextBackLoad: {
       fontSize: 30,
       color: '#c471ed',

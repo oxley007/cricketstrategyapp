@@ -23,8 +23,12 @@ import { updateToggle } from '../../Reducers/toggle';
 Stops the splash screen white file_cache_consistency_checks
 */
 import SplashScreen from 'react-native-splash-screen';
-import { WebView } from 'react-native-webview';
+import 'react-native-get-random-values';
 import { v4 as uuidv4 } from "uuid";
+import { WebView } from 'react-native-webview';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+//import NetInfo from "@react-native-community/netinfo";
+
 
 import { updateGameRuns } from '../../Reducers/gameRuns';
 import { updateGames } from '../../Reducers/games';
@@ -34,10 +38,21 @@ import { updateWideCount } from '../../Reducers/wideCount';
 import { updateGameId } from '../../Reducers/gameId';
 
 import { Col, Row, Grid } from 'react-native-easy-grid';
-import { Container, Header, Footer, Body, Content, Left, Icon, Button } from 'native-base';
+import { Container, Header, Footer, Body, Content, Left, Icon, Button, H2 } from 'native-base';
 
 import BallCalc from '../../Util/BallCalc.js';
 import BallDiff from '../../Util/BallDiff.js';
+
+/*
+// Subscribe
+const unsubscribe = NetInfo.addEventListener(state => {
+console.log("Connection type", state.type);
+console.log("Is connected?", state.isConnected);
+});
+
+// Unsubscribe
+unsubscribe();
+*/
 
 // Later on in your styles..
 const styles = StyleSheet.create({
@@ -111,7 +126,30 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 15,
   },
+  whiteText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  rowCenter: {
+    marginRight: 'auto',
+    marginLeft: 'auto',
+    height: 30,
+  },
+  rowCenterLarge: {
+    marginRight: 'auto',
+    marginLeft: 'auto',
+    height: 60,
+  },
+  buttonTextBack: {
+    fontSize: 25,
+    color: '#fff',
+    marginTop: 'auto',
+    marginRight: 'auto',
+    marginBottom: 'auto',
+    marginLeft: 'auto',
+  },
 });
+
 
 class HomeApp extends Component {
   constructor(props) {
@@ -124,6 +162,7 @@ class HomeApp extends Component {
         getGames: false,
         loadFlag: false,
         loadHome: true,
+        loadFlagTwo: true,
     };
   }
 
@@ -137,6 +176,7 @@ class HomeApp extends Component {
     gameID: this.props.gameID.gameID || '0',
     togglePremium: this.props.toggle.togglePremium || true,
     toggleHomeLoad: this.props.toggle.toggleHomeLoad || true,
+    toggleHomeLoadTwo: this.props.toggle.toggleHomeLoadTwo || true,
   };
 
   handleChange = ( gameRuns, games, gamesList, players, widecount, gameID, toggle ) => {
@@ -148,6 +188,7 @@ class HomeApp extends Component {
     this.setState({ gameID });
     this.setState({ toggle });
   };
+
 
   componentDidMount() {
 
@@ -162,7 +203,7 @@ class HomeApp extends Component {
     onDocCollectionUpdate = (documentSnapshot) => {
 
 
-      let gamesLength = this.state.gamesLength;
+      //let gamesLength = this.state.gamesLength;
 
       /*
       console.log(gamesLength);
@@ -182,15 +223,16 @@ class HomeApp extends Component {
 
       if (allPlayersNew === undefined || allPlayersNew === null || allPlayersNew < 1 || allPlayersNew === []) {
 
-        allPlayersNew = documentSnapshot.data().players
+        try {
+    allPlayersNew = documentSnapshot.data().players
+} catch (error) {
+  console.log('hit should nav to AddPlayers.');
+  const { navigation } = this.props;
+  this.props.navigation.navigate('GameAddPlayers');
+}
+
 
         console.log(allPlayersNew + ' allPlayersNew === undefined');
-        if (allPlayersNew === undefined || allPlayersNew === null || allPlayersNew < 1 || allPlayersNew === []) {
-          console.log('no players in DB');
-          const { navigation } = this.props;
-          this.props.navigation.navigate('GameAddPlayers');
-          console.log('shouldnt get hit.');
-        }
 
       }
 
@@ -214,9 +256,8 @@ class HomeApp extends Component {
 
       console.log(this.props.players.players);
 
-      //}
+      }
 
-    }
 
     onCollectionUpdate = (querySnapshot) => {
       console.log(this.props.games.games + ' onCollectionUpdate inital games state redux.');
@@ -277,6 +318,7 @@ class HomeApp extends Component {
 
       console.log(gamesLengthNew);
 
+      /*
     let countGames = 0;
 
 
@@ -301,6 +343,7 @@ class HomeApp extends Component {
       const { games } = this.state
       this.props.dispatch(updateGames(this.state.games));
      })
+     */
     }
 
 
@@ -343,19 +386,25 @@ class HomeApp extends Component {
 
 goToNewGame = () => {
 
+  //Vibration.vibrate(PATTERN);
+  ReactNativeHapticFeedback.trigger('notificationSuccess', true);
+
   console.log(this.props.games.games);
   //const { currentUser } = this.state
 
   //const uuidv4 = require('uuid/v4');
-  uuidv4();
-  console.log(uuidv4);
-  console.log(uuidv4());
+  //const { v4: uuidv4 } = require('uuid');
+  //uuidv4();
+  //console.log(uuidv4);
+  //console.log(uuidv4());
+    const randomNumGameId = Math.floor(Math.random() * 1000000000000000000000) + 1
+    console.log(randomNumGameId);  
     console.log(this.props.games.games);
     let gameRunEvents = [{eventID: 0, runsValue: 0, ball: -1, runsType: 'deleted', wicketEvent: false, batterID: 0, bowlerID: 0}];
     console.log(this.props.games.games);
     let eventID = 0;
     this.props.dispatch(updateGameRuns(gameRunEvents, eventID))
-    let gameID = uuidv4();
+    let gameID = randomNumGameId;
     console.log(gameID);
 
     let now = new Date();
@@ -380,13 +429,21 @@ goToNewGame = () => {
     this.props.dispatch(updateGameId(this.state.gameID));
   })
 
+  if (this.props.toggle.toggleHomeLoadTwo === true) {
+    console.log(this.state.loadFlagTwo + ' arrgh. How am i going to do this damn loading!!!');
 
   this.setState({
     togglePremium: true,
     toggleHomeLoad: true,
+    toggleHomeLoadTwo: false,
   }, function () {
-    const { togglePremium, toggleHomeLoad } = this.state
-    this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+    const { togglePremium, toggleHomeLoad, toggleHomeLoadTwo } = this.state
+    this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad, this.state.toggleHomeLoadTwo));
+  })
+  }
+
+  this.setState({
+    loadFlagTwo: false,
   })
 
 
@@ -478,7 +535,85 @@ goToNewGame = () => {
   }
   }
 
+  getGameNav = (gameId, displayId) => {
+
+    this.setState({
+      togglePremium: false,
+      toggleHomeLoad: false,
+      toggleHomeLoadTwo: false,
+    }, function () {
+      const { togglePremium, toggleHomeLoad, toggleHomeLoadTwo } = this.state
+      this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad, this.state.toggleHomeLoadTwo));
+    })
+
+    const { navigation } = this.props;
+
+    this.props.navigation.navigate('Game', {
+      gameId: gameId,
+      displayId: displayId,
+      continueGame: true,
+      }
+    )
+  }
+
   getNewGameButton = () => {
+    const games = this.props.games.games;
+    let gamesCount = games.length
+    gamesCount--
+
+    let latestGameResult = 1;
+    let displayId = 'n/a';
+    let gameId = this.props.gameID.gameID;
+    let firstInningsRuns = 0;
+    let target = firstInningsRuns + 1;
+    let totalRuns = 0;
+    let totalWickets = 0;
+
+    if (gamesCount > 1) {
+    latestGameResult = games[0].gameResult;
+    displayId = games[0].displayId;
+    gameId = this.props.gameID.gameID;
+    firstInningsRuns = games[0].firstInningsRuns;
+    target = firstInningsRuns + 1;
+    totalRuns = games[0].totalRuns;
+    totalWickets = games[0].totalWickets;
+    console.log(gamesCount);
+    console.log(latestGameResult);
+    console.log(JSON.stringify(games[0]) + ' what does this say three??');
+    console.log(JSON.stringify(games[gamesCount].gameResult) + ' what does this say four?');
+    }
+
+    if (latestGameResult === 0 && (gameId != undefined || gameId != null || gameId >= 1 )) {
+      return (
+      <ImageBackground source={require(`../../assets/4dot6-cricekt-sim-bg-image-2.png`)} imageStyle={{ borderRadius: 15}} style={styles.backgroundImage}>
+        <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
+        locations={[0,0.7,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradientBg}>
+          <Button large style={styles.largeButtonLoad}
+          onPress={() => this.getGameNav(gameId, displayId)}>
+          <Col>
+            <Row style={styles.rowCenter}>
+              <H2 style={{color: '#fff', fontSize: 20}}>Game #{displayId}</H2>
+            </Row>
+            <View style={styles.horizontalRule} />
+            <Row style={{marginTop: 0, height: 20}}>
+              <Col style={{alignItems: 'center', justifyContent: 'center'}}>
+                  <Text style={styles.whiteText}>Target: {target}</Text>
+              </Col>
+              <Col style={{alignItems: 'center', justifyContent: 'center'}}>
+                  <Text style={styles.whiteText}>Total: {totalRuns}/{totalWickets}</Text>
+              </Col>
+            </Row>
+            <View style={styles.horizontalRule} />
+            <Row style={styles.rowCenterLarge}>
+                <Text style={styles.buttonTextBack}>Continue Game <Icon name='ios-arrow-forward' style={styles.buttonTextBack} /></Text>
+            </Row>
+              </Col>
+          </Button>
+        </LinearGradient>
+      </ImageBackground>
+    )
+    }
+    else {
     return (
       <ImageBackground source={require(`../../assets/4dot6-cricekt-sim-bg-image-2.png`)} imageStyle={{ borderRadius: 15}} style={styles.backgroundImage}>
         <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
@@ -486,7 +621,7 @@ goToNewGame = () => {
           <Button large style={styles.largeButtonLoad}
           onPress={() => this.goToNewGame()}>
           <Col>
-            <Row>
+            <Row >
             <Text style={styles.buttonTextBackLoad}>New Game...</Text>
             </Row>
             <Row>
@@ -498,6 +633,7 @@ goToNewGame = () => {
       </ImageBackground>
 
   )
+  }
   }
 
 /*
@@ -679,7 +815,7 @@ goToNewGame = () => {
         const games = this.props.games.games;
 
         return (
-          <Col >
+          <Col>
           <Row>
             <DisplayGames navigation={this.props.navigation} games={games} />
           </Row >
@@ -708,9 +844,12 @@ goToNewGame = () => {
 
   }
 
+
+
 render() {
   return (
       <Container>
+
       {this.getHomeLoad()}
       <Header style={styles.headerStyle}>
       <Row>

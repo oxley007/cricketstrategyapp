@@ -49,7 +49,7 @@ class Game extends React.Component {
     facingBall: this.props.players.facingBall || 1,
     togglePremium: this.props.toggle.togglePremium || true,
     toggleHomeLoad: this.props.toggle.toggleHomeLoad || true,
-
+    toggleHomeLoadTwo: this.props.toggle.toggleHomeLoadTwo || true,
   };
 
   handleChange = ( batterRuns, gameID, games, players, toggle ) => {
@@ -115,9 +115,10 @@ onCollectionUpdate = (querySnapshot) => {
     this.setState({
       togglePremium: false,
       toggleHomeLoad: false,
+      toggleHomeLoadTwo: false,
     }, function () {
-      const { togglePremium, toggleHomeLoad } = this.state
-      this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+      const { togglePremium, toggleHomeLoad, toggleHomeLoadTwo } = this.state
+      this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad, this.state.toggleHomeLoadTwo));
     })
   }
 
@@ -320,7 +321,7 @@ onCollectionUpdate = (querySnapshot) => {
 
     <Footer style={styles.footerStyle}>
       <ImageBackground source={require(`../../assets/4dot6-cricekt-sim-bg-image-2.png`)} style={styles.backgroundImage}>
-        <Board navigation={this.props.navigation} />
+        <Board navigation={this.props.navigation} continueGameArray={this.props.continueGameArray} />
       </ImageBackground>
     </Footer>
     </Col>
@@ -500,7 +501,7 @@ const styles = StyleSheet.create({
         resizeMode: 'cover', // or 'stretch'
     },
     footerStyle: {
-      height: 250,
+      height: 225,
       backgroundColor: 'transparent',
       borderTopWidth: 0,
       elevation: 0,

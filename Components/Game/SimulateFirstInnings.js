@@ -63,6 +63,7 @@ class SimulateFirstInnings extends React.Component {
     firstInningsRuns: this.props.firstInningsRuns.firstInningsRuns || 0,
     togglePremium: this.props.toggle.togglePremium || true,
     toggleHomeLoad: this.props.toggle.toggleHomeLoad || true,
+    toggleHomeLoadTwo: this.props.toggle.toggleHomeLoadTwo || true,
   };
 
   handleChange = ( gameID, gameRuns, ball, players, games, teamPlayers, gamesList, toggle ) => {
@@ -255,12 +256,12 @@ class SimulateFirstInnings extends React.Component {
         console.log(n);
         console.log(this.state.newGameFlag);
         console.log(this.state.totalWickets);
-        if (n < 19 && this.state.totalWickets < 10 && this.state.newGameFlag === 1) {
-      //if (n < 121 && this.state.totalWickets < 10 && this.state.newGameFlag === 1) {
+        //if (n < 20 && this.state.totalWickets < 10 && this.state.newGameFlag === 1) {
+        if (n < 122 && this.state.totalWickets < 10 && this.state.newGameFlag === 1) {
         this.simulateRuns();
 
         if (chalScore > 1 && n > 60) {
-          n = 121
+          n = 122
         }
 
       }
@@ -684,18 +685,21 @@ goToSefcondInnings = () => {
 
   console.log(gamesCount);
 
+  /*
   this.setState({
     togglePremium: true,
     toggleHomeLoad: true,
+    toggleHomeLoadTwo: false,
   }, function () {
-    const { togglePremium, toggleHomeLoad } = this.state
-    this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+    const { togglePremium, toggleHomeLoad, toggleHomeLoadTwo } = this.state
+    this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad, this.state.toggleHomeLoadTwo));
   })
+  */
 
-  console.log();
+  //console.log();
 
 
-  if (gamesCount <= 260) {
+  if (gamesCount <= 3) {
     this.props.navigation.navigate('ExplainerImageOne', {
       displayId: displayId,
       firstInningsRuns: firstInningsRuns,
@@ -705,6 +709,7 @@ goToSefcondInnings = () => {
   this.props.navigation.navigate('Game', {
     displayId: displayId,
     firstInningsRuns: firstInningsRuns,
+    gamesCount: gamesCount,
   });
   }
 
@@ -715,12 +720,14 @@ getSimRuns = () => {
   if (this.state.newGameFlag === 0) {
     console.log('newGameFlag === 0');
     return (
-    <Col style={styles.ballCircle}>
+
     <Button rounded large warning style={styles.generateInningsLargeButton}
         onPress={() => this.changeGameFlag()} >
-        <Text style={styles.generateInningsButtonText}>Generatre innings <Icon name='ios-arrow-forward' style={styles.generateInningsButtonText} /></Text>
+        <Col style={styles.ballCircle}>
+        <Text style={styles.generateInningsButtonText}>Generate innings <Icon name='ios-arrow-forward' style={styles.generateInningsButtonText} /></Text>
+        </Col >
       </Button>
-    </Col >
+
     )
   }
   else {
@@ -1140,7 +1147,7 @@ return (
 }
 else {
   return (
-    <Row size={2}>
+    <Row size={1}>
       <Col style={{paddingTop: 5, paddingBottom: 5}}>
         <Row style={{paddingTop: 5, paddingBottom: 5}}>
           <Text style={styles.textChalHeader}>Or select a challenge score:</Text>
@@ -1241,6 +1248,36 @@ getScoreDisplay = () => {
 }
 }
 
+getChal = () => {
+if (this.state.newGameFlag === 0) {
+  return(
+    this.getChalScore()
+  )
+}
+}
+
+getFooter = () => {
+
+  if (this.state.newGameFlag != 0) {
+    return (
+    <Footer style={{ height: 60, backgroundColor: 'transparent', borderTopWidth: 0, backgroundColor: 'transparent', elevation: 0, shadowOpacity: 0 }}>
+      {this.displayStartSecondInnings()}
+    </Footer>
+    )
+  }
+}
+
+displayBackIcon = () => {
+  if (this.state.newGameFlag === 0) {
+  return (
+  <Icon name="ios-backspace" onPress={() => this.props.navigation.navigate('HomeApp')} style={{color: '#fff', paddingLeft: 20, marginTop: 'auto', marginBottom: 'auto' }} />
+  )
+  }
+  else {
+    //show nothing.
+  }
+}
+
   render() {
     console.log(this.props.games.games);
     console.log(this.state.totalWickets);
@@ -1258,8 +1295,8 @@ getScoreDisplay = () => {
                 />
     <Header style={styles.headerStyle}>
       <Left size={1}>
-        <Icon name="menu" onPress={() => this.props.navigation.openDrawer()} style={{color: '#fff', paddingLeft: 20, marginTop: 'auto', marginBottom: 'auto' }} />
-      </Left>
+        {this.displayBackIcon()}
+      </Left >
       <Col size={1} style={ styles.logoStylingCol }>
       <Image
        source={require('../../assets/4dot6logo-transparent.png')}
@@ -1290,11 +1327,9 @@ getScoreDisplay = () => {
       <Row size={2}>
         {this.getScoreDisplay()}
       </Row>
-      {this.getChalScore()}
+      {this.getChal()}
     </Content>
-    <Footer style={{ height: 60, backgroundColor: 'transparent', borderTopWidth: 0, backgroundColor: 'transparent', elevation: 0, shadowOpacity: 0 }}>
-      {this.displayStartSecondInnings()}
-    </Footer>
+      {this.getFooter()}
     </LinearGradient>
   </Container>
   );
@@ -1326,7 +1361,6 @@ const styles = StyleSheet.create({
       flex: 1,
       paddingLeft: 15,
       paddingRight: 15,
-      borderRadius: 5
     },
     textHeader: {
       color: '#fff',
@@ -1349,8 +1383,8 @@ const styles = StyleSheet.create({
     },
     textChalHeader: {
       color: '#fff',
-      fontSize: 30,
-      lineHeight: 30,
+      fontSize: 25,
+      lineHeight: 25,
     },
     colCenter: {
       alignItems: 'center',
@@ -1386,6 +1420,7 @@ const styles = StyleSheet.create({
     },
     generateInningsLargeButton: {
       width: '100%',
+      height: 200,
       backgroundColor: '#fff',
       alignItems: 'center',
       justifyContent: 'center',
@@ -1476,7 +1511,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain'
   },
   headingText: {
-    fontSize: 40,
+    fontSize: 35,
     color: '#fff',
   },
   ballCircle: {

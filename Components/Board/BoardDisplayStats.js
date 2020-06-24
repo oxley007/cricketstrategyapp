@@ -216,10 +216,13 @@ const styles = StyleSheet.create({
     },
     rowPaddingStartGame :{
       paddingTop: 10,
-      paddingRight: 20,
       paddingBottom: 10,
-      paddingLeft: 20,
-      textAlign: 'center',
+      marginTop: 'auto',
+      marginRight: 'auto',
+      marginBottom: 'auto',
+      marginLeft: 'auto',
+      textAlign:'center',
+      alignSelf:'center',
       backgroundColor: '#12c2e9'
     },
     buttonTextOver: {

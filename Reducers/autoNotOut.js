@@ -13,7 +13,7 @@ export const updateAutoNotOut = autoNotOut => ({
 });
 
 const initialState = {
-  autoNotOut: 0,
+  autoNotOut: 3,
 };
 
 console.log('hitting rootReducer');

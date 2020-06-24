@@ -6,6 +6,7 @@ import { WebView } from 'react-native-webview';
 import { connect } from "react-redux";
 import { updateGames } from '../../Reducers/games';
 import { updateToggle } from '../../Reducers/toggle';
+import { updateGameId } from '../../Reducers/gameId';
 
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -24,11 +25,15 @@ class DisplayGames extends React.PureComponent {
     games: this.props.games.games || [],
     togglePremium: this.props.toggle.togglePremium || true,
     toggleHomeLoad: this.props.toggle.toggleHomeLoad || true,
+    toggleHomeLoadTwo: this.props.toggle.toggleHomeLoadTwo || true,
+    gameID: this.props.gameID.gameID || '0',
+
   };
 
-  handleChange = ( games, toggle ) => {
+  handleChange = ( games, toggle, gameID ) => {
     this.setState({ games });
     this.setState({ toggle });
+    this.setState({ gameID });
   };
     // toggle a todo as completed or not via update()
     toggleComplete() {
@@ -113,14 +118,18 @@ class DisplayGames extends React.PureComponent {
 
     getMoreGames = () => {
       console.log('getMoreGames press');
-      const games = this.props.games;
+      const games = this.props.games.games;
       console.log(games);
 
 
-      const gamesLength = games.length;
+      let gamesLength = games.length;
       console.log(gamesLength);
 
       let gamesCount = this.state.gamesCount;
+      console.log(gamesCount);
+
+      gamesLength = games.length;
+      console.log(gamesLength);
 
       const gamesCountPlusFive = gamesCount + 5;
 
@@ -349,9 +358,10 @@ getGameNav = (gameId, displayId) => {
   this.setState({
     togglePremium: false,
     toggleHomeLoad: false,
+    toggleHomeLoadTwo: false,
   }, function () {
-    const { togglePremium, toggleHomeLoad } = this.state
-    this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+    const { togglePremium, toggleHomeLoad, toggleHomeLoadTwo } = this.state
+    this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad, this.state.toggleHomeLoadTwo));
   })
 
   const { navigation } = this.props;
@@ -375,12 +385,26 @@ getGameNav = (gameId, displayId) => {
       console.log(item.gameId);
       console.log(item.winningStreak);
 
+      const gameID = this.props.gameID.gameID;
+      console.log(gameID);
+      console.log(gameID[0]);
+      const gameIDArray = gameID[0];
+      console.log(item.gameId + ' item.gameId here.');
+      console.log(item.gameResult);
+      let gameId = 1;
+      try {
+        gameId = item.gameId[0];
+    } catch (error) {
+    console.log('hit should nav to AddPlayers.');
+      gameId = 1;
+    }
+      console.log(gameId);
+      console.log(gameIDArray);
 
-
-      if (item.gameId === 1) {
+      if (item.gameId === 1 || item.displayId === 2 ) {
         // do nothing.
       }
-      else if (item.gameResult === 0) {
+      else if (item.gameResult === 0 && gameIDArray === gameId) {
         const firstInningsRuns = item.firstInningsRuns;
         const target = firstInningsRuns + 1;
         return (
@@ -415,7 +439,7 @@ getGameNav = (gameId, displayId) => {
           </LinearGradient>
         )
       }
-      else if (item.gameResult === 3) {
+      else if (item.gameResult === 3 || item.gameResult === 0) {
         return (
           <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
           locations={[0,0.7,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradient}>
@@ -501,7 +525,7 @@ getGameButton = () => {
     <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 1}}
     locations={[0,0.7,0.9]} colors={['#12c2e9', '#c471ed']} style={styles.linearGradient}>
     <Row style={{padding: 10, backgroundColor: '#c471ed', height: 200, alignItems: 'center', justifyContent: 'center',}}><Text style={{color: '#fff', fontSize: 30, textAlign: 'center'}}>
-      Click 'New Game' at bottom of the screen to start a game. Good luck!
+      Click 'New Game' at top of the screen to start a game. Good luck!
     </Text></Row>
     </LinearGradient>
     </ImageBackground>
@@ -522,9 +546,10 @@ hideSpinner = () => {
   this.setState({
     togglePremium: false,
     toggleHomeLoad: false,
+    toggleHomeLoadTwo: false,
   }, function () {
-    const { togglePremium, toggleHomeLoad } = this.state
-    this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad));
+    const { togglePremium, toggleHomeLoad, toggleHomeLoadTwo } = this.state
+    this.props.dispatch(updateToggle(this.state.togglePremium, this.state.toggleHomeLoad, this.state.toggleHomeLoadTwo));
   })
 }
 
@@ -563,6 +588,7 @@ hideSpinner = () => {
 const mapStateToProps = state => ({
   games: state.games,
   toggle: state.toggle,
+  gameID: state.gameID,
 });
 
 export default connect(mapStateToProps)(DisplayGames);

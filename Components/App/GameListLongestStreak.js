@@ -49,7 +49,7 @@ componentWillUnmount() {
 onDocCollectionUpdate = (documentSnapshot) => {
   console.log('doc snapshot read.');
   console.log(documentSnapshot);
-  console.log(documentSnapshot.data());
+  console.log(documentSnapshot.data() + 'documentSnapshot.data() longestStreak');
   //console.log(documentSnapshot.data().winningStreak);
 
   let longestStreak = 0;
@@ -61,18 +61,26 @@ onDocCollectionUpdate = (documentSnapshot) => {
   if (documentSnapshot.data() === undefined || documentSnapshot.data() === null) {
     //longestStreak = 0;
     //winningStreak = 0;
-    longestStreak = documentSnapshot.data().longestStreak;
-    winningStreak = documentSnapshot.data().winningStreak;
-    highestTeamScore = documentSnapshot.data().highestTeamScore;
-    highestPlayerScore = documentSnapshot.data().highestPlayerScore;
-    highestPlayerScoreId = documentSnapshot.data().highestPlayerScoreId;
+    try {
+      longestStreak = documentSnapshot.data().longestStreak;
+      winningStreak = documentSnapshot.data().winningStreak;
+      highestTeamScore = documentSnapshot.data().highestTeamScore;
+      highestPlayerScore = documentSnapshot.data().highestPlayerScore;
+      highestPlayerScoreId = documentSnapshot.data().highestPlayerScoreId;
+  } catch (error) {
+    winningStreak = this.props.playerStats.winningStreak;
+    longestStreak = this.props.playerStats.longestStreak;
+    highestTeamScore = this.props.playerStats.highestTeamScore;
+    highestPlayerScore = this.props.playerStats.highestPlayerScore;
+    highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
+  }
   }
   else {
     //longestStreak = documentSnapshot.data().longestStreak;
     //winningStreak = documentSnapshot.data().winningStreak;
     winningStreak = this.props.playerStats.winningStreak;
     longestStreak = this.props.playerStats.longestStreak;
-    highestTeamScore = this.props.playerStats.highestPlayerScore;
+    highestTeamScore = this.props.playerStats.highestTeamScore;
     highestPlayerScore = this.props.playerStats.highestPlayerScore;
     highestPlayerScoreId = this.props.playerStats.highestPlayerScoreId;
   }
